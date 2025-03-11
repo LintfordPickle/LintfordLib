@@ -120,9 +120,6 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	@Override
 	public void draw(LintfordCore core, RenderPass renderPass) {
-
-		final var lIsDefaultRenderPass = renderPass.isDefaultRenderPass();
-
 		int cacheSrcBlendFactor = -1;
 		int cacheDestBlendFactor = -1;
 
@@ -138,7 +135,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 			if (!lParticleRenderer.isAssigned())
 				continue;
 
-			if (!lIsDefaultRenderPass && renderPass.passTypeIndex() != lParticleRenderer.renderPassId())
+			if (renderPass.typeIndex != lParticleRenderer.renderPassId())
 				continue;
 
 			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();

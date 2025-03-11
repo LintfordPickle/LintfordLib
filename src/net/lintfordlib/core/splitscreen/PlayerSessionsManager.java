@@ -122,7 +122,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 			final var lPlayerSession = mPlayerSessions.get(i);
 			final var lPlayerViewContainer = lPlayerSession.getViewContainer();
 
-			final var lRenderTarget = mRendererManager.createRenderTarget("Game Canvas P" + i, lCanvasWidth, lCanvasHeight, 1, GL11.GL_NEAREST, false);
+			final var lRenderTarget = mRendererManager.createRenderTarget("Game Canvas P" + i, lCanvasWidth, lCanvasHeight, 1, GL11.GL_NEAREST, false, null);
 			final var lRTCamera = new RTCamera(lCanvasWidth, lCanvasHeight);
 
 			lPlayerViewContainer.init(lRTCamera, lRenderTarget);

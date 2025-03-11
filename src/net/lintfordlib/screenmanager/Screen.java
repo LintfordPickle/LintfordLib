@@ -433,8 +433,7 @@ public abstract class Screen implements IInputProcessor {
 		if (!mRendererManager.isLoaded())
 			throw new RuntimeException("The RendererManager has been unloaded!");
 
-		// This will default to rendering all passes for both BaseRenderers and WindowRenderers.
-		mRendererManager.draw(core);
+		mRendererManager.drawStageHierarchy(core);
 	}
 
 	// --------------------------------------

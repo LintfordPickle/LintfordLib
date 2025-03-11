@@ -1,8 +1,5 @@
 package net.lintfordlib.renderers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
@@ -35,31 +32,9 @@ public abstract class BaseRenderer implements IInputProcessor {
 
 	protected float mInputTimer;
 
-	private List<Integer> registeredPasses;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	/**
-	 * Checks to see if this instance if {@link BaseRenderer} is registed to use the current {@link RenderPass} type. Usage: Some renderers are designed to render into the color buffer, and so would register themselves to the RenderPass.COLOR_TYPE_INDEX. Others render into a light buffer etc.
-	 */
-	public boolean isRegisteredForPass(int passTypeIndex) {
-		if (passTypeIndex == 0) {
-			return registeredPasses == null || registeredPasses.contains(0);
-		}
-
-		return registeredPasses != null && registeredPasses.contains(passTypeIndex);
-	}
-
-	public void registerPassTypeIndex(int renderPassTypeIndex) {
-		if (registeredPasses == null)
-			registeredPasses = new ArrayList<>();
-
-		if (!registeredPasses.contains(renderPassTypeIndex))
-			registeredPasses.add(renderPassTypeIndex);
-
-	}
 
 	public void isManagedDraw(boolean newValue) {
 		mIsManagedDraw = newValue;
@@ -108,6 +83,8 @@ public abstract class BaseRenderer implements IInputProcessor {
 		return mRendererManager;
 	}
 
+	public abstract boolean isInitialized();
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -139,9 +116,9 @@ public abstract class BaseRenderer implements IInputProcessor {
 	// Core-Methods
 	// --------------------------------------
 
-	public abstract boolean isInitialized();
+	public void initialize(LintfordCore core) {
 
-	public abstract void initialize(LintfordCore core);
+	}
 
 	public void loadResources(ResourceManager resourceManager) {
 		Debug.debugManager().logger().i(TAG, "Loading GL Content (" + getClass().getSimpleName() + ")");
@@ -166,9 +143,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 		return;
 	}
 
-	public void draw(LintfordCore core, RenderPass renderPass) {
-
-	}
+	public abstract void draw(LintfordCore core, RenderPass renderPass);
 
 	// --------------------------------------
 	// Methods

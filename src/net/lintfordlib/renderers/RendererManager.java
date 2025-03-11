@@ -11,14 +11,14 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.hud.HudLayoutController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.rendering.RenderPass;
-import net.lintfordlib.core.rendering.RenderState;
+import net.lintfordlib.core.rendering.RenderStage;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.IResizeListener;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
 
 // TODO: The RendererManager need to be sharing ALOT more of its resources with other render managers ..
@@ -28,12 +28,6 @@ public class RendererManager implements IInputClickedFocusManager {
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
-
-	/** This refers to the BaseRenderers responsible for rendering the game components. */
-	public static final boolean RENDER_GAME_RENDERABLES = true;
-
-	/** This refers to the BaseRenderers responsible for rendering the UI components. */
-	public static final boolean RENDER_UI_WINDOWS = true;
 
 	public static final int NO_WINDOW_INDEX = -1;
 	public static final int WINDOW_ALREADY_REGISTERED = -2;
@@ -54,7 +48,6 @@ public class RendererManager implements IInputClickedFocusManager {
 
 	private HudLayoutController mUiStructureController;
 	private List<BaseRenderer> mRenderers;
-	private List<UiWindow> mWindowRenderers; // TODO: remove this in the new version (using the structure)
 
 	protected float mTitleHeight;
 
@@ -68,7 +61,6 @@ public class RendererManager implements IInputClickedFocusManager {
 	private IResizeListener mResizeListener;
 	private int mRendererIdCounter;
 
-	protected final RenderState mRenderState = new RenderState();
 	protected SharedResources mSharedResources;
 
 	protected IInputClickedFocusTracker mTrackedInputControl;
@@ -76,10 +68,6 @@ public class RendererManager implements IInputClickedFocusManager {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public RenderState renderState() {
-		return mRenderState;
-	}
 
 	public int entityGroupUid() {
 		return mEntityGroupUid;
@@ -126,10 +114,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		return mRenderers;
 	}
 
-	public List<UiWindow> windows() {
-		return mWindowRenderers;
-	}
-
 	public HudLayoutController uiStructureController() {
 		return mUiStructureController;
 	}
@@ -147,7 +131,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		mEntityGroupUid = entityGroupUid;
 
 		mRenderers = new ArrayList<>();
-		mWindowRenderers = new ArrayList<>();
 		mRenderTargets = new ArrayList<>();
 		mRenderTargetAutoResize = new ArrayList<>();
 
@@ -172,12 +155,6 @@ public class RendererManager implements IInputClickedFocusManager {
 		for (int i = 0; i < lRendererCount; i++) {
 			mRenderers.get(i).initialize(mCore);
 		}
-
-		// TODO: these are the same, separated by stage/pass
-		final int lUiRendererCount = mWindowRenderers.size();
-		for (int i = 0; i < lUiRendererCount; i++) {
-			mWindowRenderers.get(i).initialize(mCore);
-		}
 	}
 
 	public void loadResources(ResourceManager resourceManager) {
@@ -195,14 +172,6 @@ public class RendererManager implements IInputClickedFocusManager {
 			}
 		}
 
-		// TODO: these are the same, separated by stage/pass
-		final int lUiRendererCount = mWindowRenderers.size();
-		for (int i = 0; i < lUiRendererCount; i++) {
-			if (!mWindowRenderers.get(i).isLoaded()) {
-				mWindowRenderers.get(i).loadResources(resourceManager);
-			}
-		}
-
 		// Register a window resize listener so we can reload the RenderTargets when the window size changes
 		mResizeListener = this::reloadRenderTargets;
 		mDisplayConfig.addResizeListener(mResizeListener);
@@ -217,15 +186,10 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Unloading Resources for all renderers");
 
-		final int lRendererCount = mRenderers.size();
-		for (int i = 0; i < lRendererCount; i++) {
-			mRenderers.get(i).unloadResources();
-		}
-
-		final int lWindowRendererCount = mWindowRenderers.size();
-		for (int i = 0; i < lWindowRendererCount; i++) {
-			mWindowRenderers.get(i).unloadResources();
-		}
+//		final int lRendererCount = mRenderers.size();
+//		for (int i = 0; i < lRendererCount; i++) {
+//			mRenderers.get(i).unloadResources();
+//		}
 
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;
@@ -234,21 +198,13 @@ public class RendererManager implements IInputClickedFocusManager {
 	}
 
 	public boolean handleInput(LintfordCore core) {
-		final int lNumWindowRenderers = mWindowRenderers.size();
-
-		// We handle the input to the UI Windows in the game with priority.
-		for (int i = 0; i < lNumWindowRenderers; i++) {
-			final var lWindow = mWindowRenderers.get(i);
-			final var lResult = lWindow.handleInput(core);
-			if (lResult && lWindow.exclusiveHandleInput()) {
-				// return true;
-			}
-		}
-
 		// Handle the base renderer input
 		final int lNumRenderers = mRenderers.size();
 		for (int i = lNumRenderers - 1; i >= 0; i--) {
 			mRenderers.get(i).handleInput(core);
+
+			// TODO: Window renderers need to be processed first, and can have 'exclusive' input (onHandledInput return).
+
 		}
 
 		return false;
@@ -263,80 +219,139 @@ public class RendererManager implements IInputClickedFocusManager {
 
 			lRenderer.update(core);
 		}
-
-		final int lWindowRendererCount = mWindowRenderers.size();
-		for (int i = 0; i < lWindowRendererCount; i++) {
-			final var lWindowRenderer = mWindowRenderers.get(i);
-			if (!lWindowRenderer.isActive())
-				continue;
-
-			lWindowRenderer.update(core);
-		}
 	}
 
 	public void draw(LintfordCore core) {
-		if (RENDER_GAME_RENDERABLES) {
-			drawRenderersAllPasses(core);
-		}
-
-		if (RENDER_UI_WINDOWS) {
-			drawWindowRenderers(core);
-		}
+		// TODO: automatic drawing or not will be added when the StructuredRendererManager is available (then its just a flat list of renderers).
 	}
 
-	public void drawRenderersWithPass(LintfordCore core, RenderPass renderPass) {
-		final int lNumBaseRenderers = mRenderers.size();
+	// -- NEW
 
-		final var lRenderPassTypeIndex = renderPass.passTypeIndex();
+	public void drawStageHierarchy(LintfordCore core) {
 
-		for (int j = 0; j < lNumBaseRenderers; j++) {
-			final var lRenderer = mRenderers.get(j);
-			if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
-				continue;
+		// TODO: render all stages and passes
+		final int lNumStages = mRenderStages.size();
+		for (int i = 0; i < lNumStages; i++) {
+			final var lStage = mRenderStages.get(i);
+			final var lRenderPass = lStage.renderPass();
 
-			if (!lRenderer.isRegisteredForPass(lRenderPassTypeIndex))
-				continue;
+			if (lStage.renderTarget() != null) {
+				lStage.renderTarget().bind();
 
-			lRenderer.draw(core, renderPass);
-		}
-	}
+				GL11.glClearColor(0.06f, 0.18f, 0.31f, 1.0f);
+				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
-	public void drawRenderersAllPasses(LintfordCore core) {
-		final var lRenderPasses = mRenderState.renderPasses();
-		final int lNumBaseRenderers = mRenderers.size();
+				if (!lStage.hasSharedDepthBuffer()) {
+					// parent stages clears depth buffer
+					GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+				}
+			} else {
+				if (mActiveRenderTarget != null) {
+					mActiveRenderTarget.bind();
+				}
+			}
 
-		final var lNumRenderPasses = lRenderPasses.size();
-		for (int i = 0; i < lNumRenderPasses; i++) {
-			final var lRenderPass = lRenderPasses.get(i);
-			final var lRenderPassTypeIndex = lRenderPass.passTypeIndex();
-
-			for (int j = 0; j < lNumBaseRenderers; j++) {
-				final var lRenderer = mRenderers.get(j);
-				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
-					continue;
-
-				if (!lRenderer.isRegisteredForPass(lRenderPassTypeIndex))
-					continue;
+			final var lRenderers = lStage.renderers();
+			final var lNumRenderers = lRenderers.size();
+			for (int j = 0; j < lNumRenderers; j++) {
+				final var lRenderer = lRenderers.get(j);
 
 				lRenderer.draw(core, lRenderPass);
+			}
+
+			if (lStage.renderTarget() != null) {
+				lStage.renderTarget().unbind();
+
+				//
+				if (mActiveRenderTarget != null) {
+					mActiveRenderTarget.bind();
+				}
 			}
 		}
 	}
 
-	public void drawWindowRenderers(LintfordCore core) {
-		final int lNumWindowRenderers = mWindowRenderers.size();
-		for (int i = 0; i < lNumWindowRenderers; i++) {
-			final var lWindow = mWindowRenderers.get(i);
-			if (!lWindow.isActive() || !lWindow.isOpen())
-				continue;
+	public void drawStageIndex(LintfordCore core, int stageIndex) {
+		// TODO: render desired stage (retreived by index)
+	}
 
-			lWindow.draw(core, RenderPass.DefaultRenderPass);
+	/** draws the given rt (by uid) into the currently bound texture buffer. */
+	public void drawStageRtByUid(LintfordCore core, int stageUid) {
+		final var lDesiredStage = getRenderStageByUid(stageUid);
+		if (lDesiredStage == null)
+			return;
+
+		final var lRenderTarget = lDesiredStage.renderTarget();
+		if (lRenderTarget == null) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "RenderStage '" + lDesiredStage.stageName + "' does not have a dedicated render target. Nothing will be rendered!");
+			return;
+		}
+
+		final var rtw = mActiveRenderTarget.width() * .8f;
+		final var rth = mActiveRenderTarget.height() * .8f;
+		final var dx = -rtw * .5f;
+		final var dy = -rth * .5f;
+
+		// TODO: remove dependency on debug drawer ffs
+		Debug.debugManager().drawers().drawRenderTargetImmediate(core, new Rectangle(dx, dy, rtw, rth), 0.01f, mActiveRenderTarget);
+	}
+
+	/** draws the given rt (by uid) into the currently bound texture buffer. */
+	public void drawStageByUid(LintfordCore core, int stageUid) {
+		final var lDesiredStage = getRenderStageByUid(stageUid);
+		if (lDesiredStage == null)
+			return;
+
+		final var lRenderPass = lDesiredStage.renderPass();
+		final var lRenderers = lDesiredStage.renderers();
+		final var lNumRenderers = lRenderers.size();
+		for (int j = 0; j < lNumRenderers; j++) {
+			final var lRenderer = lRenderers.get(j);
+
+			lRenderer.draw(core, lRenderPass);
 		}
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	private List<RenderStage> mRenderStages = new ArrayList<>();
+	private RenderTarget mActiveRenderTarget; // this is what will be drawn into the back-buffer
+
+	public void setRenderTarget(RenderTarget rt) {
+		mActiveRenderTarget = rt;
+	}
+
+	public RenderStage getRenderStageByUid(int stageUid) {
+		final var lNumStages = mRenderStages.size();
+		for (int i = 0; i < lNumStages; i++) {
+			final var lStage = mRenderStages.get(i);
+			if (lStage.stageUid == stageUid)
+				return lStage;
+		}
+
+		return null;
+	}
+
+	// RenderStageType type
+	public RenderStage addRenderStage(String name, RenderPass pass, int stageUid) {
+		final var lNewStage = new RenderStage(name, pass, stageUid);
+
+		// TODO: sort the list by Z-Order.
+		// TODO: ensure no duplicate names.
+		// TODO: ensure no duplicate uids.
+		mRenderStages.add(lNewStage);
+		return lNewStage;
+	}
+
+	public void addRenderTargetToStage(RenderStage stage, int width, int height, Integer sharedDepthId) {
+		final var rt = createRenderTarget(stage.stageName, width, height, 1.f, GL11.GL_LINEAR, true, sharedDepthId);
+		stage.renderTarget(rt);
+	}
+
+	public void addToStage(BaseRenderer renderer, RenderPass renderPass) {
+
+	}
 
 	public BaseRenderer getRendererRequired(String rendererName) {
 		final var lRenderer = getRenderer(rendererName);
@@ -353,13 +368,6 @@ public class RendererManager implements IInputClickedFocusManager {
 			return null;
 		}
 
-		final int lNumWindows = mWindowRenderers.size();
-		for (int i = 0; i < lNumWindows; i++) {
-			if (mWindowRenderers.get(i).rendererName().equals(rendererName)) {
-				return mWindowRenderers.get(i);
-			}
-		}
-
 		final int lNumRenderers = mRenderers.size();
 		for (int i = 0; i < lNumRenderers; i++) {
 			if (mRenderers.get(i).rendererName().equals(rendererName)) {
@@ -373,15 +381,8 @@ public class RendererManager implements IInputClickedFocusManager {
 	/** Adds a renderer to the manager. This automatically re-orders the renderers to take into consideration their relative z-depths. */
 	public void addRenderer(BaseRenderer renderer) {
 		if (getRenderer(renderer.rendererName()) == null) {
-			if (renderer instanceof UiWindow) {
-				mWindowRenderers.add((UiWindow) renderer);
-				Collections.sort(mWindowRenderers, new ZLayerComparator());
-			}
-
-			else {
-				mRenderers.add(renderer);
-				Collections.sort(mRenderers, new ZLayerComparator());
-			}
+			mRenderers.add(renderer);
+			Collections.sort(mRenderers, new ZLayerComparator());
 
 		} else {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot add the same renderer twice! (" + renderer.getClass().getSimpleName() + "/" + renderer.mRendererName + ")");
@@ -389,10 +390,6 @@ public class RendererManager implements IInputClickedFocusManager {
 	}
 
 	public void removeRenderer(BaseRenderer renderer) {
-		if (mWindowRenderers.contains(renderer)) {
-			mWindowRenderers.remove(renderer);
-		}
-
 		if (mRenderers.contains(renderer)) {
 			mRenderers.remove(renderer);
 		}
@@ -401,26 +398,11 @@ public class RendererManager implements IInputClickedFocusManager {
 	public void removeAllRenderers() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "RendererManager: Removing all renderers");
 
-		mWindowRenderers.clear();
 		mRenderers.clear();
 	}
 
-	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the given gorup ID assigned to them. */
+	/** Unloads all {@link BaseRenderer} instances registered to this {@link RendererManager} which have the specified entityGroupUid. */
 	public void removeRendererGroup(final int entityGroupID) {
-		final var lWindowUpdateList = new ArrayList<UiWindow>();
-		final int lNumWindows = mWindowRenderers.size();
-		for (int i = 0; i < lNumWindows; i++) {
-			lWindowUpdateList.add(mWindowRenderers.get(i));
-		}
-
-		for (int i = 0; i < lNumWindows; i++) {
-			if (lWindowUpdateList.get(i).entityGroupID() == entityGroupID) {
-				lWindowUpdateList.get(i).unloadResources();
-
-				mWindowRenderers.remove(lWindowUpdateList.get(i));
-			}
-		}
-
 		final var lRendererUpdateList = new ArrayList<BaseRenderer>();
 		final int lRendererCount = mRenderers.size();
 		for (int i = 0; i < lRendererCount; i++) {
@@ -459,10 +441,10 @@ public class RendererManager implements IInputClickedFocusManager {
 	}
 
 	public RenderTarget createRenderTarget(String name, int width, int height, float scale, boolean resizeWithWindow) {
-		return createRenderTarget(name, width, height, 1f, GL11.GL_LINEAR, resizeWithWindow);
+		return createRenderTarget(name, width, height, 1f, GL11.GL_LINEAR, resizeWithWindow, null);
 	}
 
-	public RenderTarget createRenderTarget(String name, int width, int height, float scale, int filterMode, boolean resizeWithWindow) {
+	public RenderTarget createRenderTarget(String name, int width, int height, float scale, int filterMode, boolean resizeWithWindow, Integer sharedDepthBufferId) {
 		var lRenderTarget = getRenderTarget(name);
 
 		if (lRenderTarget != null) {
@@ -478,7 +460,7 @@ public class RendererManager implements IInputClickedFocusManager {
 
 		lRenderTarget = new RenderTarget(name);
 		lRenderTarget.textureFilter(filterMode);
-		lRenderTarget.loadResources(width, height, scale);
+		lRenderTarget.loadResources(width, height, scale, sharedDepthBufferId);
 
 		mRenderTargets.add(lRenderTarget);
 

@@ -42,6 +42,7 @@ public class RenderTarget {
 	private int mWidth;
 	private int mHeight;
 	private float mScale;
+	private Integer mSharedDepthBufferId;
 
 	// --------------------------------------
 	// Properties
@@ -119,6 +120,10 @@ public class RenderTarget {
 		return mDepthTextureID;
 	}
 
+	public boolean isSharedDepthBuffer() {
+		return mSharedDepthBufferId != null;
+	}
+
 	public int frameBufferID() {
 		return mFramebufferID;
 	}
@@ -141,6 +146,7 @@ public class RenderTarget {
 		mColorTextureID = -1;
 
 		mDepthBufferEnabled = false;
+		mSharedDepthBufferId = null;
 	}
 
 	// --------------------------------------
@@ -151,9 +157,17 @@ public class RenderTarget {
 		if (width == 0 || height == 0)
 			return;
 
+		loadResources(width, height, scale, null);
+	}
+
+	public void loadResources(int width, int height, float scale, Integer sharedDepthBufferId) {
+		if (width == 0 || height == 0)
+			return;
+
 		mScale = 1.f;
 		mWidth = width;
 		mHeight = height;
+		mSharedDepthBufferId = sharedDepthBufferId;
 
 		final var lIntBuffer = MemoryUtil.memAllocInt(mWidth * mHeight * 4);
 
@@ -217,7 +231,12 @@ public class RenderTarget {
 		// Depth buffer
 		mDepthBufferEnabled = true;
 		if (mDepthBufferEnabled) {
-			mDepthTextureID = GL30.glGenRenderbuffers();
+			mSharedDepthBufferId = null;
+			if (mSharedDepthBufferId != null)
+				mDepthTextureID = mSharedDepthBufferId;
+			else
+				mDepthTextureID = GL30.glGenRenderbuffers();
+
 			GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, mDepthTextureID);
 			GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_DEPTH24_STENCIL8, mWidth, mHeight);
 			GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, mDepthTextureID);
@@ -227,27 +246,35 @@ public class RenderTarget {
 		if (lCreationStatus != GL30.GL_FRAMEBUFFER_COMPLETE) {
 			switch (lCreationStatus) {
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT'");
 				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT'");
 				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER'");
 				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
 
 			case GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE'");
 				throw new RuntimeException("GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER'");
 				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
 
 			case GL30.GL_FRAMEBUFFER_UNSUPPORTED:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_UNSUPPORTED'");
 				throw new RuntimeException("GL_FRAMEBUFFER_UNSUPPORTED");
 
 			case GL30.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE'");
 				throw new RuntimeException("GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
 
 			case GL30.GL_FRAMEBUFFER_UNDEFINED:
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create Fbo. Error: 'GL_FRAMEBUFFER_UNDEFINED'");
 				throw new RuntimeException("GL_FRAMEBUFFER_UNDEFINED");
 			}
 		}
