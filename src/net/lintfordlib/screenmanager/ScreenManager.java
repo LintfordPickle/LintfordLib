@@ -75,11 +75,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mColumnMaxWidth = newColumnMaxWidth;
 	}
 
-	// TODO: See about remove this reference in favour of the Core reference.
-	public SharedResources sharerdResources() {
-		return mSharedResources;
-	}
-
 	public ToastManager toastManager() {
 		return mToastManager;
 	}

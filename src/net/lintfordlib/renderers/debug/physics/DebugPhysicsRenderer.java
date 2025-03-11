@@ -14,7 +14,7 @@ import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.dynamics.RigidBody.BodyType;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public class DebugPhysicsRenderer extends BaseRenderer {
 
@@ -48,10 +48,8 @@ public class DebugPhysicsRenderer extends BaseRenderer {
 	// Constructor
 	// ---------------------------------------------
 
-	public DebugPhysicsRenderer(RendererManager rendererManager, int entityGroupID) {
+	public DebugPhysicsRenderer(RendererManagerBase rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
-
-		registerPassTypeIndex(RenderPass.RENDER_PASS_COLOR);
 	}
 
 	// ---------------------------------------------

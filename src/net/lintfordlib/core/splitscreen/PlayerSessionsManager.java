@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.rendertarget.RTCamera;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
@@ -25,7 +25,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	private int mNumberActivePlayers = 1;
 	private final List<T> mPlayerSessions = new ArrayList<>();
 
-	private RendererManager mRendererManager;
+	private RendererManagerBase mRendererManager;
 	private boolean mIsResourcesLoaded;
 
 	// ---------------------------------------------
@@ -102,7 +102,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		}
 	}
 
-	public void loadResource(RendererManager rendererManager, ResourceManager resourceManager) {
+	public void loadResource(RendererManagerBase rendererManager, ResourceManager resourceManager) {
 		if (mIsResourcesLoaded)
 			return;
 
@@ -122,7 +122,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 			final var lPlayerSession = mPlayerSessions.get(i);
 			final var lPlayerViewContainer = lPlayerSession.getViewContainer();
 
-			final var lRenderTarget = mRendererManager.createRenderTarget("Game Canvas P" + i, lCanvasWidth, lCanvasHeight, 1, GL11.GL_NEAREST, false);
+			final var lRenderTarget = mRendererManager.createRenderTarget("Game Canvas P" + i, lCanvasWidth, lCanvasHeight, 1, GL11.GL_NEAREST, false, null);
 			final var lRTCamera = new RTCamera(lCanvasWidth, lCanvasHeight);
 
 			lPlayerViewContainer.init(lRTCamera, lRenderTarget);

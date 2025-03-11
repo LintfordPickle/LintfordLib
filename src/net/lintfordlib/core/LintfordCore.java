@@ -35,7 +35,6 @@ import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.KeyEventActionManager;
 import net.lintfordlib.core.maths.MathHelper;
-import net.lintfordlib.core.rendering.RenderState;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.core.time.TimeConstants;
 import net.lintfordlib.data.DataManager;

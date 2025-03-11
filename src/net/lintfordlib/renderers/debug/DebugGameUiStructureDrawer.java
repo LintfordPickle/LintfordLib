@@ -5,7 +5,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.SimpleRendererManager;
 
 public class DebugGameUiStructureDrawer extends BaseRenderer {
 
@@ -34,7 +34,7 @@ public class DebugGameUiStructureDrawer extends BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public DebugGameUiStructureDrawer(RendererManager rendererManager, int entityGroupUid) {
+	public DebugGameUiStructureDrawer(SimpleRendererManager rendererManager, int entityGroupUid) {
 		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
 		mIsActive = false;

@@ -5,7 +5,7 @@ import net.lintfordlib.controllers.player.PlayerSessionController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.splitscreen.IPlayerSession;
 import net.lintfordlib.core.splitscreen.PlayerSessionsManager;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 import net.lintfordlib.screenmanager.ScreenManager;
 
 public abstract class BaseGameSplitScreen<T extends IPlayerSession> extends BaseGameScreen {
@@ -34,7 +34,7 @@ public abstract class BaseGameSplitScreen<T extends IPlayerSession> extends Base
 		this(screenManager, playerManager, null);
 	}
 
-	public BaseGameSplitScreen(ScreenManager screenManager, PlayerSessionsManager<T> playerManager, RendererManager rendererManager) {
+	public BaseGameSplitScreen(ScreenManager screenManager, PlayerSessionsManager<T> playerManager, RendererManagerBase rendererManager) {
 		super(screenManager, rendererManager);
 
 		mPlayerSessions = playerManager;

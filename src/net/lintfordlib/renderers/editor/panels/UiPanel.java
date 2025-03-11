@@ -19,7 +19,6 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.data.editor.EditorLayerBrush;
-
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintfordlib.renderers.windows.components.UIWidget;

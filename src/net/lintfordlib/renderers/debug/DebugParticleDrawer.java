@@ -9,7 +9,7 @@ import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.particles.ParticleFrameworkData;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.SimpleRendererManager;
 
 public class DebugParticleDrawer extends BaseRenderer implements IInputProcessor {
 
@@ -48,7 +48,7 @@ public class DebugParticleDrawer extends BaseRenderer implements IInputProcessor
 	// Constructor
 	// --------------------------------------
 
-	public DebugParticleDrawer(RendererManager rendererManager, ParticleFrameworkData particleFramework, int entityGroupID) {
+	public DebugParticleDrawer(SimpleRendererManager rendererManager, ParticleFrameworkData particleFramework, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
 
 		mParticleFrameworkData = particleFramework;

@@ -12,7 +12,7 @@ import net.lintfordlib.core.physics.dynamics.RigidBody;
 import net.lintfordlib.core.physics.spatial.PhysicsHashGrid;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public class DebugPhysicsGridRenderer extends BaseRenderer {
 
@@ -42,10 +42,8 @@ public class DebugPhysicsGridRenderer extends BaseRenderer {
 	// Constructor
 	// ---------------------------------------------
 
-	public DebugPhysicsGridRenderer(RendererManager rendererManager, int entityGroupID) {
+	public DebugPhysicsGridRenderer(RendererManagerBase rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
-
-		registerPassTypeIndex(RenderPass.RENDER_PASS_COLOR);
 
 		mLineBatch = new LineBatch();
 	}

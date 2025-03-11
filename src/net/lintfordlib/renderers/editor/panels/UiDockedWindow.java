@@ -6,7 +6,7 @@ import java.util.List;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.rendering.RenderPass;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public abstract class UiDockedWindow extends UiWindow {
@@ -47,7 +47,7 @@ public abstract class UiDockedWindow extends UiWindow {
 	// Constructor
 	// --------------------------------------
 
-	public UiDockedWindow(RendererManager rendererManager, String rendererName, int entityGroupUid) {
+	public UiDockedWindow(RendererManagerBase rendererManager, String rendererName, int entityGroupUid) {
 		super(rendererManager, rendererName, entityGroupUid);
 
 		mOrientation = UiDockOrientation.Right;

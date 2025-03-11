@@ -6,7 +6,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.camera.ICamera;
 import net.lintfordlib.core.time.LogicialCounter;
 import net.lintfordlib.data.DataManager;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
@@ -40,7 +40,7 @@ public abstract class BaseGameScreen extends Screen {
 		this(screenManager, null);
 	}
 
-	protected BaseGameScreen(ScreenManager screenManager, RendererManager rendererManager) {
+	protected BaseGameScreen(ScreenManager screenManager, RendererManagerBase rendererManager) {
 		super(screenManager, rendererManager);
 
 		mSingletonScreen = true;

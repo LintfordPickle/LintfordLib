@@ -3,9 +3,10 @@ package net.lintfordlib.controllers.core;
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
+import net.lintfordlib.renderers.SimpleRendererManager;
 
-/** A {@link BaseController} instance which stores a handle to a {@link RendererManager} instantiated by a game screen. */
+/** A {@link BaseController} instance which stores a handle to a {@link SimpleRendererManager} instantiated by a game screen. */
 public class GameRendererController extends BaseController {
 
 	// --------------------------------------
@@ -18,14 +19,14 @@ public class GameRendererController extends BaseController {
 	// Variables
 	// --------------------------------------
 
-	private RendererManager mRendererManager;
+	private RendererManagerBase mRendererManager;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
-	/** Returns the {@link RendererManager} associated with this controller. */
-	public RendererManager rendererManager() {
+	/** Returns the {@link RendererManagerBase} associated with this controller. */
+	public RendererManagerBase rendererManager() {
 		return mRendererManager;
 	}
 
@@ -33,7 +34,7 @@ public class GameRendererController extends BaseController {
 	// Constructor
 	// --------------------------------------
 
-	public GameRendererController(ControllerManager controllerManager, RendererManager rendererManager, final int entityGroupUid) {
+	public GameRendererController(ControllerManager controllerManager, RendererManagerBase rendererManager, final int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
 		mRendererManager = rendererManager;

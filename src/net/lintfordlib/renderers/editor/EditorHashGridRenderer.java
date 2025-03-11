@@ -10,7 +10,7 @@ import net.lintfordlib.controllers.editor.EditorHashGridController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public class EditorHashGridRenderer extends BaseRenderer {
 
@@ -63,7 +63,7 @@ public class EditorHashGridRenderer extends BaseRenderer {
 	// Constructor
 	// ---------------------------------------------
 
-	public EditorHashGridRenderer(RendererManager rendererManager, int entityGroupID) {
+	public EditorHashGridRenderer(RendererManagerBase rendererManager, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
 	}
 
