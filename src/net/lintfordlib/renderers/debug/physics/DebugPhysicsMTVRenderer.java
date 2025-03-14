@@ -12,7 +12,7 @@ import net.lintfordlib.core.physics.collisions.ContactManifold;
 import net.lintfordlib.core.physics.interfaces.ICollisionCallback;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.SimpleRendererManager;
 
 public class DebugPhysicsMTVRenderer extends BaseRenderer implements ICollisionCallback {
 
@@ -55,7 +55,7 @@ public class DebugPhysicsMTVRenderer extends BaseRenderer implements ICollisionC
 	// Constructor
 	// ---------------------------------------------
 
-	public DebugPhysicsMTVRenderer(RendererManager rendererManager, PhysicsWorld world, int entityGroupID) {
+	public DebugPhysicsMTVRenderer(SimpleRendererManager rendererManager, PhysicsWorld world, int entityGroupID) {
 		super(rendererManager, RENDERER_NAME, entityGroupID);
 
 		mWorld = world;

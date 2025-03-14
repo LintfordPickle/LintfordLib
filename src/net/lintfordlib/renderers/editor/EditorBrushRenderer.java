@@ -8,7 +8,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public class EditorBrushRenderer extends BaseRenderer {
 
@@ -50,7 +50,7 @@ public class EditorBrushRenderer extends BaseRenderer {
 	// Constructors
 	// ---------------------------------------------
 
-	public EditorBrushRenderer(RendererManager rendererManager, int entityGroupUid) {
+	public EditorBrushRenderer(RendererManagerBase rendererManager, int entityGroupUid) {
 		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
 	}

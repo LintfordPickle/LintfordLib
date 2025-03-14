@@ -1,5 +1,7 @@
 package net.lintfordlib.core.rendering;
 
+import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
+
 public class RenderPass {
 
 	// --------------------------------------
@@ -30,6 +32,7 @@ public class RenderPass {
 
 	public final String name;
 	public final int typeIndex;
+	public RenderTarget currentRt;
 
 	// --------------------------------------
 	// Constructor
@@ -39,4 +42,33 @@ public class RenderPass {
 		this.name = name;
 		this.typeIndex = typeIndex;
 	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public static RenderPass getRenderPass(int passUid) {
+		switch (passUid) {
+		case RENDER_PASS_DEFAULT:
+			return DEFAULT;
+		case RENDER_PASS_COLOR0:
+			return COLOR0;
+		case RENDER_PASS_COLOR1:
+			return COLOR1;
+		case RENDER_PASS_LIGHT0:
+			return LIGHTS0;
+		case RENDER_PASS_LIGHT1:
+			return LIGHTS1;
+		case RENDER_PASS_CUSTOM0:
+			return CUSTOM0;
+		case RENDER_PASS_CUSTOM1:
+			return CUSTOM1;
+		case RENDER_PASS_CUSTOM2:
+			return CUSTOM2;
+
+		default:
+			return DEFAULT;
+		}
+	}
+
 }

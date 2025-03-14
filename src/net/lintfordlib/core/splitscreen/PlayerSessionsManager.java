@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.rendertarget.RTCamera;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
@@ -25,7 +25,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	private int mNumberActivePlayers = 1;
 	private final List<T> mPlayerSessions = new ArrayList<>();
 
-	private RendererManager mRendererManager;
+	private RendererManagerBase mRendererManager;
 	private boolean mIsResourcesLoaded;
 
 	// ---------------------------------------------
@@ -102,7 +102,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		}
 	}
 
-	public void loadResource(RendererManager rendererManager, ResourceManager resourceManager) {
+	public void loadResource(RendererManagerBase rendererManager, ResourceManager resourceManager) {
 		if (mIsResourcesLoaded)
 			return;
 

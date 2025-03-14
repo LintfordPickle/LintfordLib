@@ -7,7 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
@@ -33,7 +33,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 		this(screenManager, menuTitle, null);
 	}
 
-	protected DualMenuScreen(ScreenManager screenManager, String menuTitle, RendererManager rendererManager) {
+	protected DualMenuScreen(ScreenManager screenManager, String menuTitle, SimpleRendererManager rendererManager) {
 		super(screenManager, menuTitle, rendererManager);
 
 		mRightLayouts = new ArrayList<>();

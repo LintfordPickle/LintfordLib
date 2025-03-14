@@ -12,7 +12,8 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.core.time.TimeSpan;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
+import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.screenmanager.transitions.BaseTransition;
 import net.lintfordlib.screenmanager.transitions.TransitionFadeIn;
 import net.lintfordlib.screenmanager.transitions.TransitionFadeOut;
@@ -49,7 +50,7 @@ public abstract class Screen implements IInputProcessor {
 	public final Color screenColor = new Color(ColorConstants.WHITE());
 	public final ScreenManager screenManager;
 
-	protected final RendererManager mRendererManager;
+	protected final RendererManagerBase mRendererManager;
 	protected SpriteSheetDefinition mCoreSpritesheet;
 
 	protected BaseTransition mTransitionOn;
@@ -111,7 +112,7 @@ public abstract class Screen implements IInputProcessor {
 		return mStretchGameResolution;
 	}
 
-	public RendererManager rendererManager() {
+	public RendererManagerBase rendererManager() {
 		return mRendererManager;
 	}
 
@@ -120,11 +121,11 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public LineBatch lineBatch() {
-		return screenManager.sharerdResources().uiLineBatch();
+		return mRendererManager.sharedResources().uiLineBatch();
 	}
 
 	public SpriteBatch spriteBatch() {
-		return screenManager.sharerdResources().uiSpriteBatch();
+		return mRendererManager.sharedResources().uiSpriteBatch();
 	}
 
 	public int entityGroupUid() {
@@ -290,10 +291,10 @@ public abstract class Screen implements IInputProcessor {
 	// --------------------------------------
 
 	protected Screen(ScreenManager screenManager) {
-		this(screenManager, new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber()));
+		this(screenManager, new SimpleRendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber()));
 	}
 
-	protected Screen(ScreenManager screenManager, RendererManager rendererManager) {
+	protected Screen(ScreenManager screenManager, RendererManagerBase rendererManager) {
 		this.screenManager = screenManager;
 
 		mScreenState = ScreenState.NONE;
@@ -304,7 +305,7 @@ public abstract class Screen implements IInputProcessor {
 		mTransitionExit = new TransitionSwipeOut(new TimeSpan(200), SwipeOutDirection.Left);
 
 		if (rendererManager == null) {
-			mRendererManager = new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber());
+			mRendererManager = new SimpleRendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber());
 		} else {
 			mRendererManager = rendererManager;
 		}
@@ -433,7 +434,7 @@ public abstract class Screen implements IInputProcessor {
 		if (!mRendererManager.isLoaded())
 			throw new RuntimeException("The RendererManager has been unloaded!");
 
-		mRendererManager.drawStageHierarchy(core);
+		mRendererManager.draw(core);
 	}
 
 	// --------------------------------------

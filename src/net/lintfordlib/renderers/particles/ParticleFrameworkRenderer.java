@@ -11,7 +11,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.particles.particlesystems.ParticleSystemInstance;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 // TODO: The RENDERER_POOL_SIZE constant is arbitrary
 // TODO: We only need to render (and therefore assign) renderers to particle systems when they are visible. Add frustum culling (Ps/Pe needs AABB).
@@ -58,7 +58,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public ParticleFrameworkRenderer(RendererManager rendererManager, int entityGroupUid) {
+	public ParticleFrameworkRenderer(RendererManagerBase rendererManager, int entityGroupUid) {
 		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
 		mParticleRenderers = new ArrayList<>();

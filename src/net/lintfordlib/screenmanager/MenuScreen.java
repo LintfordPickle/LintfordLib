@@ -11,7 +11,7 @@ import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
@@ -128,7 +128,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		this(screenManager, menuTitle, null);
 	}
 
-	protected MenuScreen(ScreenManager screenManager, String menuTitle, RendererManager rendererManager) {
+	protected MenuScreen(ScreenManager screenManager, String menuTitle, SimpleRendererManager rendererManager) {
 		super(screenManager, rendererManager);
 
 		mLayouts = new ArrayList<>();

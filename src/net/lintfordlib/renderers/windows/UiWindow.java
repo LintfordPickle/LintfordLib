@@ -16,7 +16,7 @@ import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
@@ -231,7 +231,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 	// Constructor
 	// --------------------------------------
 
-	public UiWindow(RendererManager rendererManager, String rendererName, int entityGroupUid) {
+	public UiWindow(RendererManagerBase rendererManager, String rendererName, int entityGroupUid) {
 		super(rendererManager, rendererName, entityGroupUid);
 
 		mComponents = new ArrayList<>();

@@ -231,7 +231,6 @@ public class RenderTarget {
 		// Depth buffer
 		mDepthBufferEnabled = true;
 		if (mDepthBufferEnabled) {
-			mSharedDepthBufferId = null;
 			if (mSharedDepthBufferId != null)
 				mDepthTextureID = mSharedDepthBufferId;
 			else

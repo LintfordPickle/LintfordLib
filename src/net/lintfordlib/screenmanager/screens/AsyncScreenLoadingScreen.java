@@ -6,7 +6,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.time.TimeSpan;
 import net.lintfordlib.options.DisplayManager;
-import net.lintfordlib.renderers.RendererManager;
+import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.transitions.TransitionFadeIn;
@@ -81,10 +81,10 @@ public abstract class AsyncScreenLoadingScreen extends Screen {
 	// --------------------------------------
 
 	protected AsyncScreenLoadingScreen(ScreenManager screenManager) {
-		this(screenManager, new RendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber()));
+		this(screenManager, new SimpleRendererManager(screenManager.core(), ResourceGroupProvider.getRollingEntityNumber()));
 	}
 
-	protected AsyncScreenLoadingScreen(ScreenManager screenManager, RendererManager rendererManager) {
+	protected AsyncScreenLoadingScreen(ScreenManager screenManager, SimpleRendererManager rendererManager) {
 		super(screenManager, rendererManager);
 
 		mDisplayManager = screenManager.core().config().display();

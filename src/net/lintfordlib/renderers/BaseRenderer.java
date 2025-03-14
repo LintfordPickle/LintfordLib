@@ -19,7 +19,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 	// --------------------------------------
 
 	protected final int mRendererId;
-	protected RendererManager mRendererManager;
+	protected RendererManagerBase mRendererManager;
 	protected final String mRendererName;
 	protected boolean mIsActive;
 	protected boolean mIsManagedDraw;
@@ -78,8 +78,8 @@ public abstract class BaseRenderer implements IInputProcessor {
 
 	}
 
-	/** Returns the {@link RendererManager} that this BaseRenderer is attached to. */
-	public RendererManager rendererManager() {
+	/** Returns the {@link SimpleRendererManager} that this BaseRenderer is attached to. */
+	public RendererManagerBase rendererManager() {
 		return mRendererManager;
 	}
 
@@ -89,7 +89,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	protected BaseRenderer(RendererManager rendererManager, String rendererName, int entityGroupUid) {
+	protected BaseRenderer(RendererManagerBase rendererManager, String rendererName, int entityGroupUid) {
 		if (rendererManager == null)
 			throw new RuntimeException("Renderers must be provided with valid RendererManager!");
 
@@ -103,9 +103,8 @@ public abstract class BaseRenderer implements IInputProcessor {
 
 		mIsManagedDraw = true;
 
-		if (rendererManager != null) {
+		if (rendererManager != null)
 			rendererManager.addRenderer(this);
-		}
 
 		mEntityGroupUid = entityGroupUid;
 
