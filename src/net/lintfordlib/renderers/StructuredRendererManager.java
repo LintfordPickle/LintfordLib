@@ -65,7 +65,7 @@ public class StructuredRendererManager extends RendererManagerBase {
 		if (mActiveRenderTarget != null) { // current player rt (split screen)
 			mActiveRenderTarget.bind();
 
-			GL11.glClearColor(0.06f, 0.18f, 0.31f, 1.0f);
+			GL11.glClearColor(.06f, 0.18f, 0.31f, 1.0f);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		}
 
@@ -80,11 +80,7 @@ public class StructuredRendererManager extends RendererManagerBase {
 				lStage.renderTarget().bind();
 				lRenderPass.currentRt = lStage.renderTarget();
 
-				if (i == 1)
-					GL11.glClearColor(0.f, 0.f, 0.f, 0.0f);
-				else
-					GL11.glClearColor(0.06f, 0.18f, 0.31f, 1.0f);
-
+				GL11.glClearColor(lStage.clearColorR, lStage.clearColorG, lStage.clearColorB, lStage.clearColorA);
 				GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 				if (!lStage.hasSharedDepthBuffer())
@@ -102,6 +98,8 @@ public class StructuredRendererManager extends RendererManagerBase {
 
 			if (lStage.renderTarget() != null) {
 				lStage.renderTarget().unbind();
+
+				core.config().display().reapplyGlViewport();
 
 				if (mActiveRenderTarget != null) {
 					mActiveRenderTarget.bind();

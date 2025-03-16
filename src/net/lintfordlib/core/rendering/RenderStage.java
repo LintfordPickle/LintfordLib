@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.BaseRenderer;
 
 public class RenderStage {
@@ -18,6 +19,10 @@ public class RenderStage {
 
 	public final int stageUid;
 	public final String stageName;
+	public float clearColorR;
+	public float clearColorG;
+	public float clearColorB;
+	public float clearColorA;
 
 	private List<BaseRenderer> mRenderers = new ArrayList<>();
 	private List<BaseRenderer> mReadOnlyRenderers;
@@ -42,6 +47,23 @@ public class RenderStage {
 		mRenderTarget = newRt;
 	}
 
+	public void setClearColorRGB(float r, float g, float b) {
+		clearColorR = MathHelper.clamp(r, 0, 1);
+		clearColorG = MathHelper.clamp(g, 0, 1);
+		clearColorB = MathHelper.clamp(b, 0, 1);
+	}
+
+	public void setClearColorA(float a) {
+		clearColorA = MathHelper.clamp(a, 0, 1);
+	}
+
+	public void setClearColorRGBA(float r, float g, float b, float a) {
+		clearColorR = MathHelper.clamp(r, 0, 1);
+		clearColorG = MathHelper.clamp(g, 0, 1);
+		clearColorB = MathHelper.clamp(b, 0, 1);
+		clearColorA = MathHelper.clamp(a, 0, 1);
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -52,6 +74,11 @@ public class RenderStage {
 
 		mRenderPass = pass;
 		mReadOnlyRenderers = Collections.unmodifiableList(mRenderers);
+
+		clearColorR = 0.f;
+		clearColorG = 0.f;
+		clearColorB = 0.f;
+		clearColorA = 1.f;
 	}
 
 	// --------------------------------------
