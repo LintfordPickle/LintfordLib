@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.core.rendering.RenderStage;
@@ -135,8 +134,7 @@ public class StructuredRendererManager extends RendererManagerBase {
 		final var dx = -rtw * .5f;
 		final var dy = -rth * .5f;
 
-		// TODO: remove dependency on debug drawer ffs
-		Debug.debugManager().drawers().drawRenderTargetImmediate(core, new Rectangle(dx, dy, rtw, rth), 0.01f, mActiveRenderTarget);
+		mSharedResources.drawRenderTargetImmediate(core, dx, dy, rtw, rth, 0.01f, mActiveRenderTarget);
 	}
 
 	/** draws the given rt (by uid) into the currently bound texture buffer. */
