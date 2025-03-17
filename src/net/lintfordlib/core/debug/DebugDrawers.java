@@ -26,9 +26,6 @@ public class DebugDrawers {
 	// Constants
 	// --------------------------------------
 
-	protected static final String VERT_FILENAME = "/res/shaders/shader_basic_pt.vert";
-	protected static final String FRAG_FILENAME = "/res/shaders/shader_basic_pt.frag";
-
 	private static final float DEBUG_DRAWERS_Z_DEPTH = 0.01f;
 
 	// --------------------------------------
@@ -70,7 +67,7 @@ public class DebugDrawers {
 		mTextureBatch = new TextureBatchPCT();
 		mTexturedQuad = new TexturedQuad_PT();
 
-		mBasicShader = new ShaderMVP_PT("BasicShaderPT", VERT_FILENAME, FRAG_FILENAME) {
+		mBasicShader = new ShaderMVP_PT("Basic Shader PT DebugDrawer") {
 			@Override
 			protected void bindAtrributeLocations(int pShaderID) {
 				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
