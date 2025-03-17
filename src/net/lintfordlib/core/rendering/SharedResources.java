@@ -1,11 +1,19 @@
 package net.lintfordlib.core.rendering;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
+
 import net.lintfordlib.assets.ResourceManager;
+import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
+import net.lintfordlib.core.graphics.geometry.TexturedQuad_PT;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
 import net.lintfordlib.core.graphics.polybatch.PolyBatchPCT;
+import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
+import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
 
 public final class SharedResources {
 
@@ -39,6 +47,9 @@ public final class SharedResources {
 	private FontUnit mUiTextBoldFont;
 	private FontUnit mUiHeaderFont;
 	private FontUnit mUiTitleFont;
+
+	private TexturedQuad_PT mTexturedQuad;
+	private ShaderMVP_PT mBasicShader;
 
 	private int mEntityGroupUid;
 	private boolean mResourcesLoaded;
@@ -114,6 +125,16 @@ public final class SharedResources {
 		mLineBatch = new LineBatch();
 		mPolyBatch = new PolyBatchPCT();
 
+		mTexturedQuad = new TexturedQuad_PT();
+
+		mBasicShader = new ShaderMVP_PT("Basic Shader PT") {
+			@Override
+			protected void bindAtrributeLocations(int pShaderID) {
+				GL20.glBindAttribLocation(pShaderID, 0, "inPosition");
+				GL20.glBindAttribLocation(pShaderID, 1, "inTexCoord");
+			}
+		};
+
 		RendererManagerFonts.AddIfNotExists(HUD_FONT_TEXT_BOLD_SMALL_NAME, "/res/fonts/fontCoreText.json");
 
 		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_NAME, "/res/fonts/fontCoreText.json");
@@ -144,6 +165,9 @@ public final class SharedResources {
 		mLineBatch.loadResources(resourceManager);
 		mPolyBatch.loadResources(resourceManager);
 
+		mBasicShader.loadResources(resourceManager);
+		mTexturedQuad.loadResources(resourceManager);
+
 		mResourcesLoaded = true;
 	}
 
@@ -154,6 +178,8 @@ public final class SharedResources {
 		mSpriteBatch.unloadResources();
 		mLineBatch.unloadResources();
 		mPolyBatch.unloadResources();
+		mBasicShader.unloadResources();
+		mTexturedQuad.unloadResources();
 
 		mUiTextFont = null;
 		mUiTextBoldFont = null;
@@ -169,4 +195,25 @@ public final class SharedResources {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void drawRenderTargetImmediate(LintfordCore core, float destinationX, float destinationY, float destinationWidth, float destinationHeight, float zDepth, RenderTarget renderTarget) {
+		if (renderTarget == null)
+			return;
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderTarget.colorTextureID());
+
+		mBasicShader.projectionMatrix(core.HUD().projection());
+		mBasicShader.viewMatrix(core.HUD().view());
+
+		mTexturedQuad.createModelMatrixAbsolute(destinationX, destinationY, zDepth, destinationWidth, destinationHeight);
+		mBasicShader.modelMatrix(mTexturedQuad.modelMatrix());
+
+		mBasicShader.bind();
+		mTexturedQuad.draw(core);
+		mBasicShader.unbind();
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	}
 }
