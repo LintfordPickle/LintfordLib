@@ -64,6 +64,10 @@ public class ShaderMVP_PT extends Shader {
 	// Constructor
 	// --------------------------------------
 
+	public ShaderMVP_PT(String shaderName) {
+		this(shaderName, BASIC_VERT_FILENAME, BASIC_FRAG_FILENAME);
+	}
+
 	public ShaderMVP_PT(String shaderName, String vertPath, String fragPath) {
 		super(shaderName, vertPath, fragPath);
 
