@@ -32,8 +32,7 @@ public class SimpleRendererManager extends RendererManagerBase {
 
 	private List<UiWindow> mWindowRenderers;
 
-	// TODO: Need a way to be able to set the render pass indices to use for rendering 'all-passes'.
-	private int[] renderpasses = new int[] { RenderPass.RENDER_PASS_DEFAULT, RenderPass.RENDER_PASS_COLOR0 };
+	private final List<Integer> activeRenderPasses = new ArrayList<Integer>();
 
 	// --------------------------------------
 	// Properties
@@ -41,6 +40,25 @@ public class SimpleRendererManager extends RendererManagerBase {
 
 	public List<UiWindow> windows() {
 		return mWindowRenderers;
+	}
+
+	public void addRenderPass(RenderPass renderPass) {
+		if (!activeRenderPasses.contains(renderPass.typeIndex))
+			activeRenderPasses.add(renderPass.typeIndex);
+	}
+
+	public void addRenderPassByIndex(int renderPassIndex) {
+		if (!activeRenderPasses.contains(renderPassIndex))
+			activeRenderPasses.add(renderPassIndex);
+	}
+
+	public void addRenderPassByIndex(int renderPassIndex, int index) {
+		if (!activeRenderPasses.contains(renderPassIndex))
+			activeRenderPasses.add(index, renderPassIndex);
+	}
+
+	public void removeRenderPassesByIndex(int renderPassIndex) {
+		activeRenderPasses.removeIf(n -> n == renderPassIndex);
 	}
 
 	// --------------------------------------
@@ -51,6 +69,8 @@ public class SimpleRendererManager extends RendererManagerBase {
 		super(core, entityGroupUid);
 
 		mWindowRenderers = new ArrayList<>();
+
+		addRenderPassByIndex(RenderPass.RENDER_PASS_COLOR0);
 	}
 
 	// --------------------------------------
@@ -149,14 +169,13 @@ public class SimpleRendererManager extends RendererManagerBase {
 	}
 
 	public void drawRenderersAllPasses(LintfordCore core) {
-
-		if (renderpasses == null || renderpasses.length == 0)
-			return;
+		if (activeRenderPasses.isEmpty())
+			throw new RuntimeException("no renderpasses definied in RenderManager");
 
 		final int lNumBaseRenderers = mRenderers.size();
-		final var lNumRenderPasses = renderpasses.length;
+		final var lNumRenderPasses = activeRenderPasses.size();
 		for (int i = 0; i < lNumRenderPasses; i++) {
-			final var lRenderPass = RenderPass.getRenderPass(renderpasses[i]);
+			final var lRenderPass = RenderPass.getRenderPass(activeRenderPasses.get(i));
 
 			for (int j = 0; j < lNumBaseRenderers; j++) {
 				final var lRenderer = mRenderers.get(j);

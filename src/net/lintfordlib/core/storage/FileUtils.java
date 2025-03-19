@@ -257,4 +257,23 @@ public class FileUtils {
 
 		return Arrays.asList(lFileList);
 	}
+
+	public List<File> getListOfFilesInResourceDirectory(String resourceDirectory, String subDirectory, String extType) {
+		final var path = Paths.get(resourceDirectory, subDirectory);
+
+		final var lScenesDirectory = path.toFile();
+		final var lSubDirectoryList = lScenesDirectory.listFiles((dir, name) -> new File(dir, name).isDirectory());
+
+		final List<File> lAllHeaderFiles = new ArrayList<>();
+
+		if (lSubDirectoryList == null)
+			return lAllHeaderFiles;
+
+		for (var subDir : lSubDirectoryList) {
+			final var lFilesInSubDir = FileUtils.getListOfFilesInDirectory(subDir.getPath(), extType);
+			lAllHeaderFiles.addAll(lFilesInSubDir);
+		}
+
+		return lAllHeaderFiles;
+	}
 }

@@ -13,6 +13,7 @@ import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.options.IResizeListener;
 import net.lintfordlib.screenmanager.Screen.ScreenState;
+import net.lintfordlib.screenmanager.screens.LoadingScreen;
 import net.lintfordlib.screenmanager.toast.ToastManager;
 
 public class ScreenManager implements IInputClickedFocusManager {
@@ -437,20 +438,19 @@ public class ScreenManager implements IInputClickedFocusManager {
 		}
 	}
 
-	public void createLoadingScreen(Screen loadingScreen) {
+	// TODO: rename this method, it isn't creating the loadingScreen, it kicking it off
+	public void createLoadingScreen(LoadingScreen loadingScreen) {
 		exitAllScreens();
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "=== Loading Screen ===");
 
 		System.gc();
 
-		if (!loadingScreen.isinitialized()) {
+		if (!loadingScreen.isinitialized())
 			loadingScreen.initialize();
-		}
 
-		if (!loadingScreen.isResourcesLoaded()) {
+		if (!loadingScreen.isResourcesLoaded())
 			loadingScreen.loadResources(mResourceManager);
-		}
 
 		addScreen(loadingScreen);
 	}

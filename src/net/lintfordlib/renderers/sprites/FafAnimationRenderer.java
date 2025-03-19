@@ -9,7 +9,7 @@ import net.lintfordlib.core.graphics.sprites.AnimatedSpriteListener;
 import net.lintfordlib.core.graphics.sprites.SpriteInstance;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.SimpleRendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public class FafAnimationRenderer extends BaseRenderer implements AnimatedSpriteListener {
 
@@ -34,7 +34,7 @@ public class FafAnimationRenderer extends BaseRenderer implements AnimatedSprite
 	// Constructor
 	// --------------------------------------
 
-	public FafAnimationRenderer(SimpleRendererManager rendererManager, String rendererName, FafAnimationController animationController, int entityGroupUid) {
+	public FafAnimationRenderer(RendererManagerBase rendererManager, String rendererName, FafAnimationController animationController, int entityGroupUid) {
 		super(rendererManager, rendererName, entityGroupUid);
 
 		mFafAnimationController = animationController;
