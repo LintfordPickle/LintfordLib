@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.options.ResourcePathsConfig;
 
 public abstract class SceneHeader implements Serializable {
 
@@ -122,7 +123,7 @@ public abstract class SceneHeader implements Serializable {
 	// Methods
 	// ---------------------------------------------
 
-	public void initialize(String sceneDirectory, BaseGameResourcePaths settings) {
+	public void initialize(String sceneDirectory, ResourcePathsConfig settings) {
 		setSceneDirectory(sceneDirectory);
 	}
 

@@ -8,7 +8,6 @@ public class RenderPass {
 	// Constants
 	// --------------------------------------
 
-	public static final int RENDER_PASS_DEFAULT = 0;
 	public static final int RENDER_PASS_COLOR0 = 1;
 	public static final int RENDER_PASS_COLOR1 = 2;
 	public static final int RENDER_PASS_LIGHT0 = 10;
@@ -17,7 +16,6 @@ public class RenderPass {
 	public static final int RENDER_PASS_CUSTOM1 = 21;
 	public static final int RENDER_PASS_CUSTOM2 = 22;
 
-	public static final RenderPass DEFAULT = new RenderPass("default", RENDER_PASS_DEFAULT);
 	public static final RenderPass COLOR0 = new RenderPass("color0", RENDER_PASS_COLOR0);
 	public static final RenderPass COLOR1 = new RenderPass("color1", RENDER_PASS_COLOR1);
 	public static final RenderPass LIGHTS0 = new RenderPass("light0", RENDER_PASS_LIGHT0);
@@ -49,8 +47,7 @@ public class RenderPass {
 
 	public static RenderPass getRenderPass(int passUid) {
 		switch (passUid) {
-		case RENDER_PASS_DEFAULT:
-			return DEFAULT;
+		default:
 		case RENDER_PASS_COLOR0:
 			return COLOR0;
 		case RENDER_PASS_COLOR1:
@@ -65,10 +62,6 @@ public class RenderPass {
 			return CUSTOM1;
 		case RENDER_PASS_CUSTOM2:
 			return CUSTOM2;
-
-		default:
-			return DEFAULT;
 		}
 	}
-
 }

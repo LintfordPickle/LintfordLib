@@ -2,8 +2,8 @@ package net.lintfordlib.screenmanager;
 
 import net.lintfordlib.ConstantsEditor;
 import net.lintfordlib.assets.ResourceManager;
-import net.lintfordlib.data.scene.BaseGameResourcePaths;
 import net.lintfordlib.data.scene.SceneHeader;
+import net.lintfordlib.options.ResourcePathsConfig;
 import net.lintfordlib.screenmanager.entries.MenuDropDownEntry;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
@@ -23,7 +23,7 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// Variables
 	// ---------------------------------------------
 
-	protected BaseGameResourcePaths mSceneSettings;
+	protected ResourcePathsConfig mResourcePathsConfig;
 	protected MenuDropDownEntry<T> mSceneFilenameEntries;
 
 	protected String mTextureHudLocation = "res/textures/textureHud.png";
@@ -33,8 +33,8 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// Properities
 	// ---------------------------------------------
 
-	public BaseGameResourcePaths gameResourcePaths() {
-		return mSceneSettings;
+	public ResourcePathsConfig gameResourcePaths() {
+		return mResourcePathsConfig;
 	}
 
 	public void setTextureHudFilepath(String newFilepath) {
@@ -49,10 +49,10 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// Constructors
 	// ---------------------------------------------
 
-	protected BaseEditorSceneSelectionScreen(ScreenManager screenManager, BaseGameResourcePaths sceneSettings, boolean enableBackButton) {
+	protected BaseEditorSceneSelectionScreen(ScreenManager screenManager, ResourcePathsConfig pathsConfig, boolean enableBackButton) {
 		super(screenManager, TITLE);
 
-		mSceneSettings = sceneSettings;
+		mResourcePathsConfig = pathsConfig;
 		final var lListLayout = new ListLayout(this);
 
 		mSceneFilenameEntries = new MenuDropDownEntry<>(screenManager, this);

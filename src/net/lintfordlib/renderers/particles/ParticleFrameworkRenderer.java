@@ -135,6 +135,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 			if (!lParticleRenderer.isAssigned())
 				continue;
 
+			// TODO: Need to modify the ParticleSystems to use the new RenderPass and the pass indices.
+			
 			if (renderPass.typeIndex != lParticleRenderer.renderPassId())
 				continue;
 
