@@ -83,7 +83,7 @@ public class SpriteInstance extends Rectangle {
 		return mSpriteDefinition == null;
 	}
 
-	public boolean enabled() {
+	public boolean animationEnabled() {
 		return mAnimationEnabled;
 	}
 
