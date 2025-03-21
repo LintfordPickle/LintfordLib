@@ -137,7 +137,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 			// TODO: Need to modify the ParticleSystems to use the new RenderPass and the pass indices.
 			
-			if (renderPass.typeIndex != lParticleRenderer.renderPassId())
+			if (renderPass.passUid != lParticleRenderer.renderPassId())
 				continue;
 
 			final var lSrcBlendFactor = lParticleRenderer.srcBlendFactor();

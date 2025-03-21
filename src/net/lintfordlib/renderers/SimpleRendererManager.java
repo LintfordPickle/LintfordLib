@@ -43,8 +43,8 @@ public class SimpleRendererManager extends RendererManagerBase {
 	}
 
 	public void addRenderPass(RenderPass renderPass) {
-		if (!activeRenderPasses.contains(renderPass.typeIndex))
-			activeRenderPasses.add(renderPass.typeIndex);
+		if (!activeRenderPasses.contains(renderPass.passUid))
+			activeRenderPasses.add(renderPass.passUid);
 	}
 
 	public void addRenderPassByIndex(int renderPassIndex) {

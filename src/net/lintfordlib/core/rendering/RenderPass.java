@@ -29,7 +29,7 @@ public class RenderPass {
 	// --------------------------------------
 
 	public final String name;
-	public final int typeIndex;
+	public final int passUid;
 	public RenderTarget currentRt;
 
 	// --------------------------------------
@@ -38,7 +38,7 @@ public class RenderPass {
 
 	private RenderPass(String name, int typeIndex) {
 		this.name = name;
-		this.typeIndex = typeIndex;
+		this.passUid = typeIndex;
 	}
 
 	// --------------------------------------
