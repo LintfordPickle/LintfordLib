@@ -31,11 +31,15 @@ public class UiEnumSelection extends UIWidget {
 	// Variables
 	// --------------------------------------
 
-	private final List<UiIndexedEnum> mItems = new ArrayList<>();
+	private final List<UiIndexedEnumItem> mItems = new ArrayList<>();
 	private String mButtonLabel;
 	private boolean mIsClicked;
 	private float mClickTimer;
 	private int mSelectedIndex;
+	private boolean mIndexTotalEnabled;
+	private boolean mArrowsEnabled;
+	private boolean mArrowLeftHovered;
+	private boolean mArrowRightHovered;
 
 	private final Rectangle mLeftRectangle = new Rectangle();
 	private final Rectangle mRightRectangle = new Rectangle();
@@ -44,11 +48,27 @@ public class UiEnumSelection extends UIWidget {
 	// Properties
 	// --------------------------------------
 
-	public void addItem(UiIndexedEnum newItem) {
+	public void indexTotalEnabled(boolean newValue) {
+		mIndexTotalEnabled = newValue;
+	}
+
+	public boolean indexTotalEnabled() {
+		return mIndexTotalEnabled;
+	}
+
+	public void arrowsEnabled(boolean newValue) {
+		mArrowsEnabled = newValue;
+	}
+
+	public boolean arrowsEnabled() {
+		return mArrowsEnabled;
+	}
+
+	public void addItem(UiIndexedEnumItem newItem) {
 		mItems.add(newItem);
 	}
 
-	public void addItems(List<UiIndexedEnum> newItems) {
+	public void addItems(List<UiIndexedEnumItem> newItems) {
 		mItems.addAll(newItems);
 	}
 
@@ -78,7 +98,7 @@ public class UiEnumSelection extends UIWidget {
 		mUiWidgetListenerUid = pNewLabel;
 	}
 
-	public UiIndexedEnum selectedItem() {
+	public UiIndexedEnumItem selectedItem() {
 		return mItems.get(mSelectedIndex);
 	}
 
@@ -96,10 +116,14 @@ public class UiEnumSelection extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiEnumSelection(UiWindow pParentWindow) {
-		super(pParentWindow);
+	public UiEnumSelection(UiWindow parentWindow) {
+		this(parentWindow, null);
+	}
 
-		mButtonLabel = NO_LABEL_TEXT;
+	public UiEnumSelection(UiWindow parentWindow, String labelText) {
+		super(parentWindow);
+
+		mButtonLabel = labelText;
 		mW = 200;
 		mH = 25;
 	}
@@ -114,8 +138,10 @@ public class UiEnumSelection extends UIWidget {
 			return false;
 
 		final var MINIMUM_CLICK_TIMER = 200;
+		mArrowLeftHovered = false;
+		mArrowRightHovered = false;
 
-		if (!mIsClicked && mLeftRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+		if (!mIsClicked && mArrowsEnabled && mLeftRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mIsHoveredOver = true;
 
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
@@ -132,10 +158,12 @@ public class UiEnumSelection extends UIWidget {
 					if (mUiWidgetListenerCallback != null)
 						mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
 
+					mArrowLeftHovered = true;
+
 					return true;
 				}
 			}
-		} else if (!mIsClicked && mRightRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
+		} else if (!mIsClicked && mArrowsEnabled && mRightRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mIsHoveredOver = true;
 
 			if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
@@ -150,6 +178,8 @@ public class UiEnumSelection extends UIWidget {
 
 					if (mUiWidgetListenerCallback != null)
 						mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
+
+					mArrowRightHovered = true;
 
 					return true;
 				}
@@ -170,8 +200,22 @@ public class UiEnumSelection extends UIWidget {
 
 		mClickTimer += core.appTime().elapsedTimeMilli();
 
-		mLeftRectangle.set(mX + ARROW_PADDING, mY + mH - ARROW_SIZE - ARROW_PADDING, ARROW_SIZE, ARROW_SIZE);
-		mRightRectangle.set(mX + mW - ARROW_SIZE - ARROW_PADDING, mY + mH - ARROW_SIZE - ARROW_PADDING, ARROW_SIZE, ARROW_SIZE);
+		var xx = mX;
+		var ww = mW;
+
+		if (mArrowLeftHovered) {
+
+		}
+
+		if (mButtonLabel != null) {
+			xx = mX + mW * .5f;
+			ww = mW * .5f;
+		} else if (mArrowsEnabled) {
+
+		}
+
+		mLeftRectangle.set(xx, mY + mH / 2.f - ARROW_SIZE / 2.f, ARROW_SIZE, ARROW_SIZE);
+		mRightRectangle.set(mX + mW - ARROW_SIZE - ARROW_PADDING, mY + mH / 2.f - ARROW_SIZE / 2.f, ARROW_SIZE, ARROW_SIZE);
 	}
 
 	@Override
@@ -180,10 +224,6 @@ public class UiEnumSelection extends UIWidget {
 			return;
 
 		final var lColor = ColorConstants.getColorWithRGBMod(entityColor, 1.f);
-		final var lTileSize = 32;
-
-		final var lSelectionText = (!mItems.isEmpty() ? (mSelectedIndex + 1) + "/" + mItems.size() : "0");
-		final var lSelectionTextWidth = textFont.getStringWidth(lSelectionText);
 		final var lScale = 1.f;
 
 		final var lSpriteBatch = sharedResources.uiSpriteBatch();
@@ -191,30 +231,61 @@ public class UiEnumSelection extends UIWidget {
 		lSpriteBatch.begin(core.HUD());
 		lSpriteBatch.setColor(lColor);
 
-		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_LEFT, mX, mY, lTileSize, mH, componentZDepth);
-		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_MID, mX + lTileSize, mY, mW - lTileSize * 2, mH, componentZDepth);
-		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X1_RIGHT, mX + mW - lTileSize, mY, lTileSize, mH, componentZDepth);
-
-		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_LEFT, mLeftRectangle, componentZDepth);
-		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_RIGHT, mRightRectangle, componentZDepth - 0.01f);
-		lSpriteBatch.end();
-
 		textFont.begin(core.HUD());
 		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-		final var lLabelText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 
-		textFont.drawText(lSelectionText, mX + mW - lSelectionTextWidth - ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, lScale);
-		textFont.drawText(lLabelText, mX + ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, lScale);
+		var xx = mX;
+		var ww = mW;
+
+		if (mButtonLabel != null) {
+			final var lLabelText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
+			textFont.drawText(lLabelText + ":", mX, mY + mH / 2 - textFont.fontHeight() / 2, componentZDepth, lScale);
+
+			xx = mX + mW * .5f;
+			ww = mW * .5f;
+		}
+
+		lSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth);
+		if (mW > 32) {
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32, mY, ww - 64, mH, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth);
+		}
+
+		if (mArrowsEnabled) {
+			lSpriteBatch.setColorWhite();
+			if (mArrowLeftHovered)
+				lSpriteBatch.setColorRGB(.7f, .7f, .7f);
+			else
+				lSpriteBatch.setColorWhite();
+
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mLeftRectangle, componentZDepth);
+
+			if (mArrowRightHovered)
+				lSpriteBatch.setColorRGB(.7f, .7f, .7f);
+			else
+				lSpriteBatch.setColorWhite();
+
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mRightRectangle, componentZDepth - 0.01f);
+		}
+
+		lSpriteBatch.end();
+
+		if (mIndexTotalEnabled) {
+			final var lSelectionText = (!mItems.isEmpty() ? (mSelectedIndex + 1) + "/" + mItems.size() : "0");
+			final var lSelectionTextWidth = textFont.getStringWidth(lSelectionText);
+			textFont.drawText(lSelectionText, mX + mW - lSelectionTextWidth - ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, lScale);
+		}
 
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			final var lItem = mItems.get(mSelectedIndex);
 			final var lItemDisplayName = lItem.displayName;
 			final var lTextItemWidth = textFont.getStringWidth(lItemDisplayName);
-			textFont.drawText(lItemDisplayName, mX + mW - mW / 3.f - lTextItemWidth / 2f, mY + mH / 2 - textFont.fontHeight() / 2, componentZDepth, lScale);
+			textFont.drawText(lItemDisplayName, mX + mW - mW / 4.f - lTextItemWidth / 2f, mY + mH / 2 - textFont.fontHeight() / 2, componentZDepth, lScale);
 		} else {
 			final var lNoItemSelectedText = "";
 			final var lNoTextWidth = textFont.getStringWidth(lNoItemSelectedText);
-			textFont.drawText(lNoItemSelectedText, mX + mW / 2f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, lScale);
+			textFont.drawText(lNoItemSelectedText, mX + mW / 4f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, lScale);
 		}
 		textFont.end();
 	}

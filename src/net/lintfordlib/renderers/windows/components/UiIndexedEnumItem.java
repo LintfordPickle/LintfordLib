@@ -1,6 +1,6 @@
 package net.lintfordlib.renderers.windows.components;
 
-public class UiIndexedEnum {
+public class UiIndexedEnumItem {
 
 	// --------------------------------------
 	// Variables
@@ -13,7 +13,7 @@ public class UiIndexedEnum {
 	// Constructor
 	// --------------------------------------
 
-	public UiIndexedEnum(int uid, String displayName) {
+	public UiIndexedEnumItem(int uid, String displayName) {
 		this.uid = uid;
 		this.displayName = displayName;
 	}
