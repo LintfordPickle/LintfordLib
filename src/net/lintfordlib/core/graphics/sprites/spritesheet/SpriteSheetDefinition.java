@@ -60,6 +60,7 @@ public class SpriteSheetDefinition {
 	@SerializedName(value = "animationFramesMap")
 	protected Map<String, SpriteDefinition> mAnimationFramesMap;
 	protected List<SpriteInstance> mSpriteInstancePool;
+	private int mNumSpriteInstancesCreated;
 
 	@SerializedName(value = "spriteGraphNodeName")
 	protected String mSpriteGraphNodeName;
@@ -113,6 +114,14 @@ public class SpriteSheetDefinition {
 
 	public int textureHeight() {
 		return mTextureHeight;
+	}
+
+	public int getPoolSize() {
+		return mSpriteInstancePool.size();
+	}
+
+	public int getPoolTotalCreated() {
+		return mNumSpriteInstancesCreated;
 	}
 
 	// --------------------------------------
@@ -317,8 +326,11 @@ public class SpriteSheetDefinition {
 
 	private SpriteInstance extendInstancePool(int extendByAmount) {
 		for (int i = 0; i < extendByAmount; i++) {
+			mNumSpriteInstancesCreated++;
 			mSpriteInstancePool.add(new SpriteInstance());
 		}
+
+		mNumSpriteInstancesCreated++;
 		return new SpriteInstance();
 	}
 }
