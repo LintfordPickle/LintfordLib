@@ -269,6 +269,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		mIsValueBounded = false;
 		mMinValue = 0.f;
 		mMaxValue = 0.f;
+		mStepSize = 1.f;
 
 		mValue = 0.f;
 		mInputField.append(mValue);
