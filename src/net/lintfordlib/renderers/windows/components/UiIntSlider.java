@@ -122,9 +122,9 @@ public class UiIntSlider extends UIWidget {
 				final float lMouseX = core.HUD().getMouseCameraSpace().x;
 				updateValue(MathHelper.clamp(lMouseX - mX, 0, mW));
 
-				if (mCallback != null) {
-					mCallback.menuEntryOnClick(core.input(), mEntryUid);
-				}
+				if (mUiWidgetListenerCallback != null)
+					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
+
 				return true;
 			}
 		}
