@@ -417,8 +417,8 @@ public class TextureBatchPT {
 		final var texWidth = tex.getTextureWidth();
 		final var texHeight = tex.getTextureHeight();
 
-		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
-		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcx = (mUseHalfPixelCorrection ? .5f : .0f) / texWidth;
+		final var pcy = (mUseHalfPixelCorrection ? .5f : .0f) / texHeight;
 
 		float x0 = dx;
 		float y0 = dy + dh;
@@ -489,8 +489,8 @@ public class TextureBatchPT {
 		final var texWidth = tex.getTextureWidth();
 		final var texHeight = tex.getTextureHeight();
 
-		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
-		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcx = (mUseHalfPixelCorrection ? .5f : .0f) / texWidth;
+		final var pcy = (mUseHalfPixelCorrection ? .5f : .0f) / texHeight;
 
 		// define the origin of this sprite
 		// note: the rotation origin is not scaled with the sprite (this should be performed before calling this function)

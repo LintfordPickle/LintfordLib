@@ -523,8 +523,8 @@ public class TextureBatchPCT {
 		final float texWidth = tex.getTextureWidth();
 		final float texHeight = tex.getTextureHeight();
 
-		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
-		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcx = (mUseHalfPixelCorrection ? .5f : .0f) / texWidth;
+		final var pcy = (mUseHalfPixelCorrection ? .5f : .0f) / texHeight;
 
 		final var x0 = dx;
 		final var y0 = dy + dh;
@@ -731,8 +731,8 @@ public class TextureBatchPCT {
 		final var originX = -rotx;
 		final var originY = -roty;
 
-		final var pcx = mUseHalfPixelCorrection ? .5f : .0f;
-		final var pcy = mUseHalfPixelCorrection ? .5f : .0f;
+		final var pcx = (mUseHalfPixelCorrection ? .5f : .0f) / texWidth;
+		final var pcy = (mUseHalfPixelCorrection ? .5f : .0f) / texHeight;
 
 		// Vertex 0 (bottom left)
 		final var x0 = -(lHalfW - originX) * cos - (lHalfH + originY) * sin;
