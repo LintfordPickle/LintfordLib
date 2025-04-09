@@ -1,7 +1,5 @@
 package net.lintfordlib;
 
-import java.time.Year;
-
 import net.lintfordlib.core.debug.Debug;
 
 public class GameVersion {
@@ -10,13 +8,13 @@ public class GameVersion {
 	// Constants
 	// --------------------------------------
 
-	private static int appVersionMajor = 0;
-	private static int appVersionMinor = 1;
-	private static int appVersionBuild = 1;
-	private static String appVersionPostFix = "032023";
+	private static int appVersionMajor = 1;
+	private static int appVersionMinor = 2;
+	private static int appVersionBuild = 0;
+
+	private static String appVersionPostFix = "(09042025)";
 
 	public static final String AUTHOR = "LintfordPickle";
-	public static final String VERSIONYEAR = Year.now().toString();
 
 	private static final String DELIMITOR = ".";
 
@@ -35,8 +33,14 @@ public class GameVersion {
 	}
 
 	/** Returns the game version as a string */
+	private static String _gameVersion;
+
 	private static String getGameVersion() {
-		return appVersionMajor + DELIMITOR + appVersionMinor + DELIMITOR + appVersionBuild + DELIMITOR + appVersionPostFix;
+		if (_gameVersion == null)
+			_gameVersion = appVersionMajor + DELIMITOR + appVersionMinor + DELIMITOR + appVersionBuild + " - " + appVersionPostFix;
+		;
+
+		return _gameVersion;
 	}
 
 	/** Checks if the given version string matches the version of the game as defined in {@link GameVersion} */
