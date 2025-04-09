@@ -388,6 +388,10 @@ public class DebugDrawers {
 	}
 
 	public void drawCircle(float x, float y, float radius, float initialAngle, int segCount, int glLineType) {
+		this.drawCircle(x, y, radius, initialAngle, segCount, glLineType, 1.f, 1.f, 1.f);
+	}
+
+	public void drawCircle(float x, float y, float radius, float initialAngle, int segCount, int glLineType, float r, float g, float b) {
 		if (!mDebugManager.debugManagerEnabled())
 			return;
 
@@ -402,10 +406,10 @@ public class DebugDrawers {
 			float xx = x + (float) (radius * Math.cos(i));
 			float yy = y + (float) (radius * Math.sin(i));
 
-			mLineBatch.draw(xx, yy, DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f, 1f);
+			mLineBatch.draw(xx, yy, DEBUG_DRAWERS_Z_DEPTH, r, g, b, 1f);
 		}
 
-		mLineBatch.draw(x + (float) (radius * Math.cos(-initialAngle)), y + (float) (radius * Math.sin(-initialAngle)), DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f, 1f);
+		mLineBatch.draw(x + (float) (radius * Math.cos(-initialAngle)), y + (float) (radius * Math.sin(-initialAngle)), DEBUG_DRAWERS_Z_DEPTH, r, g, b, 1f);
 	}
 
 	public void endLineRenderer() {
