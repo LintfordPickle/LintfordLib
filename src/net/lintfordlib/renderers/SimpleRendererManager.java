@@ -1,7 +1,6 @@
 package net.lintfordlib.renderers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.lintfordlib.assets.ResourceManager;
@@ -9,6 +8,8 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.rendering.RenderPass;
+import net.lintfordlib.core.rendering.RenderStage;
+import net.lintfordlib.core.rendering.UiRenderStage;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public class SimpleRendererManager extends RendererManagerBase {
@@ -32,33 +33,19 @@ public class SimpleRendererManager extends RendererManagerBase {
 
 	private List<UiWindow> mWindowRenderers;
 
-	private final List<Integer> activeRenderPasses = new ArrayList<Integer>();
+	private final RenderStage mGameStage = new RenderStage("Game", RenderPass.MAIN, 0);
+	private final UiRenderStage mHudStage = new UiRenderStage("HUD", RenderPass.HUD, 0);
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
+	public List<BaseRenderer> renderers() {
+		return mRenderers;
+	}
+
 	public List<UiWindow> windows() {
 		return mWindowRenderers;
-	}
-
-	public void addRenderPass(RenderPass renderPass) {
-		if (!activeRenderPasses.contains(renderPass.passUid))
-			activeRenderPasses.add(renderPass.passUid);
-	}
-
-	public void addRenderPassByIndex(int renderPassIndex) {
-		if (!activeRenderPasses.contains(renderPassIndex))
-			activeRenderPasses.add(renderPassIndex);
-	}
-
-	public void addRenderPassByIndex(int renderPassIndex, int index) {
-		if (!activeRenderPasses.contains(renderPassIndex))
-			activeRenderPasses.add(index, renderPassIndex);
-	}
-
-	public void removeRenderPassesByIndex(int renderPassIndex) {
-		activeRenderPasses.removeIf(n -> n == renderPassIndex);
 	}
 
 	// --------------------------------------
@@ -69,8 +56,14 @@ public class SimpleRendererManager extends RendererManagerBase {
 		super(core, entityGroupUid);
 
 		mWindowRenderers = new ArrayList<>();
+	}
 
-		addRenderPassByIndex(RenderPass.RENDER_PASS_COLOR0);
+	public RenderStage gameStage() {
+		return mGameStage;
+	}
+
+	public UiRenderStage hudStage() {
+		return mHudStage;
 	}
 
 	// --------------------------------------
@@ -148,7 +141,7 @@ public class SimpleRendererManager extends RendererManagerBase {
 	@Override
 	public void draw(LintfordCore core) {
 		if (RENDER_GAME_RENDERABLES) {
-			drawRenderersAllPasses(core);
+			drawGameRenderers(core);
 		}
 
 		if (RENDER_UI_WINDOWS) {
@@ -156,45 +149,35 @@ public class SimpleRendererManager extends RendererManagerBase {
 		}
 	}
 
-	public void drawRenderersWithPass(LintfordCore core, RenderPass renderPass) {
-		final int lNumBaseRenderers = mRenderers.size();
+	public void drawGameRenderers(LintfordCore core) {
 
-		for (int j = 0; j < lNumBaseRenderers; j++) {
-			final var lRenderer = mRenderers.get(j);
+		// SimpleRendererManager renders all BaseRenderers using RenderPass.MAIN
+
+		final var lGameRenderers = mGameStage.renderers();
+
+		final int lNumGameRenderers = lGameRenderers.size();
+		for (int j = 0; j < lNumGameRenderers; j++) {
+			final var lRenderer = lGameRenderers.get(j);
 			if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
 				continue;
 
-			lRenderer.draw(core, renderPass);
-		}
-	}
-
-	public void drawRenderersAllPasses(LintfordCore core) {
-		if (activeRenderPasses.isEmpty())
-			throw new RuntimeException("no renderpasses definied in RenderManager");
-
-		final int lNumBaseRenderers = mRenderers.size();
-		final var lNumRenderPasses = activeRenderPasses.size();
-		for (int i = 0; i < lNumRenderPasses; i++) {
-			final var lRenderPass = RenderPass.getRenderPass(activeRenderPasses.get(i));
-
-			for (int j = 0; j < lNumBaseRenderers; j++) {
-				final var lRenderer = mRenderers.get(j);
-				if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
-					continue;
-
-				lRenderer.draw(core, lRenderPass);
-			}
+			lRenderer.draw(core, RenderPass.MAIN);
 		}
 	}
 
 	public void drawWindowRenderers(LintfordCore core) {
-		final int lNumWindowRenderers = mWindowRenderers.size();
+
+		// SimpleRendererManager renders all BaseRenderers using RenderPass.HUD
+
+		final var lHudRenderers = mHudStage.renderers();
+
+		final int lNumWindowRenderers = lHudRenderers.size();
 		for (int i = 0; i < lNumWindowRenderers; i++) {
-			final var lWindow = mWindowRenderers.get(i);
+			final var lWindow = lHudRenderers.get(i);
 			if (!lWindow.isActive() || !lWindow.isOpen())
 				continue;
 
-			lWindow.draw(core, RenderPass.COLOR0);
+			lWindow.draw(core, RenderPass.HUD);
 		}
 	}
 
@@ -207,20 +190,12 @@ public class SimpleRendererManager extends RendererManagerBase {
 	 */
 	@Override
 	public void addRenderer(BaseRenderer renderer) {
-		if (getRenderer(renderer.rendererName()) == null) {
-			if (renderer instanceof UiWindow) {
-				mWindowRenderers.add((UiWindow) renderer);
-				Collections.sort(mWindowRenderers, new ZLayerComparator());
-			}
-
-			else {
-				mRenderers.add(renderer);
-				Collections.sort(mRenderers, new ZLayerComparator());
-			}
-
+		if (renderer instanceof UiWindow) {
+			mWindowRenderers.add((UiWindow) renderer);
 		} else {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot add the same renderer twice! (" + renderer.getClass().getSimpleName() + "/" + renderer.mRendererName + ")");
+			mRenderers.add(renderer);
 		}
+
 	}
 
 	@Override

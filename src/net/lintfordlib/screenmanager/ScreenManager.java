@@ -265,6 +265,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 			if (lScreen.screenState() == ScreenState.TRANSITION_STARTING || lScreen.screenState() == ScreenState.ACTIVE) {
 				lOtherScreenHasFocus = true;
 			}
+
 			if (!lScreen.isPopup()) {
 				lCoveredByOtherScreen = true;
 			}
