@@ -22,7 +22,9 @@ public class ParticleEmitterPoint extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
+	@Override
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float forceX, float forceY) {
-		particleSystem.spawnParticle(worldX, worldY, zDepth, forceX, forceY);
+		if(particleSystem != null)
+			particleSystem.spawnParticle(worldX, worldY, zDepth, forceX, forceY);
 	}
 }
