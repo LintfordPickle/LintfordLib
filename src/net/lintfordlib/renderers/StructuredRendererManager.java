@@ -10,6 +10,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.core.rendering.RenderStage;
+import net.lintfordlib.renderers.windows.UiWindow;
 
 public class StructuredRendererManager extends RendererManagerBase {
 
@@ -41,13 +42,21 @@ public class StructuredRendererManager extends RendererManagerBase {
 
 	@Override
 	public boolean handleInput(LintfordCore core) {
-		// Handle the base renderer input
-		final int lNumRenderers = mRenderers.size();
-		for (int i = lNumRenderers - 1; i >= 0; i--) {
-			mRenderers.get(i).handleInput(core);
 
-			// TODO: Window renderers need to be processed first, and can have 'exclusive' input (onHandledInput return).
+		final int lNumStages = mRenderStages.size();
+		for (int i = lNumStages - 1; i >= 0; i--) {
+			final var lStage = mRenderStages.get(i);
+			final var lRenderers = lStage.renderers();
+			final var lNumRenderers = lRenderers.size();
+			for (int j = lNumRenderers - 1; j >= 0; j--) {
+				final var lRenderer = lRenderers.get(j);
 
+				var result = lRenderer.handleInput(core);
+				if (lRenderer instanceof UiWindow window) {
+					if (window.exclusiveHandleInput() && result)
+						return true;
+				}
+			}
 		}
 
 		return false;
