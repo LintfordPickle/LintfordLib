@@ -31,6 +31,7 @@ public class ParticleEmitterCone extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
+	@Override
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float glHeadingRads, float forceX, float forceY) {
 
 		final var nh = glHeadingRads + (float) Math.toRadians(this.headingDegs);

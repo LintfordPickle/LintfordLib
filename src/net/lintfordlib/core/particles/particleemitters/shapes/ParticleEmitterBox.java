@@ -37,6 +37,7 @@ public class ParticleEmitterBox extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
+	@Override
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float forceX, float forceY) {
 		float xx = worldX;
 		float yy = worldY;

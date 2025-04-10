@@ -66,6 +66,7 @@ public class ParticleEmitterA2B extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
+	@Override
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float forceX, float forceY) {
 
 		final var endX = worldX + (float) Math.cos(heading) * forceX;

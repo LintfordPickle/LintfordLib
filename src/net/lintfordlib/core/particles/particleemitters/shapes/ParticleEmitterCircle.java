@@ -36,6 +36,7 @@ public class ParticleEmitterCircle extends ParticleEmitterShape {
 	// Methods
 	// --------------------------------------
 
+	@Override
 	public void spawn(ParticleSystemInstance particleSystem, float worldX, float worldY, float zDepth, float heading, float forceX, float forceY) {
 		final var lRandomHeading = RandomNumbers.nextFloat() * ConstantsMath.Pi * 2;
 		final var xx = worldX + (float) Math.cos(lRandomHeading) * radius;
