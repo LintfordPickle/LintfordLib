@@ -248,6 +248,9 @@ public class ParticleEmitterInstance extends GridEntity {
 			final var emitAmtMin = mEmitterDefinition.emitAmountMin;
 			final var emitAmtMax = Math.max(emitAmtMin, mEmitterDefinition.emitAmountMax);
 
+			if (emitAmtMin >= emitAmtMax)
+				return;
+
 			final int lAmtToSpawn = RandomNumbers.random(emitAmtMin, emitAmtMax);
 			for (int i = 0; i < lAmtToSpawn; i++) {
 
@@ -258,6 +261,7 @@ public class ParticleEmitterInstance extends GridEntity {
 				final var lObjForceX = RandomNumbers.random(lObjForceMin, lObjForceMax);
 				final var lObjForceY = RandomNumbers.random(lObjForceMin, lObjForceMax);
 
+				// global force is the force passed down from a parent emitter to a nested child. It can be 0 if not set, so as a coefficient, wie should take 1.
 				final var fx = globalForceX == 0 ? 1.f : globalForceX;
 				final var fy = globalForceY == 0 ? 1.f : globalForceY;
 
@@ -276,6 +280,10 @@ public class ParticleEmitterInstance extends GridEntity {
 
 						particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, lVelX, lVelY);
 					} else {
+
+						// In the case that the global force* is not set, just take the object force and let the emitter shape work out the new velocities based on the heading etc.
+						// *the global force is the force passed down from the parent emitter.
+
 						mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeadingRads, lObjForceX * fx, lObjForceY * fy);
 					}
 				}
@@ -307,7 +315,7 @@ public class ParticleEmitterInstance extends GridEntity {
 			final var lObjForceMax = Math.max(lObjForceMin + 1, mEmitterDefinition.emitForceMax);
 			final var lObjForceX = RandomNumbers.random(lObjForceMin, lObjForceMax);
 			final var lObjForceY = RandomNumbers.random(lObjForceMin, lObjForceMax);
-			
+
 			final var fx = globalForceX == 0 ? 1.f : globalForceX;
 			final var fy = globalForceY == 0 ? 1.f : globalForceY;
 
