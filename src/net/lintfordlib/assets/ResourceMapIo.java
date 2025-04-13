@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -98,4 +100,39 @@ public class ResourceMapIo {
 	private static ResourceMap createResourceMap() {
 		return new ResourceMap();
 	}
+
+	// --------------------------------------
+
+	public static void createStandardResourceMap(String workspaceFilePath) {
+
+		final var resFolderFilePath = Paths.get(workspaceFilePath, "res");
+		final var resFolderFile = new File(resFolderFilePath.toString());
+
+		if (!resFolderFile.exists())
+			resFolderFile.mkdir();
+
+		mkSubFolder(resFolderFilePath, "textures");
+		mkSubFolder(resFolderFilePath, "spritesheets");
+		mkSubFolder(resFolderFilePath, "fonts");
+		final var definitionsSubDir = mkSubFolder(resFolderFilePath, "def");
+		final var particlesSubDir = mkSubFolder(definitionsSubDir, "particles");
+		mkSubFolder(particlesSubDir, "systems");
+		mkSubFolder(particlesSubDir, "emitters");
+
+	}
+
+	private static Path mkSubFolder(Path baseDir, String subDirName) {
+		final var subDirFolderFilePath = Paths.get(baseDir.toString(), subDirName);
+		final var subDirFolderFile = new File(subDirFolderFilePath.toString());
+
+		if (!subDirFolderFile.exists())
+			subDirFolderFile.mkdir();
+
+		return subDirFolderFilePath;
+	}
+
+	private static void createMetaFileHeader(File filePath) {
+		// TODO: create empty '_meta.json' files in their subfolder locations
+	}
+
 }

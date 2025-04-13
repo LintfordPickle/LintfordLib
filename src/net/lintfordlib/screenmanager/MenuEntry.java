@@ -483,7 +483,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		if (!mIsActive)
 			return false;
 
-		if (mParentScreen == null || !mEnabled)
+		if (mParentScreen == null || !mEnabled || mReadOnly)
 			return false;
 
 		if (!core.input().mouse().isMouseMenuSelectionEnabled()) {

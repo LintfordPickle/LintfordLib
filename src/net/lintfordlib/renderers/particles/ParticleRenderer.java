@@ -151,6 +151,9 @@ public class ParticleRenderer {
 		mIsAssigned = false;
 	}
 
+	record Point(int x, int y) {
+	}
+
 	private void loadParticleContent(ParticleSystemInstance particleSystemInst) {
 		if (!mResourcesLoaded)
 			return;

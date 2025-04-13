@@ -121,7 +121,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 			final var lEntry = getSelectedEntry(lSelectedLayouts, lSelectedLayoutIndex, lSelectedEntryIndex);
 
-			if (lEntry != null)
+			if (lEntry != null && !lEntry.readOnly() && lEntry.enabled())
 				lEntry.onClick(core.input());
 		}
 

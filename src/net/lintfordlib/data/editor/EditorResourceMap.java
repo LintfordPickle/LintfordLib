@@ -52,6 +52,17 @@ public class EditorResourceMap {
 			mResourceMap = lResMap;
 			mFile = resMapFile;
 		}
+
+		// TODO: Create the whole resource structure
+		// res/
+		// def/
+		// particles/
+		// systems/
+		// emitters/
+		// scenes/
+		// spritesheets/
+		// textures/
+
 	}
 
 	public void setResourceMap(ResourceMap resMap, File resMapFile) {

@@ -130,7 +130,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		return false;
 	}
-
+	
 	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
 		if (!mEnableUpdateDraw)

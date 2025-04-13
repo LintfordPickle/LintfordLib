@@ -95,6 +95,10 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	}
 
 	public File file() {
+		if (mFile == null || !mFile.exists()) {
+			mFile = new File(inputString().toString());
+		}
+
 		return mFile;
 	}
 

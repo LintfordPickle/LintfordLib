@@ -306,6 +306,7 @@ public abstract class LintfordCore {
 		var defaultWorkspaceLocation = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 		if (defaultWorkspaceLocation == null) {
 			defaultWorkspaceLocation = System.getProperty("user.dir");
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Setting 'user.dir' to: " + defaultWorkspaceLocation);
 			System.setProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME, defaultWorkspaceLocation);
 		}
 

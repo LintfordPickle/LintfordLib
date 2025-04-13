@@ -3,13 +3,11 @@ package net.lintfordlib.renderers.editor.panels;
 import java.io.File;
 
 import net.lintfordlib.ConstantsApp;
-import net.lintfordlib.assets.ResourceManager;
-import net.lintfordlib.controllers.editor.EditorResourceMapController;
-import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.options.ResourcePathsConfig;
 import net.lintfordlib.renderers.windows.UiWindow;
+import net.lintfordlib.renderers.windows.components.UiCheckBox;
 import net.lintfordlib.renderers.windows.components.UiInputFile;
 
 public class WorkspacePanel extends UiPanel {
@@ -18,20 +16,15 @@ public class WorkspacePanel extends UiPanel {
 	// Constants
 	// --------------------------------------
 
-	public static final String LAST_RESMAP_PATHNAME = "LastResMapLocation";
-
 	public static final int WORKSPACE_DIRECTORY_ENTRY = 10;
-	public static final int RESMAP_FILE_ENTRY = 11;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private UiInputFile mWorkspaceLocation; // this should be set to the project location (other paths are relative to this)
-	private UiInputFile mResMapLocation;
+	private UiCheckBox mResMapAvailable;
 	private ResourcePathsConfig mResourcePathsConfig;
-	private ResourceManager mResourceManager;
-	private EditorResourceMapController mEditorResourceMapController;
 
 	// --------------------------------------
 	// Properties
@@ -47,35 +40,29 @@ public class WorkspacePanel extends UiPanel {
 	// --------------------------------------
 
 	public WorkspacePanel(UiWindow parentWindow, int entityGroupUid) {
-		super(parentWindow, "Work Space Panel", entityGroupUid);
+		super(parentWindow, "Workspace", entityGroupUid);
 
 		mRenderPanelTitle = true;
 		mIsExpandable = true;
+		mShowActiveLayerButton = false;
+		mShowShowLayerButton = false;
+
 		underlineTitle(true);
 
 		mWorkspaceLocation = new UiInputFile(parentWindow);
 		mWorkspaceLocation.label("Workspace Folder");
 		mWorkspaceLocation.setUiWidgetListener(this, WORKSPACE_DIRECTORY_ENTRY);
 		mWorkspaceLocation.directorySelection(true);
+		mWorkspaceLocation.isReadonly(true);
 
-		mResMapLocation = new UiInputFile(parentWindow);
-		mResMapLocation.label("Res Map File");
-		mResMapLocation.setUiWidgetListener(this, RESMAP_FILE_ENTRY);
-		mResMapLocation.directorySelection(false);
+		mResMapAvailable = new UiCheckBox(parentWindow);
+		mResMapAvailable.label("Res Map Available");
+		mResMapAvailable.isReadonly(true);
 
 		addWidget(mWorkspaceLocation);
-		addWidget(mResMapLocation);
+		addWidget(mResMapAvailable);
 
 		resolveResourcePathsConfig();
-	}
-
-	@Override
-	public void initialize(LintfordCore core) {
-		super.initialize(core);
-
-		final var lControllerManager = core.controllerManager();
-		mEditorResourceMapController = (EditorResourceMapController) lControllerManager.getControllerByNameRequired(EditorResourceMapController.CONTROLLER_NAME, mEntityGroupUid);
-
 	}
 
 	private void resolveResourcePathsConfig() {
@@ -96,29 +83,19 @@ public class WorkspacePanel extends UiPanel {
 			System.setProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME, lLastWorkspacePathname);
 		}
 
-		// TODO: use the mEditorResourceMapController to load the resmap in the main editor screen
+		updateResMapAvailableDisplay();
 
-		final var lLastResmapPathname = mResourcePathsConfig.getKeyValue(LAST_RESMAP_PATHNAME);
-		if (lLastResmapPathname != null) {
-			final var lFile = new File(lLastResmapPathname);
-
-			if (lFile == null || lFile.isDirectory())
-				return;
-
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Restoring previous resmap file as " + lLastWorkspacePathname);
-
-			mResMapLocation.inputString(lLastWorkspacePathname);
-			mResMapLocation.baseDirectory(lLastWorkspacePathname);
-
-			System.setProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME, lLastWorkspacePathname);
-		}
 	}
 
-	@Override
-	public void loadResources(ResourceManager resourceManager) {
-		super.loadResources(resourceManager);
+	private void updateResMapAvailableDisplay() {
+		final var lWorkspacePathname = mResourcePathsConfig.getKeyValue(ResourcePathsConfig.LAST_WORKSPACE_PATHNAME);
+		final var lFile = new File(lWorkspacePathname);
+		if (lFile == null || !lFile.exists() || lFile.isDirectory() == false) {
+			mResMapAvailable.isChecked(false);
+			return;
+		}
 
-		mResourceManager = resourceManager;
+		mResMapAvailable.isChecked(true);
 	}
 
 	// --------------------------------------
@@ -131,12 +108,10 @@ public class WorkspacePanel extends UiPanel {
 			final var lWorkspaceDirectory = mWorkspaceLocation.file();
 			setWorkspaceDirectory(lWorkspaceDirectory);
 
-			return;
-		}
+			// TODO: update all resources and res_map stuff
 
-		if (entryUid == RESMAP_FILE_ENTRY) {
-			final var lResMapFile = mResMapLocation.file();
-			setNewResMapFile(lResMapFile);
+			updateResMapAvailableDisplay();
+
 			return;
 		}
 	}
@@ -153,19 +128,8 @@ public class WorkspacePanel extends UiPanel {
 			mResourcePathsConfig.saveConfig();
 
 			mWorkspaceLocation.baseDirectory(lFilepath);
-			mResMapLocation.baseDirectory(lFilepath);
-		}
-	}
 
-	private void setNewResMapFile(File file) {
-		if (file != null && file.exists() && file.isFile()) {
-			mResourceManager.loadResourcesFromResMap(file, mEntityGroupUid);
-
-			// Save the entry so its automatically reloaded next time
-			mResourcePathsConfig.insertOrUpdateValue(LAST_RESMAP_PATHNAME, file.getAbsolutePath());
-			mResourcePathsConfig.saveConfig();
-		} else {
-			// Create new res_map at this location
+			updateResMapAvailableDisplay();
 		}
 	}
 

@@ -29,6 +29,28 @@ public class ResourceMap {
 	@SerializedName(value = "Spritesheets")
 	public final List<String> spritesheetMetaFiles = new ArrayList<>();
 
+	public String particleSystemMetaFile;
+
+	@SerializedName(value = "Particle Systems Meta")
+	public String particleSystemsMetaFile = "res/def/particles/systems/_meta.json";
+
+	@SerializedName(value = "Particle Emitter Meta")
+	public String particleEmitterMetaFile = "res/def/particles/emitters/_meta.json";
+
+	// res_map to hold all meta file locations
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public String particleSystemsMetaFile() {
+		return particleSystemsMetaFile;
+	}
+
+	public String particleEmittersMetaFile() {
+		return particleEmitterMetaFile;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------

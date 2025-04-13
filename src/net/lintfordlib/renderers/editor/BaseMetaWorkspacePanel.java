@@ -207,7 +207,7 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 
 	// --------------------------------------
 
-	private void newMetaFileSelected() {
+	protected void newMetaFileSelected() {
 		var lNewSystemsMetaFile = mMetaFileSelectionEntry.file();
 		if (lNewSystemsMetaFile == null)
 			return;
@@ -241,7 +241,7 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 		}
 	}
 
-	private void reloadListBoxItemsFromMetadata() {
+	protected void reloadListBoxItemsFromMetadata() {
 		mMetaFileItemsList.items().clear();
 
 		final var lWorkspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);

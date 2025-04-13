@@ -88,6 +88,8 @@ public class LoadingScreen extends Screen {
 								lScreen.transitionOn(true);
 
 						}
+					} else if(lScreen.screenState() == ScreenState.NONE) {
+						lScreen.transitionOn(); // should be active ?
 					}
 
 					mScreenManager.addScreenToStack(lScreen);
