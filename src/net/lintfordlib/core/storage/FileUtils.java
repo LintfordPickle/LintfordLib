@@ -224,6 +224,13 @@ public class FileUtils {
 		return lFile.getPath();
 	}
 
+	public static Path makeRelative(String path1, String path2) {
+		final var pathAbsolute = Paths.get(path1);
+		final var pathBase = Paths.get(path2);
+
+		return pathBase.relativize(pathAbsolute);
+	}
+
 	// --------------------------------------
 
 	public static List<File> getListOfFilesInDirectory(String directory) {
