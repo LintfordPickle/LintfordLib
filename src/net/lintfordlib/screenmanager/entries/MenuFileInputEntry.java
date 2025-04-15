@@ -92,9 +92,8 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 	}
 
 	public void inputString(String newValue) {
-		if (mInputField.length() > 0) {
+		if (mInputField.length() > 0)
 			mInputField.delete(0, mInputField.length());
-		}
 
 		if (newValue == null) {
 			mFile = null;
@@ -102,11 +101,9 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 		}
 
 		mInputField.append(newValue);
-
 		mCursorPos = mInputField.length();
 
 		mFile = new File(newValue);
-
 	}
 
 	public String inputString() {

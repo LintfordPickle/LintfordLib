@@ -12,7 +12,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.entities.definitions.MetaFileHeader;
+import net.lintfordlib.core.entities.definitions.MetaFileHeaderIo;
 
 public class ResourceMapIo {
 
@@ -131,8 +134,44 @@ public class ResourceMapIo {
 		return subDirFolderFilePath;
 	}
 
-	private static void createMetaFileHeader(File filePath) {
-		// TODO: create empty '_meta.json' files in their subfolder locations
+	public static void createNewParticleSystemsMetaFile(File newMetaFile, ResourceMap resmap) {
+		if (!newMetaFile.toString().endsWith(".json")) {
+			Debug.debugManager().logger().e(ResourceMapIo.class.getSimpleName(), "Cannot save particle system metafile. The file should be a .json type. (" + newMetaFile.toString() + ")");
+			return;
+		}
+
+		final var lWorkspacePath = Paths.get(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME));
+		var lMetaFilePath = Paths.get(newMetaFile.getAbsolutePath());
+
+		if (lMetaFilePath.startsWith(lWorkspacePath)) {
+			lMetaFilePath = lWorkspacePath.relativize(lMetaFilePath);
+			lMetaFilePath = lMetaFilePath.getParent();
+		}
+
+		final var lNewMetaHeader = new MetaFileHeader();
+		lNewMetaHeader.assetRootDirectory(lMetaFilePath != null ? lMetaFilePath.toString() : "");
+
+		MetaFileHeaderIo.saveDefinitionsToMetadataFile(lNewMetaHeader, newMetaFile.toString());
+	}
+
+	public static void createNewParticleEmittersMetaFile(File newMetaFile, ResourceMap resmap) {
+		if (!newMetaFile.toString().endsWith(".json")) {
+			Debug.debugManager().logger().e(ResourceMapIo.class.getSimpleName(), "Cannot save particle emitter metafile. The file should be a .json type. (" + newMetaFile.toString() + ")");
+			return;
+		}
+
+		final var lWorkspacePath = Paths.get(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME));
+		var lMetaFilePath = Paths.get(newMetaFile.getAbsolutePath());
+
+		if (lMetaFilePath.startsWith(lWorkspacePath)) {
+			lMetaFilePath = lWorkspacePath.relativize(lMetaFilePath);
+			lMetaFilePath = lMetaFilePath.getParent();
+		}
+
+		final var lNewMetaHeader = new MetaFileHeader();
+		lNewMetaHeader.assetRootDirectory(lMetaFilePath != null ? lMetaFilePath.toString() : "");
+
+		MetaFileHeaderIo.saveDefinitionsToMetadataFile(lNewMetaHeader, newMetaFile.toString());
 	}
 
 }

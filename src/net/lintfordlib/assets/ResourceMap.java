@@ -29,8 +29,6 @@ public class ResourceMap {
 	@SerializedName(value = "Spritesheets")
 	public final List<String> spritesheetMetaFiles = new ArrayList<>();
 
-	public String particleSystemMetaFile;
-
 	@SerializedName(value = "Particle Systems Meta")
 	public String particleSystemsMetaFile = "res/def/particles/systems/_meta.json";
 
