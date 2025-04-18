@@ -8,6 +8,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
+import net.lintfordlib.options.DisplayManager;
 
 public class ToastManager {
 
@@ -18,6 +19,9 @@ public class ToastManager {
 	// --------------------------------------
 
 	public static final String FONT_TOAST_NAME = "FONT_TOAST";
+
+	private static final float SCREEN_PADDING_X = 10.f;
+	private static final float SCREEN_PADDING_Y = 50.f;
 
 	private static final int MAX_TOASTPOOL_SIZE = 48;
 	private static final int MIN_TIME_BETWEEN_ADD = 250;
@@ -42,7 +46,11 @@ public class ToastManager {
 	// Constructor
 	// --------------------------------------
 
-	public ToastManager() {
+	private DisplayManager mDisplayManager;
+
+	public ToastManager(DisplayManager displayManager) {
+		mDisplayManager = displayManager;
+
 		mToastMessages = new ArrayList<>();
 		mToastMessagePool = new ArrayList<>();
 		mToastMessageUpdate = new ArrayList<>();
@@ -82,25 +90,25 @@ public class ToastManager {
 
 		}
 
-		float lFinalX = -pCore.config().display().windowWidth() / 2;
-		float lFinalY = pCore.config().display().windowHeight() / 2 - 50;
+		float lFinalX = -mDisplayManager.windowWidth() / 2 + SCREEN_PADDING_X;
+		float lFinalY = mDisplayManager.windowHeight() / 2 - SCREEN_PADDING_Y;
 
 		for (int i = 0; i < SIZE_T; i++) {
-			ToastMessage lTM = mToastMessageUpdate.get(i);
+			final var toastMessage = mToastMessageUpdate.get(i);
 
-			lTM.liveLeft -= pCore.appTime().elapsedTimeMilli();
+			toastMessage.liveLeft -= pCore.appTime().elapsedTimeMilli();
 
-			if (lTM.liveLeft < 0) {
-				lTM.reset();
-				mToastMessages.remove(lTM);
+			if (toastMessage.liveLeft < 0) {
+				toastMessage.reset();
+				mToastMessages.remove(toastMessage);
 				continue;
 			}
 
-			lTM.x = lTM.xx = lFinalX;
-			lTM.yy = lFinalY;
+			toastMessage.x = toastMessage.xx = lFinalX;
+			toastMessage.yy = lFinalY;
 
-			if (lTM.y < lTM.yy)
-				lTM.y += 500f * pCore.appTime().elapsedTimeMilli() / 1000f;
+			if (toastMessage.y < toastMessage.yy)
+				toastMessage.y += 500f * pCore.appTime().elapsedTimeMilli() / 1000f;
 
 			lFinalY -= 25;
 		}
@@ -151,7 +159,12 @@ public class ToastManager {
 		if (lToastMessage == null)
 			return;
 
-		lToastMessage.y = 0;
+		// Place the message a little higher than its resting place -.^.-
+		final var lNumMessagesInQueue = mToastMessageUpdate.size();
+		final var lQueueHeight = lNumMessagesInQueue * 25.f;
+
+		final var lDropHeight = 50.f;
+		lToastMessage.y = mDisplayManager.windowHeight() / 2 - SCREEN_PADDING_Y - lQueueHeight - lDropHeight;
 
 		lToastMessage.init(title, message, messageLifeTimeInMs);
 	}
