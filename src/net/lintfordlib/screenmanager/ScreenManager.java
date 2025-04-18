@@ -116,7 +116,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mLWJGLCore = core;
 		mScreenUIDCounter = 100;
 
-		mToastManager = new ToastManager();
+		mToastManager = new ToastManager(core.config().display());
 		mContextHintManager = new ContextHintManager();
 		mToolTip = new ToolTip();
 
