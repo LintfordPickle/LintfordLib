@@ -15,7 +15,7 @@ public class CameraChaseController extends BaseController {
 	// Constants
 	// ---------------------------------------------
 
-	public static final String CONTROLLER_NAME = "Camera Ship Chase Controller";
+	public static final String CONTROLLER_NAME = "Camera Chase Controller";
 
 	private static final float CAMERA_MAN_MOVE_SPEED = 0.2f;
 
