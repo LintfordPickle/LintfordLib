@@ -189,7 +189,7 @@ public class CameraChaseController extends BaseController {
 		mLookAhead.x = mTrackedTarget.lookAheadX();
 		mLookAhead.y = mTrackedTarget.lookAheadY();
 
-		float lSpeedMod = mTrackedTarget.speed();
+		float lSpeedMod = mTrackedTarget.speed2();
 		mDesiredPosition.x = mTrackedTarget.worldX() + mLookAhead.x * lSpeedMod;
 		mDesiredPosition.y = mTrackedTarget.worldY() + mLookAhead.y * lSpeedMod;
 	}
@@ -199,7 +199,7 @@ public class CameraChaseController extends BaseController {
 		final var lZoomInLimit = 1.5f;
 		final var lDefaultZoom = lZoomInLimit;
 
-		var lEntitySpeed = mTrackedTarget.speed();
+		var lEntitySpeed = mTrackedTarget.speed2();
 		if (Math.abs(lEntitySpeed) < 0.001f)
 			lEntitySpeed = 0.f;
 		float lTargetZoom = lDefaultZoom - lEntitySpeed;
