@@ -35,6 +35,8 @@ public class PhysicsWorld {
 	// Constants
 	// --------------------------------------
 
+	private static final int DEFAULT_NUM_UPDATE_ITERATIONS = 7;
+
 	private final ContactManifold mContactManifold = new ContactManifold();
 
 	// --------------------------------------
@@ -192,6 +194,7 @@ public class PhysicsWorld {
 		mCollisionResolver = new CollisionResolverSimple();
 
 		setGravity(settings.gravityX, settings.gravityY);
+		mNumIterations = DEFAULT_NUM_UPDATE_ITERATIONS;
 	}
 
 	// --------------------------------------
@@ -241,7 +244,7 @@ public class PhysicsWorld {
 		mCollisionCallbackList.clear();
 	}
 
-	public void stepWorld(float time, int totalIterations) {
+	public void stepWorld(float time) {
 		if (!mInitialized) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot step physics world - not initialized");
 			return;
@@ -252,8 +255,8 @@ public class PhysicsWorld {
 
 		final var lSystemTimeBegin = System.nanoTime();
 
-		time /= totalIterations;
-		for (int it = 0; it < totalIterations; it++) {
+		time /= mNumIterations;
+		for (int it = 0; it < mNumIterations; it++) {
 			mCurrentIterationNr = it;
 
 			mAreBodiesLocked = true;

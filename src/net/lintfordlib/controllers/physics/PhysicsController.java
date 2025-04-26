@@ -13,8 +13,6 @@ public class PhysicsController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "Physics Controller";
 
-	public static final int NUM_PHYSICS_ITERATIONS = 7;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -45,10 +43,12 @@ public class PhysicsController extends BaseController {
 	public PhysicsController(ControllerManager controllerManager, IPhysicsControllerCallback callback, int entityGroupUid) {
 		super(controllerManager, CONTROLLER_NAME, entityGroupUid);
 
-		if (callback != null) {
-			mWorld = callback.createPhysicsWorld();
-			mWorld.initialize();
-		}
+		if (callback == null)
+			throw new RuntimeException("The physics controller was not given a valid IPhysicsControllerCallback to create the world.");
+
+		mWorld = callback.createPhysicsWorld();
+		mWorld.initialize();
+
 	}
 
 	// --------------------------------------
@@ -72,7 +72,7 @@ public class PhysicsController extends BaseController {
 		if (!mSimulationRunning)
 			return;
 
-		mWorld.stepWorld((float) core.gameTime().elapsedTimeMilli() * 0.001f, NUM_PHYSICS_ITERATIONS);
+		mWorld.stepWorld((float) core.gameTime().elapsedTimeMilli() * 0.001f);
 	}
 
 	public void setPhysicsWorldGravity(float gx, float gy) {
