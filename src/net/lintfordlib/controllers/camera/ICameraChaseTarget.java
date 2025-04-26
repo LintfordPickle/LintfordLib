@@ -25,6 +25,6 @@ public interface ICameraChaseTarget {
 	/**
 	 * The speed of the target. Used to offset the camera in the 'lookAhead' direction.
 	 */
-	float speed();
+	float speed2();
 
 }
