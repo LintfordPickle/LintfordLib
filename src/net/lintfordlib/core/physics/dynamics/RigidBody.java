@@ -303,8 +303,14 @@ public class RigidBody extends PhysicsGridEntity {
 		accY += fy * invMass;
 	}
 
-	// TODO: These appear to be world Points - I think local would make more sense?
-	public void addForceAtPoint(float fx, float fy, float px, float py) {
+	public void addForceAtLocalPoint(float fx, float fy, float px, float py) {
+		accX += fx * invMass;
+		accY += fy * invMass;
+
+		torque += Vector2f.cross(px, py, fx, fy);
+	}
+
+	public void addForceAtWorldPoint(float fx, float fy, float px, float py) {
 		accX += fx * invMass;
 		accY += fy * invMass;
 
