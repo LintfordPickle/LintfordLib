@@ -209,26 +209,27 @@ public class RigidBody extends PhysicsGridEntity {
 		if (mBodyType == BodyType.Static)
 			return;
 
-		vx += accX * time;
-		vy += accY * time;
-		angularVelocity += torque * time;
+		// Symplectic Euler
 
-		vx += gravityX * time;
-		vy += gravityY * time;
+		// Apply forces first
+		vx += (accX + gravityX) * time;
+		vy += (accY + gravityY) * time;
+		angularVelocity += torque * invInertia * time;
 
+		// Then update position/orientation
 		transform.p.x += vx * time;
 		transform.p.y += vy * time;
-
-		vx *= linearDampingX;
-		vy *= linearDampingY;
-
 		transform.setAngle(transform.angle + angularVelocity * time);
 
+		// Apply damping after integration
+		vx *= linearDampingX;
+		vy *= linearDampingY;
+		angularVelocity *= (float) Math.exp(-.97f * time);
+
+		// Reset forces
 		accX = 0.f;
 		accY = 0.f;
 		torque = 0.f;
-
-		angularVelocity *= (float) Math.exp(-.97f * time);
 	}
 
 	// --------------------------------------
@@ -276,8 +277,8 @@ public class RigidBody extends PhysicsGridEntity {
 
 	// -- Impulses: Change a body's velocity / angular velocity immediately
 
-	public void addAngularImpulse(float ai) {
-		angularVelocity += ai * invMass;
+	public void addAngularImpulse(float angualrImpulse) {
+		angularVelocity += angualrImpulse * invInertia;
 	}
 
 	public void addImpulse(float ix, float iy) {
@@ -289,7 +290,7 @@ public class RigidBody extends PhysicsGridEntity {
 		vx += ix * invMass;
 		vy += iy * invMass;
 
-		// angularVelocity += invMass * Vector2f.cross(px - transform.p.x, py - transform.p.y, ix, iy);
+		angularVelocity += Vector2f.cross(px - transform.p.x, py - transform.p.y, ix, iy);
 	}
 
 	// -- Forces: act gradually over time (should be applied as needed per update)
@@ -306,7 +307,6 @@ public class RigidBody extends PhysicsGridEntity {
 	public void addForceAtLocalPoint(float fx, float fy, float px, float py) {
 		accX += fx * invMass;
 		accY += fy * invMass;
-
 		torque += Vector2f.cross(px, py, fx, fy);
 	}
 
