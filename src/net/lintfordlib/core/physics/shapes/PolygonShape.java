@@ -128,8 +128,13 @@ public class PolygonShape extends BaseShape {
 		// total mass
 		mMass = (float) Math.abs(mDensity * mArea);
 
-		// Inertia relative to local center (s)
+		// Inertia relative to local point s
 		mInertia = (float) Math.abs(mDensity * I);
+		
+		// Parallel axis theorem adjustment to move inertia to center of mass
+		float dx = localCenter.x - s.x;
+		float dy = localCenter.y - s.y;
+		mInertia -= mMass * (dx * dx + dy * dy);
 	}
 
 	public void setLocalVertices(List<Vector2f> vertices) {
@@ -239,7 +244,7 @@ public class PolygonShape extends BaseShape {
 
 	public static PolygonShape createBoxShape(float unitPositionX, float unitPositionY, float unitWidth, float unitHeight, float rotRadians, float density, float restitution, float staticFriction, float dynamicFriction) {
 		final var lNewBoxShape = new PolygonShape();
-
+		
 		lNewBoxShape.mDensity = Math.abs(density);
 		lNewBoxShape.mStaticFriction = MathHelper.clamp(staticFriction, 0.f, 1.f);
 		lNewBoxShape.mDynamicFriction = MathHelper.clamp(dynamicFriction, 0.f, 1.f);
