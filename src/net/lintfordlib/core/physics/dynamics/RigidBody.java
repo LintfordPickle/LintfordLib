@@ -284,13 +284,15 @@ public class RigidBody extends PhysicsGridEntity {
 	public void addImpulse(float ix, float iy) {
 		vx += ix * invMass;
 		vy += iy * invMass;
+
+		// am I assuming the center is the CoM?
 	}
 
 	public void addImpulse(float ix, float iy, float px, float py) {
 		vx += ix * invMass;
 		vy += iy * invMass;
 
-		angularVelocity += Vector2f.cross(px - transform.p.x, py - transform.p.y, ix, iy);
+		angularVelocity += Vector2f.cross(px - transform.p.x, py - transform.p.y, ix, iy) * invInertia;
 	}
 
 	// -- Forces: act gradually over time (should be applied as needed per update)
@@ -307,6 +309,7 @@ public class RigidBody extends PhysicsGridEntity {
 	public void addForceAtLocalPoint(float fx, float fy, float px, float py) {
 		accX += fx * invMass;
 		accY += fy * invMass;
+
 		torque += Vector2f.cross(px, py, fx, fy);
 	}
 
