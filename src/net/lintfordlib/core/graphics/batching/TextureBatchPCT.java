@@ -241,12 +241,16 @@ public class TextureBatchPCT {
 			protected void getUniformLocations() {
 				super.getUniformLocations();
 
-				final var lIntBuffer = BufferUtils.createIntBuffer(8);
-				lIntBuffer.put(new int[] { 0, 1, 2, 3, 4, 5, 6, 7 });
-				lIntBuffer.flip();
+				// TODO: Move this into a central location, like graphic options or some capability helper class.
+				final var maxTextureUnits = GL11.glGetInteger(GL20.GL_MAX_TEXTURE_IMAGE_UNITS);
+				final var textureUnits = BufferUtils.createIntBuffer(maxTextureUnits);
+				for (int i = 0; i < maxTextureUnits; i++) {
+					textureUnits.put(i);
+				}
+				textureUnits.flip();
 
 				int lTextureSamplerLocation = GL20.glGetUniformLocation(shaderID(), "textureSampler");
-				GL20.glUniform1iv(lTextureSamplerLocation, lIntBuffer);
+				GL20.glUniform1iv(lTextureSamplerLocation, textureUnits);
 			}
 		};
 
@@ -305,6 +309,11 @@ public class TextureBatchPCT {
 
 		if (mAreGlContainersInitialized)
 			return;
+
+		// Enforce main OpenGL thread
+		if (!mResourceManager.isMainOpenGlThread()) {
+			throw new IllegalStateException("initializeGlContainers() must be called on the main OpenGL thread.");
+		}
 
 		if (mVaoId == -1) {
 			mVaoId = GL30.glGenVertexArrays();
