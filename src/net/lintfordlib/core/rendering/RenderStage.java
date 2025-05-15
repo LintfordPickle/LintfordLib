@@ -94,6 +94,9 @@ public class RenderStage {
 	// --------------------------------------
 
 	public void addRenderer(BaseRenderer renderer) {
+		if (renderer == null)
+			return;
+
 		mRenderers.add(renderer);
 	}
 
