@@ -47,6 +47,10 @@ public class DebugDrawers {
 		return mImmediateLineBatch;
 	}
 
+	public LineBatch lineBatch() {
+		return mLineBatch;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
