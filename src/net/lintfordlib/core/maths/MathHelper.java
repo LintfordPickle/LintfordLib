@@ -147,14 +147,14 @@ public class MathHelper {
 		if (angleInRadians == 0)
 			return 0.f;
 
-		return normalizeAngle(ConstantsMath.TwoPi - angleInRadians);
+		return normalizeAngle2Pi(ConstantsMath.TwoPi - angleInRadians);
 	}
 
 	/**
 	 * Inverts the given angle (in radians) over the Y axis
 	 */
 	public static float invertAngleYAxis(float angleInRadians) {
-		float lAngle = normalizeAngle(angleInRadians);
+		float lAngle = normalizeAngle2Pi(angleInRadians);
 
 		if (lAngle < ConstantsMath.Pi) {
 			lAngle = ConstantsMath.Pi - lAngle;
@@ -165,20 +165,30 @@ public class MathHelper {
 		return lAngle;
 	}
 
+	/**
+	 * Normalizes the angle around 0 (to within [-Pi, Pi]).
+	 */
+	public static float normalizeAngle(float angle) {
+		while (angle > Math.PI)
+			angle -= 2 * Math.PI;
+		while (angle < -Math.PI)
+			angle += 2 * Math.PI;
+		return angle;
+	}
+
 	/***
 	 * Normalizes the angle to within [0, TwoPi]
 	 * 
 	 * @param angle The angle to be normalized.
-	 * @return The new angle scaled to within [0, TwoPi]
+	 * @return The new angle scaled to within [0, TwoPi], that is, always returns positive values.
 	 */
-	public static float normalizeAngle(float angle) {
+	public static float normalizeAngle2Pi(float angle) {
 		if (angle < 0) {
 			final var lBackRevolutions = (int) (-angle / ConstantsMath.TwoPi);
 			return angle + ConstantsMath.TwoPi * (lBackRevolutions + 1);
 		}
 
 		return angle % ConstantsMath.TwoPi;
-
 	}
 
 	/**

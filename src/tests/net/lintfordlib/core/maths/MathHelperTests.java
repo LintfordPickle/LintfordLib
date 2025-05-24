@@ -1057,9 +1057,9 @@ class MathHelperTests {
 		final float expected2 = 2.234233f;
 
 		// act
-		final float result0 = MathHelper.normalizeAngle(angle0);
-		final float result1 = MathHelper.normalizeAngle(angle1);
-		final float result2 = MathHelper.normalizeAngle(angle2);
+		final float result0 = MathHelper.normalizeAngle2Pi(angle0);
+		final float result1 = MathHelper.normalizeAngle2Pi(angle1);
+		final float result2 = MathHelper.normalizeAngle2Pi(angle2);
 
 		// assert
 		assertEquals(expected0, result0, 0.00001f, "The returned normalized angle was not as expected.");
@@ -1081,10 +1081,10 @@ class MathHelperTests {
 		final float expected3 = 3.332137f;
 
 		// act
-		final float result0 = MathHelper.normalizeAngle(angle0);
-		final float result1 = MathHelper.normalizeAngle(angle1);
-		final float result2 = MathHelper.normalizeAngle(angle2);
-		final float result3 = MathHelper.normalizeAngle(angle3);
+		final float result0 = MathHelper.normalizeAngle2Pi(angle0);
+		final float result1 = MathHelper.normalizeAngle2Pi(angle1);
+		final float result2 = MathHelper.normalizeAngle2Pi(angle2);
+		final float result3 = MathHelper.normalizeAngle2Pi(angle3);
 
 		// assert
 		assertEquals(expected0, result0, 0.00001f, "The returned normalized angle was not as expected.");
@@ -1107,10 +1107,10 @@ class MathHelperTests {
 		final float expected3 = 2.951048f;
 
 		// act
-		final float result0 = MathHelper.normalizeAngle(angle0);
-		final float result1 = MathHelper.normalizeAngle(angle1);
-		final float result2 = MathHelper.normalizeAngle(angle2);
-		final float result3 = MathHelper.normalizeAngle(angle3);
+		final float result0 = MathHelper.normalizeAngle2Pi(angle0);
+		final float result1 = MathHelper.normalizeAngle2Pi(angle1);
+		final float result2 = MathHelper.normalizeAngle2Pi(angle2);
+		final float result3 = MathHelper.normalizeAngle2Pi(angle3);
 
 		// assert
 		assertEquals(expected0, result0, 0.00001f, "The returned normalized angle was not as expected.");
