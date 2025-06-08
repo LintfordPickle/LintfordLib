@@ -169,8 +169,19 @@ public class RTCamera implements ICamera {
 	// --------------------------------------
 
 	public void handleInput(LintfordCore core) {
-		mMouseWorldSpace.x = core.input().mouse().mouseWindowCoords().x * getZoomFactorOverOne() + getMinX();
-		mMouseWorldSpace.y = core.input().mouse().mouseWindowCoords().y * getZoomFactorOverOne() + getMinY();
+		final var mouseWindowCoordX = core.input().mouse().mouseWindowCoords().x;
+		final var mouseWindowCoordY = core.input().mouse().mouseWindowCoords().y;
+
+		final var displayWidth = core.config().display().windowWidth();
+		final var displayHeight = core.config().display().windowHeight();
+
+		final var lx = mouseWindowCoordX / (float) displayWidth;
+		final var ly = mouseWindowCoordY / (float) displayHeight;
+		final var mouseWindowCoordXScaled = lx * mViewportWidth;
+		final var mouseWindowCoordYScaled = ly * mViewportHeight;
+
+		mMouseWorldSpace.x = (mouseWindowCoordXScaled * getZoomFactorOverOne()) + getMinX();
+		mMouseWorldSpace.y = (mouseWindowCoordYScaled * getZoomFactorOverOne()) + getMinY();
 	}
 
 	public void update(LintfordCore core) {
