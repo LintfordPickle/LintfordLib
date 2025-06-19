@@ -133,7 +133,7 @@ public class DebugDrawers {
 	}
 
 	public void drawPointImmediate(ICamera camera, float x, float y, float red, float green, float blue, float alpha) {
-		drawPointImmediate(camera, x, y, DEBUG_DRAWERS_Z_DEPTH, 1f, 1f, 1f, 1f);
+		drawPointImmediate(camera, x, y, DEBUG_DRAWERS_Z_DEPTH, red, green, blue, alpha);
 	}
 
 	public void drawPointImmediate(ICamera camera, float x, float y, float zDepth, float red, float green, float blue, float alpha) {
