@@ -110,6 +110,8 @@ public class UiEnumSelection extends UIWidget {
 				return;
 			}
 		}
+		
+		mSelectedIndex = NO_UID;
 	}
 
 	// --------------------------------------
