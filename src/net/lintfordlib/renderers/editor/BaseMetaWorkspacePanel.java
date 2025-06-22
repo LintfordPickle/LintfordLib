@@ -103,7 +103,8 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 
 		mMetaFileItemsList = new UiVerticalTextListBox(parentWindow, entityGroupUid);
 		mMetaFileItemsList.addCallbackListener(this);
-		mMetaFileItemsList.desiredHeight(150);
+		mMetaFileItemsList.desiredHeight(210);
+		mMetaFileItemsList.showReorderButtons(true);
 
 		mAddItemButton = new UiButton(parentWindow, "Add");
 		mAddItemButton.setUiWidgetListener(this, ITEM_ADD_ENTRY);
