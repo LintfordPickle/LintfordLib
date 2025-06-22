@@ -294,6 +294,9 @@ public class ParticleEmitterInstance extends GridEntity {
 	}
 
 	private void updateTriggerEmitter(LintfordCore core) {
+		if (particleSystemInstance == null)
+			return;
+		
 		if (!mTriggered && mEmitterDefinition.isHead())
 			return;
 
