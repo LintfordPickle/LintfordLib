@@ -13,19 +13,24 @@ import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiListBoxListener;
+import net.lintfordlib.renderers.windows.components.interfaces.IUiWidgetInteractions;
 
-public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
+public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, IUiWidgetInteractions {
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
 	private static final long serialVersionUID = 3637330515154931480L;
+
+	private static final int ORDER_BUTTON_UP = 1;
+	private static final int ORDER_BUTTON_DOWN = 2;
 
 	// --------------------------------------
 	// Variables
@@ -41,12 +46,25 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	private float mAssetHeightInpx;
 	private IUiListBoxListener mCallbackListener;
 
+	private UiButtonImage mUpButton;
+	private UiButtonImage mDownButton;
+
 	private float mMinHeight = 50;
 	private float mMaxHeight = 200;
+
+	private boolean mShowReorderButtons;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean showReorderButtons() {
+		return mShowReorderButtons;
+	}
+
+	public void showReorderButtons(boolean newValue) {
+		mShowReorderButtons = newValue;
+	}
 
 	@Override
 	public void desiredHeight(float desiredHeight) {
@@ -151,6 +169,18 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		mWindowRectangle = new ScrollBarContentRectangle(parentWindow);
 
 		mScrollbar = new ScrollBar(this, mContentArea);
+
+		mUpButton = new UiButtonImage(parentWindow);
+		mUpButton.buttonLabel("");
+		mUpButton.setDimensions(20, 20);
+		mUpButton.setUiWidgetListener(this, ORDER_BUTTON_UP);
+		mUpButton.spriteName("TEXTURE_CONTROL_UP");
+
+		mDownButton = new UiButtonImage(parentWindow);
+		mDownButton.buttonLabel("");
+		mDownButton.setDimensions(20, 20);
+		mDownButton.setUiWidgetListener(this, ORDER_BUTTON_DOWN);
+		mDownButton.spriteName("TEXTURE_CONTROL_DOWN");
 	}
 
 	// --------------------------------------
@@ -162,6 +192,16 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 		mScrollbar.handleInput(core, null);
 
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
+
+			if (mShowReorderButtons) {
+				if (mUpButton.handleInput(core))
+					return true;
+
+				if (mDownButton.handleInput(core))
+					return true;
+
+			}
+
 			boolean itemSelected = false;
 			final var lNumitems = mItems.size();
 			for (int i = 0; i < lNumitems; i++) {
@@ -206,10 +246,20 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 			mH = MathHelper.clamp(lContentHeight, mMinHeight, mMaxHeight);
 		}
 
-		mDesiredHeight = mH;
+		// @formatter:off
+		  mUpButton.setPosition(mX + mW - 32, mY + mH - 48);
+		mDownButton.setPosition(mX + mW - 32, mY + mH - 25);
+		// @formatter:on
+
 		mContentArea.set(mX, mY, mW, Math.max(mH, lContentHeight));
 		mWindowRectangle.set(mX, mY, mW, mH);
 		mScrollbar.update(core);
+
+		if (mShowReorderButtons) {
+			mUpButton.update(core);
+			mDownButton.update(core);
+
+		}
 
 		// Update the positions of the individual items
 
@@ -274,7 +324,15 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 
 		if (mScrollbar.scrollBarEnabled()) {
 			mScrollbar.scrollBarAlpha(.8f);
-			mScrollbar.draw(core, lSpriteBatch, coreSpritesheetDefinition, componentZDepth);
+			lSpriteBatch.begin(core.HUD());
+			mScrollbar.draw(core, lSpriteBatch, coreSpritesheetDefinition, componentZDepth - 0.01f);
+			lSpriteBatch.end();
+		}
+
+		if (mShowReorderButtons) {
+			mUpButton.draw(core, sharedResources, coreSpritesheetDefinition, textFont, componentZDepth);
+			mDownButton.draw(core, sharedResources, coreSpritesheetDefinition, textFont, componentZDepth);
+
 		}
 
 	}
@@ -328,6 +386,30 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 			mSelectedItemIndex = -1;
 	}
 
+	private void moveSelectedUp() {
+		if (mSelectedItemIndex <= 0) {
+			return;
+		}
+
+		var toMove = mItems.get(mSelectedItemIndex);
+		mItems.set(mSelectedItemIndex, mItems.get(mSelectedItemIndex - 1));
+		mItems.set(mSelectedItemIndex - 1, toMove);
+		mSelectedItemIndex--;
+
+	}
+
+	private void moveSelectedDown() {
+		if (mSelectedItemIndex >= mItems.size() - 1) {
+			return;
+		}
+
+		var toMove = mItems.get(mSelectedItemIndex);
+		mItems.set(mSelectedItemIndex, mItems.get(mSelectedItemIndex + 1));
+		mItems.set(mSelectedItemIndex + 1, toMove);
+		mSelectedItemIndex++;
+
+	}
+
 	// --------------------------------------
 	// Inherited-Methods
 	// --------------------------------------
@@ -340,6 +422,24 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea {
 	@Override
 	public ScrollBarContentRectangle fullContentArea() {
 		return mContentArea;
+	}
+
+	@Override
+	public void widgetOnDataChanged(InputManager inputManager, int entryUid) {
+		// ignore
+	}
+
+	@Override
+	public void widgetOnClick(InputManager inputManager, int entryUid) {
+		switch (entryUid) {
+		case ORDER_BUTTON_UP:
+			moveSelectedUp();
+			break;
+		case ORDER_BUTTON_DOWN:
+			moveSelectedDown();
+			break;
+		}
+
 	}
 
 }
