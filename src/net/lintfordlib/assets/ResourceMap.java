@@ -84,7 +84,7 @@ public class ResourceMap {
 				continue;
 			}
 
-			resourceManager.textureManager().loadTexturesFromMetafile(lMetaFilepath.getAbsolutePath(), entityGroupUid);
+			resourceManager.textureManager().loadTexturesFromMetafile(lMetaFilepath.getAbsolutePath(), baseDirectory, entityGroupUid);
 		}
 	}
 

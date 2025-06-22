@@ -3,6 +3,7 @@ package net.lintfordlib.core.graphics.textures;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -384,6 +385,7 @@ public class TextureManager extends EntityGroupManager {
 		}
 	}
 
+//
 	public boolean saveTextureToFile(int width, int height, int[] imageData, String fileLocation) {
 		BufferedImage lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
@@ -433,8 +435,8 @@ public class TextureManager extends EntityGroupManager {
 		return lNewTexture;
 	}
 
-	public void reloadTextures() {
-		Debug.debugManager().logger().v(getClass().getSimpleName(), "Reloading all modified files");
+	public void reloadAllTextures() {
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "Reloading all modified textures");
 
 		for (final var lTextureGroup : mTextureGroupMap.values()) {
 			for (final var lTexture : lTextureGroup.mTextureMap.values()) {
@@ -479,8 +481,12 @@ public class TextureManager extends EntityGroupManager {
 		}
 	}
 
-	/** Batch load textures */
 	public void loadTexturesFromMetafile(String metaFileLocation, int entityGroupUid) {
+		loadTexturesFromMetafile(metaFileLocation, null, entityGroupUid);
+	}
+
+	/** Batch load textures */
+	public void loadTexturesFromMetafile(String metaFileLocation, String baseDirectory, int entityGroupUid) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading textures from meta-file %s", metaFileLocation));
 
 		final var lGson = new GsonBuilder().create();
@@ -505,13 +511,16 @@ public class TextureManager extends EntityGroupManager {
 				final var lTextureDataDefinition = lTextureMetaData.textureDefinitions[i];
 
 				final var lTextureName = lTextureDataDefinition.textureName;
-				final var lFilepath = lTextureDataDefinition.filepath;
+				var filePath = lTextureDataDefinition.filepath;
+				if (baseDirectory != null) {
+					filePath = Paths.get(baseDirectory, lTextureDataDefinition.filepath).toString();
+				}
 
 				final int lGlFilterMode = mapTextureFilterMode(lTextureDataDefinition.filterIndex);
 				final int lGlWrapSFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
 				final int lGlWrapTFilter = mapWrapMode(lTextureDataDefinition.filterIndex);
 
-				final var lNewTexture = loadTexture(lTextureName, lFilepath, lGlFilterMode, lGlWrapSFilter, lGlWrapTFilter, false, entityGroupUid);
+				final var lNewTexture = loadTexture(lTextureName, filePath, lGlFilterMode, lGlWrapSFilter, lGlWrapTFilter, false, entityGroupUid);
 
 				if (lNewTexture != null) {
 					lNewTexture.reloadable(true);

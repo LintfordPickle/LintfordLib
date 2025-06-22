@@ -15,6 +15,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.audio.AudioManager;
@@ -164,32 +166,37 @@ public class ResourceManager {
 
 	public void update(LintfordCore core) {
 		if (mMonitorResourcesForChanges) {
-			WatchKey lKey = mTexturePathWatcher.poll();
-			if (lKey != null) {
 
-				List<WatchEvent<?>> events = lKey.pollEvents();
-				for (WatchEvent<?> event : events) {
-					if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-						mTextureManager.reloadTextures();
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_F4, null)) {
+				mTextureManager.reloadAllTextures();
+			}
+
+			if (mTexturePathWatcher != null) {
+				final var watchKey = mTexturePathWatcher.poll();
+				if (watchKey != null) {
+					final var events = watchKey.pollEvents();
+					for (final var event : events) {
+						if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+							mTextureManager.reloadAllTextures();
+						}
 					}
-				}
 
-				lKey.reset();
+					watchKey.reset();
+				}
 			}
 
 			if (mSpriteSheetPathWatcher != null) {
-				WatchKey lSpriteFileKey = mSpriteSheetPathWatcher.poll();
-				if (lSpriteFileKey != null) {
+				final var spriteWatchKey = mSpriteSheetPathWatcher.poll();
+				if (spriteWatchKey != null) {
 
-					List<WatchEvent<?>> events = lSpriteFileKey.pollEvents();
-					for (WatchEvent<?> event : events) {
+					final var events = spriteWatchKey.pollEvents();
+					for (final var event : events) {
 						if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
-							// Reload the spritesheet in question ...
 							mSpriteSheetManager.reload();
 						}
 					}
 
-					lSpriteFileKey.reset();
+					spriteWatchKey.reset();
 				}
 			}
 		}
@@ -236,7 +243,15 @@ public class ResourceManager {
 					}
 				});
 
-				Path lSpriteSheetDirectory = Paths.get("res//spritesheets//game//");
+				mMonitorResourcesForChanges = true;
+
+			} catch (Exception e) {
+				mMonitorResourcesForChanges = mMonitorResourcesForChanges || false;
+			}
+
+			try {
+
+				Path lSpriteSheetDirectory = Paths.get("res//spritesheets//");
 				mSpriteSheetPathWatcher = lSpriteSheetDirectory.getFileSystem().newWatchService();
 				Files.walkFileTree(lSpriteSheetDirectory, new SimpleFileVisitor<Path>() {
 					@Override
@@ -250,7 +265,7 @@ public class ResourceManager {
 				mMonitorResourcesForChanges = true;
 
 			} catch (Exception e) {
-				mMonitorResourcesForChanges = false;
+				mMonitorResourcesForChanges = mMonitorResourcesForChanges || false;
 			}
 		}
 	}

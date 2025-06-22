@@ -301,32 +301,37 @@ public class Texture {
 	}
 
 	public void reloadTexture(String textureFilename) {
-		String lCleanFilename = FileUtils.cleanFilename(textureFilename);
+		final var cleanFilename = FileUtils.cleanFilename(textureFilename);
+
+		// TODO: Check about marking the resources (and other core textures) with !reloadable.
+		if (textureFilename != null && textureFilename.startsWith("/")) {
+			// cannot reload textures embedded in resources.
+			return;
+		}
 
 		try {
-			final var lTextureFile = new File(lCleanFilename);
+			final var lTextureFile = new File(cleanFilename);
 			final var lFileSize = lTextureFile.length();
 
-			final var lImage = ImageIO.read(lTextureFile);
+			final var lImage = createFlipped(ImageIO.read(lTextureFile));
 
 			final int lWidth = lImage.getWidth();
 			final int lHeight = lImage.getHeight();
 
 			final int[] lPixels = new int[lWidth * lHeight];
 			lImage.getRGB(0, 0, lWidth, lHeight, lPixels, 0, lWidth);
-
-			updateGLTextureData(changeARGBtoABGR(lPixels, lWidth, lHeight), lWidth, lHeight);
+			updateGLTextureData(lPixels, lWidth, lHeight);
 
 			mTextureWidth = lWidth;
 			mTextureHeight = lHeight;
 
-			mTextureLocation = lCleanFilename;
+			mTextureLocation = cleanFilename;
 			fileSizeOnLoad(lFileSize);
 			reloadable(true);
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + textureFilename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + textureFilename + ") from location: " + mTextureLocation);
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 		}
 	}
