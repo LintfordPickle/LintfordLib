@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
@@ -437,16 +438,15 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
 		}
 		lSpriteBatch.end();
-
+		
 		ContentRectangle.preDraw(core, lSpriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(lTextColor);
-		textFont.drawText(lText, lTextPosX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
+		textFont.drawText(lText, lTextPosX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, componentZDepth - .01f, mTextScale);
 		textFont.end();
 
 		ContentRectangle.postDraw(core);
-
 	}
 
 	// --------------------------------------

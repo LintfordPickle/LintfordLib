@@ -353,7 +353,7 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(lTextColor);
-		textFont.drawText(lText, lTextPosX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
+		textFont.drawText(lText, lTextPosX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth - .01f, mTextScale);
 		textFont.end();
 
 		ContentRectangle.postDraw(core);
