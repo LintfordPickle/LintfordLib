@@ -75,6 +75,16 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	// Methods
 	// ---------------------------------------------
 
+	public void reset() {
+
+		// this really depends on the type of sessions the player/game is currently engaged in (e.g. head-to-head or single player)
+
+		mPlayerSessions.get(0).enablePlayer(true);
+		mPlayerSessions.get(1).enablePlayer(false);
+		mPlayerSessions.get(2).enablePlayer(false);
+		mPlayerSessions.get(3).enablePlayer(false);
+	}
+
 	protected abstract T createNewPlayerSession(boolean canBeDeactivated);
 
 	public void initialize(LintfordCore core) {
