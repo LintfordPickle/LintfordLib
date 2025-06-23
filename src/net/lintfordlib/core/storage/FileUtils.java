@@ -1,5 +1,7 @@
 package net.lintfordlib.core.storage;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -169,6 +171,42 @@ public class FileUtils {
 		}
 	}
 
+	public static boolean copyFile(File oldAssetFile, File newAssetFile) {
+		if (oldAssetFile == null || !oldAssetFile.exists())
+			return false;
+
+		if (newAssetFile == null)
+			return false;
+
+		if (!newAssetFile.exists()) {
+			try {
+				newAssetFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try (var in = new BufferedInputStream(new FileInputStream(oldAssetFile)); var out = new BufferedOutputStream(new FileOutputStream(newAssetFile))) {
+			final var buffer = new byte[1024];
+			int lengthRead;
+			while ((lengthRead = in.read(buffer)) > 0) {
+				out.write(buffer, 0, lengthRead);
+				out.flush();
+			}
+
+			return true;
+
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Error copying file from " + oldAssetFile.getPath() + " to " + newAssetFile.getPath());
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
+		} catch (Exception e) {
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Unexpected error while copying file: " + oldAssetFile.getPath() + " to " + newAssetFile.getPath());
+			Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), e.getMessage());
+		}
+
+		return false;
+	}
+
 	/* deletes the given file or folder, includes all files and subdirectories. Note the file or folder specified must be contained within the GameStorage directory */
 	public static void deleteFolder(File fileToDelete) throws IOException {
 		// Make sure that the folders and files being deleting belongs within the app storage folder
@@ -283,4 +321,5 @@ public class FileUtils {
 
 		return lAllHeaderFiles;
 	}
+
 }
