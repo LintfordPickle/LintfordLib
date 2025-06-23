@@ -59,6 +59,12 @@ public class ParticleSystemManager extends PoolInstanceManager<ParticleSystemIns
 		public void saveDefinitionEntriesToMetaFile(String metaDataFilename) {
 
 		}
+
+		public void updateParticleSystemDefinitionName(String oldPsName, ParticleSystemDefinition newDefinition) {
+			mDefinitions.remove(oldPsName);
+			mDefinitions.put(newDefinition.name, newDefinition);
+
+		}
 	}
 
 	// --------------------------------------
