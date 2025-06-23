@@ -1,6 +1,7 @@
 package net.lintfordlib.renderers.windows.components;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -105,8 +106,9 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		mVerticalAssetSeparationInPx = newAsseteparation;
 	}
 
+	/** Returns an unmodifiableList with the mItems as backing. */
 	public List<UiListBoxItem> items() {
-		return mItems;
+		return Collections.unmodifiableList(mItems);
 	}
 
 	public void selectedItemIndex(int newIndex) {
@@ -357,6 +359,16 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 				mCallbackListener.onItemAdded(newItem);
 			}
 		}
+	}
+
+	public void clearItems() {
+		if (mItems.isEmpty())
+			return;
+
+		mItems.clear();
+		mSelectedItemIndex = -1;
+
+		mScrollbar.resetBarTop();
 	}
 
 	public void removeItem(UiListBoxItem oldItem) {

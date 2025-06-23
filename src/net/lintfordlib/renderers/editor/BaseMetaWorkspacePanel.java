@@ -247,7 +247,7 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 	}
 
 	protected void reloadListBoxItemsFromMetadata() {
-		mMetaFileItemsList.items().clear();
+		mMetaFileItemsList.clearItems();
 
 		final var lWorkspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 		final var lNumItems = mSelectedAssetMetaHeader.numItems();
@@ -263,7 +263,7 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 			final var lNewItem = new UiListBoxItem(i, itemName);
 			lNewItem.data = lAssetItemFile;
 
-			mMetaFileItemsList.items().add(lNewItem);
+			mMetaFileItemsList.addItem(lNewItem);
 		}
 	}
 
