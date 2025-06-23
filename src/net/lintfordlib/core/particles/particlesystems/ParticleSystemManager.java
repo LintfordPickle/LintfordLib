@@ -163,6 +163,14 @@ public class ParticleSystemManager extends PoolInstanceManager<ParticleSystemIns
 		return createNewParticleSystemFromDefinition(lParticleSystemDefinition);
 	}
 
+	public void assignSystemDefinitionAndResolveEmitters(ParticleSystemInstance particleSystemInstance, String particleSystemDefName) {
+		final var particleSystemDef = mParticleSystemDefinitionManager.getByName(particleSystemDefName);
+		if (particleSystemInstance != null && particleSystemDef != null) {
+			particleSystemInstance.assignSystemDefinitionAndResolveEmitters(ParticleSystemUidCounter++, particleSystemDef, mParticleFrameworkData);
+			mInstances.add(particleSystemInstance);
+		}
+	}
+
 	public ParticleSystemInstance createNewParticleSystemFromDefinition(ParticleSystemDefinition particleSystemDef) {
 		if (particleSystemDef != null) {
 			final var lNewParticleSystem = getFreePooledItem();
