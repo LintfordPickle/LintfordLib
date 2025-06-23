@@ -189,11 +189,15 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 			if (mSelectedAssetMetaHeader == null)
 				return;
 
-			newParticleSystemDefinitionCreated();
+			createNewMetaDataItem();
 
 			break;
 
 		case ITEM_DUP_ENTRY:
+			if (mSelectedAssetMetaHeader == null)
+				return;
+
+			duplicateSelectedMetaDataItem();
 			break;
 
 		case ITEM_DEL_ENTRY:
@@ -291,7 +295,7 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 		}
 	}
 
-	protected void newParticleSystemDefinitionCreated() {
+	protected void createNewMetaDataItem() {
 		var lNewItemEntryName = "not set";
 		final var lNewItemIndex = mMetaFileItemsList.items().size();
 
@@ -311,7 +315,36 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 		mMetaFileItemsList.items().add(lNewListBoxItem);
 
 		mSelectedMetaItem = lNewListBoxItem;
+		newEntryItemSelected(lNewListBoxItem);
+	}
 
+	protected void duplicateSelectedMetaDataItem() {
+		if (mSelectedMetaItem == null)
+			return;
+
+		var oldAssetFile = (File) mSelectedMetaItem.data;
+		if (!oldAssetFile.exists())
+			return;
+
+		// list stuff
+		final var lNewItemIndex = mMetaFileItemsList.items().size();
+		final var lNewItemEntryName = "copy of " + oldAssetFile.getName();
+
+		// file stuff
+		final var lWorkspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+		var lAssetRootDirectory = mSelectedAssetMetaHeader.assetRootDirectory();
+		if (lAssetRootDirectory.endsWith(FileUtils.FILE_SEPERATOR) == false)
+			lAssetRootDirectory += FileUtils.FILE_SEPERATOR;
+
+		// copy old file to new file name
+		final var newAssetFile = new File(lWorkspacePath, lAssetRootDirectory + lNewItemEntryName);
+		FileUtils.copyFile(oldAssetFile, newAssetFile);
+
+		final var lNewListBoxItem = new UiListBoxItem(lNewItemIndex, lNewItemEntryName + "*");
+		lNewListBoxItem.data = newAssetFile;
+		mMetaFileItemsList.items().add(lNewListBoxItem);
+
+		mSelectedMetaItem = lNewListBoxItem;
 		newEntryItemSelected(lNewListBoxItem);
 	}
 
@@ -324,9 +357,8 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 
 		var lAssetFile = (File) mSelectedMetaItem.data;
 		if (lAssetFile.exists()) {
-			if (lAssetFile.exists()) {
-				lAssetFile.delete();
-			}
+			lAssetFile.delete();
+
 		}
 
 		mSelectedAssetMetaHeader.itemFilepaths().remove(mSelectedMetaItem.itemUid);
