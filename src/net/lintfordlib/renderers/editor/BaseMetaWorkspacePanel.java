@@ -312,7 +312,7 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 		final var lNewListBoxItem = new UiListBoxItem(lNewItemIndex, lNewItemEntryName);
 
 		lNewListBoxItem.data = lAssetItemFile;
-		mMetaFileItemsList.items().add(lNewListBoxItem);
+		mMetaFileItemsList.addItem(lNewListBoxItem);
 
 		mSelectedMetaItem = lNewListBoxItem;
 		newEntryItemSelected(lNewListBoxItem);
