@@ -1,6 +1,7 @@
 package net.lintfordlib.renderers.windows.components;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -46,6 +47,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	private static final float ITEM_HEIGHT = 25.f;
 
 	private static final int NO_ITEM_INDEX = -1;
+
+	private static final String NO_SELECTION_TEXT = "No Selection";
 	private static final String NO_ITEMS_FOUND_TEXT = "No items found";
 
 	// --------------------------------------
@@ -65,9 +68,34 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	private final Rectangle mDownArrowRectangle = new Rectangle();
 	private boolean mDownArrowHovered;
 
+	private boolean mUseEmptyItemPlaceholder;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** If set, an empty item will be automatically added at the top of the dropdown box (even after clearing) to be used to deselect the current item. */
+	public boolean useEmptyItemPlaceholder() {
+		return mUseEmptyItemPlaceholder;
+	}
+
+	/** If set, an empty item will be automatically added at the top of the dropdown box (even after clearing) to be used to deselect the current item. */
+	public void useEmptyItemPlaceholder(boolean newValue) {
+
+		if (newValue && !mUseEmptyItemPlaceholder) {
+			mItems.add(0, new UiDropDownBoxItem(NO_SELECTION_TEXT, null));
+		} else if (!newValue && mUseEmptyItemPlaceholder) {
+			final var numItems = mItems.size();
+			for (int i = 0; i < numItems; i++) {
+				if (mItems.get(i).name.equals(NO_SELECTION_TEXT)) {
+					mItems.remove(i);
+					break;
+				}
+			}
+		}
+
+		mUseEmptyItemPlaceholder = newValue;
+	}
 
 	public String label() {
 		return mLabel;
@@ -93,7 +121,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	}
 
 	public List<UiDropDownBoxItem> items() {
-		return mItems;
+		return Collections.unmodifiableList(mItems);
 	}
 
 	public UiDropDownBoxItem selectedItem() {
@@ -169,6 +197,10 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public void clearItems() {
 		mItems.clear();
 		mSelectedIndex = NO_ITEM_INDEX;
+
+		if (mUseEmptyItemPlaceholder) {
+			mItems.add(0, new UiDropDownBoxItem(NO_SELECTION_TEXT, null));
+		}
 	}
 
 	// --------------------------------------
