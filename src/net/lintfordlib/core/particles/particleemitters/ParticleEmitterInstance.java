@@ -294,9 +294,9 @@ public class ParticleEmitterInstance extends GridEntity {
 	}
 
 	private void updateTriggerEmitter(LintfordCore core) {
-		if (particleSystemInstance == null)
+		if (!mEmitterDefinition.isHead() && particleSystemInstance == null)
 			return;
-		
+
 		if (!mTriggered && mEmitterDefinition.isHead())
 			return;
 
@@ -382,6 +382,18 @@ public class ParticleEmitterInstance extends GridEntity {
 		if (emitterDefinition.particleSystemName != null && emitterDefinition.particleSystemName.length() > 0) {
 			if (emitterDefinition.useSharedParticleSystem) {
 				particleSystemInstance = emitterDefinition.sharedParticleSystemInstance;
+
+				if (particleSystemInstance == null) {
+					particleSystemInstance = particleFramework.particleSystemManager().getParticleSystemByName(emitterDefinition.particleSystemName, true);
+				} else if (!particleSystemInstance.isAssigned()) {
+
+					// note: just because this is shared particle system (which may have even already been used) it can still have been unassigned,
+					// especially in the editor where the scenes are cleared regularly. The PS don't necessarily know if they are attached to a
+					// shared emitter, and so there is no 'protection' to prevent them being prematurely unassigned.
+
+					particleFramework.particleSystemManager().assignSystemDefinitionAndResolveEmitters(particleSystemInstance, emitterDefinition.particleSystemName);
+				}
+
 			} else {
 				particleSystemInstance = particleFramework.particleSystemManager().getParticleSystemByName(emitterDefinition.particleSystemName, false);
 			}
