@@ -54,7 +54,7 @@ public class RandomNumbers {
 		if (maxValue <= 0)
 			return 0;
 
-		return minValue + RANDOM.nextInt((maxValue+1) - minValue);
+		return minValue + RANDOM.nextInt(maxValue - minValue);
 	}
 
 	/**
