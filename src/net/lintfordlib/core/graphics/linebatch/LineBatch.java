@@ -136,6 +136,7 @@ public class LineBatch {
 
 		mA = mR = mG = mB = 1f;
 
+		mGLLineType = GL11.GL_LINES;
 		mGLLineWidth = 1.f;
 		mModelMatrix = new Matrix4f();
 		mResourcesLoaded = false;
