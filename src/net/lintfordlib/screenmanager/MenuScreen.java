@@ -10,6 +10,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.input.InputType;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.renderers.ZLayers;
@@ -38,8 +39,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	protected String mMenuSubTitle;
 	protected float mTitleFontHeight;
 
+	/** The active entry is an entry which has 'captured' the input to prevent navigation away. Example: Textfield during buffered input or a dropdown box. */
 	protected MenuEntry mActiveEntry;
-	protected boolean mIsSelectedActive;
 	protected int mSelectedEntryIndex;
 	protected int mSelectedLayoutIndex;
 
@@ -209,63 +210,67 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.handleInput(core);
 
-		if (mESCBackEnabled && (mScreenState == ScreenState.ACTIVE) && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
+		if (mESCBackEnabled && (mScreenState == ScreenState.ACTIVE) && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this)) {
 			onEscPressed();
 			return;
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
 			screenManager.contextHintManager().setKeyboardHints();
-			onNavigationUp(core);
+			onNavigationUp(core, InputType.Keyboard);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
 			screenManager.contextHintManager().setGamePadHints();
-			onNavigationUp(core);
+			onNavigationUp(core, InputType.Gamepad);
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
 			screenManager.contextHintManager().setKeyboardHints();
-			onNavigationDown(core);
+			onNavigationDown(core, InputType.Keyboard);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
 			screenManager.contextHintManager().setGamePadHints();
-			onNavigationDown(core);
+			onNavigationDown(core, InputType.Gamepad);
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
 			screenManager.contextHintManager().setKeyboardHints();
-			onNavigationLeft(core);
+			onNavigationLeft(core, InputType.Keyboard);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
 			screenManager.contextHintManager().setGamePadHints();
-			onNavigationLeft(core);
+			onNavigationLeft(core, InputType.Gamepad);
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
 			screenManager.contextHintManager().setKeyboardHints();
-			onNavigationRight(core);
+			onNavigationRight(core, InputType.Keyboard);
 		}
 
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
 			screenManager.contextHintManager().setGamePadHints();
-			onNavigationRight(core);
+			onNavigationRight(core, InputType.Gamepad);
 		}
-
-		// Process ENTER key press
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
-			final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
-
-			if (lEntry != null)
-				lEntry.onClick(core.input());
-		}
-
+		
 		final var lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(core);
+		}
+		
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
+			onNavigationBack(core, InputType.Gamepad);
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
+			onNavigationConfirm(core, InputType.Keyboard);
+		}
+
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
+			onNavigationConfirm(core, InputType.Gamepad);
 		}
 	}
 
@@ -476,6 +481,24 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Methods
 	// --------------------------------------
 
+	/** Given a MenuEntry instance, it will search the current MenuScreen for a match and then set the selectedENtry/selectedLayout variables accordingly. If the entry is not found, then nothing it changed. */
+	public void resolveSelectedEntry(MenuEntry entry) {
+		final var numLayouts = mLayouts.size();
+		for (int i = 0; i < numLayouts; i++) {
+			final var layout = mLayouts.get(i);
+			final var numEntries = layout.entries().size();
+			for (int j = 0; j < numEntries; j++) {
+				final var checkEntry = layout.entries().get(j);
+				if (checkEntry == entry || checkEntry.resolveChildEntry(entry)) {
+					mSelectedLayoutIndex = i;
+					mSelectedEntryIndex = j;
+					return;
+				}
+			}
+		}
+		return;
+	}
+
 	public int getLayoutCount() {
 		return mLayouts.size();
 	}
@@ -534,6 +557,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		exitScreen();
 	}
 
+	/** This is called when an entry is clicked.This is called regardless (and including) if an entry was registered as a click listener. */
+	public void menuEntryOnClick(InputManager inputState, MenuEntry entry) {
+
+	}
+
+	/** This is called when a previously registered entry (with an entryUid) is clicked. */
 	@Override
 	public void menuEntryOnClick(InputManager inputState, int entryUid) {
 		mClickAction.setNewClick(entryUid);
@@ -595,7 +624,16 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					mSelectedEntryIndex = j;
 
 				} else {
-					lEntry.mHasFocus = false;
+
+					if (lEntry.setFocusOnChildEntry(entry)) {
+						lEntry.mHasFocus = true;
+						screenManager.contextHintManager().contextHintProvider(lEntry);
+
+						mSelectedLayoutIndex = i;
+						mSelectedEntryIndex = j;
+					} else {
+						lEntry.mHasFocus = false;
+					}
 				}
 			}
 		}
@@ -635,11 +673,49 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	// NAVIGATION ---------------------------
 
-	protected void onNavigationUp(LintfordCore core) {
+	protected void onNavigationBack(LintfordCore core, InputType inputType) {
+		System.out.println("nav back");
+
 		if (mActiveEntry != null)
 			return;
 
-		if (!acceptGamepadInput && !acceptKeyboardInput)
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+			return;
+
+	}
+
+	protected void onNavigationConfirm(LintfordCore core, InputType inputType) {
+		System.out.println("nav confirm");
+
+		if (mActiveEntry != null)
+			return;
+
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+			return;
+
+		final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
+
+		if (lEntry != null)
+			lEntry.onClick(core.input());
+
+	}
+
+	protected void onNavigationUp(LintfordCore core, InputType inputType) {
+		System.out.println("nav up");
+
+		if (mActiveEntry != null)
+			return;
+
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -652,11 +728,16 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
 	}
 
-	protected void onNavigationDown(LintfordCore core) {
+	protected void onNavigationDown(LintfordCore core, InputType inputType) {
+		System.out.println("nav down");
+
 		if (mActiveEntry != null)
 			return;
 
-		if (!acceptGamepadInput && !acceptKeyboardInput)
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -669,15 +750,25 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
 	}
 
-	protected void onNavigationLeft(LintfordCore core) {
+	protected void onNavigationLeft(LintfordCore core, InputType inputType) {
+		System.out.println("nav left");
+
+		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
+
+		final var selectedEntry = mLayouts.get(mSelectedLayoutIndex).entries().get(mSelectedEntryIndex);
+		selectedEntry.onNavigationLeft(core);
 
 	}
 
-	protected void onNavigationRight(LintfordCore core) {
+	protected void onNavigationRight(LintfordCore core, InputType inputType) {
+		System.out.println("nav right");
+
+		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
+
+		final var selectedEntry = mLayouts.get(mSelectedLayoutIndex).entries().get(mSelectedEntryIndex);
+		selectedEntry.onNavigationRight(core);
 
 	}
-
-	// NAVIGATION ---------------------------
 
 	protected void getPreviousEnabledEntry() {
 		if (mActiveEntry != null)

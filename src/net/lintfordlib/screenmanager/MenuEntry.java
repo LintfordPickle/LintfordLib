@@ -666,6 +666,17 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	// Methods
 	// --------------------------------------
 
+	public boolean resolveChildEntry(MenuEntry entry) {
+
+		// to be overriden in container entries. Given a MenuEntry, if it exists within the container, the selectedEntry index should be updated to match it.
+
+		return false;
+	}
+
+	public boolean setFocusOnChildEntry(MenuEntry entry) {
+		return false;
+	}
+
 	public void drawInfoIcon(LintfordCore core, SpriteBatch spriteBatch, Rectangle destRect, float screenAlpha) {
 		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, screenAlpha);
 		final var lScreenOffset = mParentScreen.screenPositionOffset();
@@ -769,6 +780,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void onClick(InputManager inputManager) {
+
+		if (mParentScreen != null)
+			mParentScreen.menuEntryOnClick(inputManager, this);
+
 		if (mClickListener == null || mMenuEntryID == -1)
 			return;
 
@@ -790,4 +805,27 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public ContextHintState contextHints() {
 		return contextHintState;
 	}
+
+	// ---
+
+	/** Returns navigation handled */
+	public boolean onNavigationUp(LintfordCore core) {
+		return false;
+	}
+
+	/** Returns navigation handled */
+	public boolean onNavigationDown(LintfordCore core) {
+		return false;
+	}
+
+	/** Returns navigation handled */
+	public boolean onNavigationLeft(LintfordCore core) {
+		return false;
+	}
+
+	/** Returns navigation handled */
+	public boolean onNavigationRight(LintfordCore core) {
+		return false;
+	}
+
 }

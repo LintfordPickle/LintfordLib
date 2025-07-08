@@ -66,7 +66,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 		mPlayerSessions.add(createNewPlayerSession(true));
 		mPlayerSessions.add(createNewPlayerSession(true));
 
-		mPlayerSessions.get(0).enablePlayer(true);
+		mPlayerSessions.get(0).isPlayerEnabled(true);
 
 		mIsResourcesLoaded = false;
 	}
@@ -79,10 +79,10 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 		// this really depends on the type of sessions the player/game is currently engaged in (e.g. head-to-head or single player)
 
-		mPlayerSessions.get(0).enablePlayer(true);
-		mPlayerSessions.get(1).enablePlayer(false);
-		mPlayerSessions.get(2).enablePlayer(false);
-		mPlayerSessions.get(3).enablePlayer(false);
+		mPlayerSessions.get(0).isPlayerEnabled(true);
+		mPlayerSessions.get(1).isPlayerEnabled(false);
+		mPlayerSessions.get(2).isPlayerEnabled(false);
+		mPlayerSessions.get(3).isPlayerEnabled(false);
 	}
 
 	protected abstract T createNewPlayerSession(boolean canBeDeactivated);
@@ -160,41 +160,64 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 	}
 
 	private void updatePlayerViewports(LintfordCore core) {
-		final var lDisplayConfig = core.config().display();
-		final var lGameWindowWidth = lDisplayConfig.gameResolutionWidth();
-		final var lGameWindowHeight = lDisplayConfig.gameResolutionHeight();
+		final var displayConfig = core.config().display();
 
-		final var lHudWindowWidth = lDisplayConfig.uiResolutionWidth();
-		final var lHudWindowHeight = lDisplayConfig.uiResolutionHeight();
+		final var gameWindowWidth = displayConfig.gameResolutionWidth();
+		final var gameWindowHeight = displayConfig.gameResolutionHeight();
+		final var halfGameWindowWidth = gameWindowWidth * .5f;
+		final var halfGameWindowHeight = gameWindowHeight * .5f;
 
-		// Create the viewports depending on how many players joined this game
-		int numPlayers = numActivePlayers();
+		final var hudWindowWidth = displayConfig.uiResolutionWidth();
+		final var hudWindowHeight = displayConfig.uiResolutionHeight();
+		final var halfHudWindowWidth = hudWindowWidth * .5f;
+		final var halfHudWindowHeight = hudWindowHeight * .5f;
 
-		switch (numPlayers) {
+		//@formatter:off
+		switch (numActivePlayers()) {
 		default:
 		case 1:
-			mPlayerSessions.get(0).getViewContainer().gameViewport().set(-lGameWindowWidth * .5f, -lGameWindowHeight * .5f, lGameWindowWidth, lGameWindowHeight);
-			mPlayerSessions.get(0).getViewContainer().hudViewport().set(-lHudWindowWidth * .5f, -lHudWindowHeight * .5f, lHudWindowWidth, lHudWindowHeight);
+			// game render viewport
+			mPlayerSessions.get(0).getViewContainer().gameViewport().set(-gameWindowWidth * .5f, 	-gameWindowHeight * .5f, 	gameWindowWidth, 		gameWindowHeight);
+			
+			// huds
+			mPlayerSessions.get(0).getViewContainer().hudViewport().set(-hudWindowWidth * .5f, 		-hudWindowHeight * .5f, 	hudWindowWidth, 		hudWindowHeight);
 
 			break;
 
 		case 2:
+			
+			// game render viewports
+			mPlayerSessions.get(0).getViewContainer().gameViewport().set(-halfGameWindowWidth, 		-halfGameWindowHeight, 		halfGameWindowWidth, 	halfGameWindowHeight * 2);
+			mPlayerSessions.get(1).getViewContainer().gameViewport().set(0, 						-halfGameWindowHeight, 		halfGameWindowWidth, 	halfGameWindowHeight * 2);
 
-			final float lHalfWidth = lGameWindowWidth * .5f;
-			final float lHalfHeight = lGameWindowHeight * .5f;
+			// huds
+			mPlayerSessions.get(0).getViewContainer().hudViewport().set(-hudWindowWidth * .5f, 		-hudWindowHeight * .5f, 	hudWindowWidth, 		hudWindowHeight);
+			mPlayerSessions.get(1).getViewContainer().hudViewport().set(-hudWindowWidth * .5f, 		-hudWindowHeight * .5f, 	hudWindowWidth, 		hudWindowHeight);
 
-			mPlayerSessions.get(0).getViewContainer().gameViewport().set(-lHalfWidth, -lHalfHeight, lHalfWidth, lHalfHeight * 2);
-			mPlayerSessions.get(1).getViewContainer().gameViewport().set(0, -lHalfHeight, lHalfWidth, lHalfHeight * 2);
 			break;
 
 		case 3:
-
-			break;
-
+			
+			// TODO: Enable viewport minimap
+			
 		case 4:
 
+			// game render viewports
+			mPlayerSessions.get(0).getViewContainer().gameViewport().set(-halfGameWindowWidth, 		-halfGameWindowHeight, 		halfGameWindowWidth, 	halfGameWindowHeight);
+			mPlayerSessions.get(1).getViewContainer().gameViewport().set(0, 						-halfGameWindowHeight, 		halfGameWindowWidth, 	halfGameWindowHeight);
+			mPlayerSessions.get(2).getViewContainer().gameViewport().set(-halfGameWindowWidth, 		0, 							halfGameWindowWidth, 	halfGameWindowHeight);
+			mPlayerSessions.get(3).getViewContainer().gameViewport().set(0, 						0, 							halfGameWindowWidth, 	halfGameWindowHeight);
+
+			// huds
+			mPlayerSessions.get(0).getViewContainer().hudViewport().set(-halfHudWindowWidth, 		-halfHudWindowHeight, 		halfHudWindowWidth, 	halfHudWindowHeight);
+			mPlayerSessions.get(1).getViewContainer().hudViewport().set(0, 							-halfHudWindowHeight, 		halfHudWindowWidth, 	halfHudWindowHeight);
+			mPlayerSessions.get(2).getViewContainer().hudViewport().set(-halfHudWindowWidth, 		0, 							halfHudWindowWidth, 	halfHudWindowHeight);
+			mPlayerSessions.get(3).getViewContainer().hudViewport().set(0, 							0, 							halfHudWindowWidth, 	halfHudWindowHeight);
+
 			break;
+
 		}
+		//@formatter:on
 	}
 
 	public boolean isPlayerActive(int playerNumber) {
@@ -216,13 +239,13 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 		switch (mNumberActivePlayers) {
 		case 4:
-			mPlayerSessions.get(3).enablePlayer(true);
+			mPlayerSessions.get(3).isPlayerEnabled(true);
 			break;
 		case 3:
-			mPlayerSessions.get(2).enablePlayer(true);
+			mPlayerSessions.get(2).isPlayerEnabled(true);
 			break;
 		case 2:
-			mPlayerSessions.get(1).enablePlayer(true);
+			mPlayerSessions.get(1).isPlayerEnabled(true);
 			break;
 
 		default:
@@ -236,13 +259,13 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 		switch (mNumberActivePlayers) {
 		case 4:
-			mPlayerSessions.get(3).enablePlayer(false);
+			mPlayerSessions.get(3).isPlayerEnabled(false);
 			break;
 		case 3:
-			mPlayerSessions.get(2).enablePlayer(false);
+			mPlayerSessions.get(2).isPlayerEnabled(false);
 			break;
 		case 2:
-			mPlayerSessions.get(1).enablePlayer(false);
+			mPlayerSessions.get(1).isPlayerEnabled(false);
 			break;
 		}
 

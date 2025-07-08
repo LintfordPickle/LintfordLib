@@ -24,10 +24,21 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	private List<MenuEntry> mChildEntries;
 	private int mSelectedEntryUid;
+	private boolean mWrapInputAround = false;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	/** should the left/right input wrap the index around to the beginning..? */
+	public boolean inputWrap() {
+		return mWrapInputAround;
+	}
+
+	/** should the left/right input wrap the index around to the beginning..? */
+	public void inputWrap(boolean wrapInputAround) {
+		mWrapInputAround = wrapInputAround;
+	}
 
 	public List<MenuEntry> entries() {
 		return mChildEntries;
@@ -146,6 +157,13 @@ public class HorizontalEntryGroup extends MenuEntry {
 	public void draw(LintfordCore pCore, Screen pScreen, float pParentZDepth) {
 		final var lChildEntryCount = mChildEntries.size();
 		for (int i = 0; i < lChildEntryCount; i++) {
+
+			if (mHasFocus && mSelectedEntryUid == i) {
+				mChildEntries.get(i).hasFocus(true);
+			} else {
+				mChildEntries.get(i).hasFocus(false);
+			}
+
 			mChildEntries.get(i).draw(pCore, pScreen, pParentZDepth);
 		}
 
@@ -163,6 +181,37 @@ public class HorizontalEntryGroup extends MenuEntry {
 	// --------------------------------------
 
 	@Override
+	public boolean resolveChildEntry(MenuEntry entry) {
+		final var numEntries = mChildEntries.size();
+		for (int i = 0; i < numEntries; i++) {
+			final var childEntry = mChildEntries.get(i);
+			if (childEntry == entry || childEntry.resolveChildEntry(entry)) {
+				mSelectedEntryUid = i;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean setFocusOnChildEntry(MenuEntry entry) {
+		boolean found = false; // cannot early escape, we need to update all entries either way
+		final var numEntries = mChildEntries.size();
+		for (int i = 0; i < numEntries; i++) {
+			final var childEntry = mChildEntries.get(i);
+			if (childEntry == entry || childEntry.setFocusOnChildEntry(entry)) {
+				childEntry.hasFocus(true);
+				mSelectedEntryUid = i;
+				found = true;
+			} else {
+				childEntry.hasFocus(false);
+			}
+		}
+
+		return found;
+	}
+
+	@Override
 	public void onClick(InputManager inputManager) {
 		if (mChildEntries.isEmpty())
 			return;
@@ -173,16 +222,62 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	}
 
-	public void navigatePrev() {
+	@Override
+	public boolean onNavigationLeft(LintfordCore core) {
+
+		if (mChildEntries.size() <= 1)
+			return true;
+
+		final var startIndex = mSelectedEntryUid;
 		mSelectedEntryUid--;
-		if (mSelectedEntryUid < 0)
-			mSelectedEntryUid = mChildEntries.size();
+
+		while (mSelectedEntryUid != startIndex) {
+			if (mSelectedEntryUid < 0) {
+				if (!mWrapInputAround) {
+					mSelectedEntryUid = startIndex;
+					return false;
+				}
+
+				mSelectedEntryUid = mChildEntries.size() - 1;
+			}
+
+			if (mChildEntries.get(mSelectedEntryUid) != MenuEntry.menuSeparator())
+				return true;
+
+			mSelectedEntryUid--;
+
+		}
+
+		return false;
+
 	}
 
-	public void navigateNext() {
+	@Override
+	public boolean onNavigationRight(LintfordCore core) {
+
+		if (mChildEntries.size() <= 1)
+			return true;
+
+		final var startIndex = mSelectedEntryUid;
 		mSelectedEntryUid++;
-		if (mSelectedEntryUid >= mChildEntries.size())
-			mSelectedEntryUid = 0;
+
+		while (mSelectedEntryUid != startIndex) {
+			if (mSelectedEntryUid >= mChildEntries.size()) {
+				if (!mWrapInputAround) {
+					mSelectedEntryUid = startIndex;
+					return false;
+				}
+
+				mSelectedEntryUid = 0;
+			}
+
+			if (mChildEntries.get(mSelectedEntryUid) != MenuEntry.menuSeparator())
+				return true;
+
+			mSelectedEntryUid++;
+		}
+
+		return false;
 	}
 
 	private void updateEntries() {

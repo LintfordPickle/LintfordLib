@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.input.InputType;
 import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
@@ -98,21 +99,39 @@ public abstract class DualMenuScreen extends MenuScreen {
 		if (mLayouts.isEmpty() && mRightLayouts.isEmpty())
 			return; // nothing to do
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
-			onNavigationUp(core);
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
+			onNavigationUp(core, InputType.Keyboard);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
-			onNavigationDown(core);
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+			onNavigationUp(core, InputType.Gamepad);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
-			onNavigationLeft(core);
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
+			onNavigationDown(core, InputType.Keyboard);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
-			onNavigationRight(core);
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+			onNavigationDown(core, InputType.Gamepad);
 		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
+			onNavigationLeft(core, InputType.Keyboard);
+		}
+
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
+			onNavigationLeft(core, InputType.Gamepad);
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
+			onNavigationRight(core, InputType.Keyboard);
+		}
+
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
+			onNavigationRight(core, InputType.Gamepad);
+		}
+
+		// This might become a problem if we have entries which capture the input in a dual screen. Should call out to onNavigationBack/Confirm
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
 
@@ -204,8 +223,14 @@ public abstract class DualMenuScreen extends MenuScreen {
 	// --------------------------------------
 
 	@Override
-	protected void onNavigationUp(LintfordCore core) {
+	protected void onNavigationUp(LintfordCore core, InputType inputType) {
 		if (isEntryActive())
+			return;
+
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -221,8 +246,14 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationDown(LintfordCore core) {
+	protected void onNavigationDown(LintfordCore core, InputType inputType) {
 		if (isEntryActive())
+			return;
+
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -238,11 +269,35 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationLeft(LintfordCore core) {
+	protected void onNavigationLeft(LintfordCore core, InputType inputType) {
 		if (isEntryActive())
 			return;
 
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+			return;
+
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		// first give the entries a chance to react to the nav right
+		if (!mRightColumnSelected) {
+
+			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+			final var selectedEntry = mLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
+			if (selectedEntry.onNavigationLeft(core))
+				return;
+
+		} else {
+			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+			final var selectedEntry = mRightLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
+			if (selectedEntry.onNavigationLeft(core))
+				return;
+
+		}
 
 		mRightColumnSelected = !mRightColumnSelected;
 		final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
@@ -253,11 +308,35 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationRight(LintfordCore core) {
+	protected void onNavigationRight(LintfordCore core, InputType inputType) {
 		if (isEntryActive())
 			return;
 
+		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+			return;
+
+		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+			return;
+
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		// first give the entries a chance to react to the nav right
+		if (!mRightColumnSelected) {
+
+			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+			final var selectedEntry = mLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
+			if (selectedEntry.onNavigationRight(core))
+				return;
+
+		} else {
+			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+			final var selectedEntry = mRightLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
+			if (selectedEntry.onNavigationRight(core))
+				return;
+
+		}
 
 		mRightColumnSelected = !mRightColumnSelected;
 		final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;

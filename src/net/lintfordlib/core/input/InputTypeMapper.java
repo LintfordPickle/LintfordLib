@@ -10,23 +10,31 @@ public class InputTypeMapper implements IInputProcessor {
 	// Constants
 	// --------------------------------------
 
-	public static final int INPUT_TYPE_INDEX_KEYBOARD = 0;
-	public static final int INPUT_TYPE_INDEX_GAMEPAD = 1;
+	public static final int NOT_ASSIGNED = 0;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	public final int inputTypeIndex;
+	public final InputType inputTypeIndex;
 
 	public int assignedToPlayerIndex;
 	private float mCooldownTimer;
 
 	private InputGamepad gamepad;
+	private boolean mIsLockedToPlayer;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isLockedToPlayer() {
+		return mIsLockedToPlayer;
+	}
+
+	public void isLockedToPlayer(boolean newvalue) {
+		mIsLockedToPlayer = newvalue;
+	}
 
 	public InputGamepad gamepad() {
 		return gamepad;
@@ -50,8 +58,13 @@ public class InputTypeMapper implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	public InputTypeMapper(int typeIndex) {
+	public InputTypeMapper(InputType typeIndex) {
+		if (typeIndex == null) {
+			typeIndex = InputType.None;
+		}
+
 		inputTypeIndex = typeIndex;
+		assignedToPlayerIndex = NOT_ASSIGNED;
 	}
 
 	// --------------------------------------
@@ -69,16 +82,16 @@ public class InputTypeMapper implements IInputProcessor {
 
 	@Override
 	public boolean allowKeyboardInput() {
-		return inputTypeIndex == INPUT_TYPE_INDEX_KEYBOARD;
+		return inputTypeIndex == InputType.Keyboard;
 	}
 
 	@Override
 	public boolean allowGamepadInput() {
-		return inputTypeIndex == INPUT_TYPE_INDEX_GAMEPAD;
+		return inputTypeIndex == InputType.Gamepad;
 	}
 
 	@Override
 	public boolean allowMouseInput() {
-		return false;
+		return inputTypeIndex == InputType.Mouse;
 	}
 }

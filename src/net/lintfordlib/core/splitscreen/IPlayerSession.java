@@ -6,7 +6,7 @@ import net.lintfordlib.core.input.InputTypeMapper;
 
 public interface IPlayerSession {
 
-	void enablePlayer(boolean playerEnabled);
+	void isPlayerEnabled(boolean playerEnabled);
 
 	boolean isPlayerEnabled();
 
