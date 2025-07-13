@@ -326,7 +326,8 @@ public abstract class DualMenuScreen extends MenuScreen {
 			if (selectedEntry.onNavigationLeft(core))
 				return;
 
-			selectFirstSelectableEntryInColumn(false);
+			final var setFirstEntryFocus = false;
+			toggleColumns(false, setFirstEntryFocus);
 
 		}
 
@@ -362,8 +363,8 @@ public abstract class DualMenuScreen extends MenuScreen {
 			if (selectedEntry.onNavigationRight(core))
 				return;
 
-			// we weren't able to move right within a container entry - so try to switch to the right layout column
-			selectFirstSelectableEntryInColumn(true);
+			final var setFirstEntryFocus = false;
+			toggleColumns(true, setFirstEntryFocus);
 
 		} else {
 			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
@@ -387,7 +388,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 		updateAllEntriesToMatchSelected(mRightLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, mRightColumnSelected);
 	}
 
-	private boolean selectFirstSelectableEntryInColumn(boolean rightColumn) {
+	private boolean toggleColumns(boolean rightColumn, boolean setFirstEntityFocus) {
 		final var columnLayout = rightColumn ? mRightLayouts : mLayouts;
 		if (columnLayout == null || columnLayout.size() == 0)
 			return false;
@@ -404,13 +405,15 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 				if (rightColumn) {
 					mRightColumnSelectedLayoutIndex = i;
-					mRightColumnSelectedEntryIndex = j;
+					if (setFirstEntityFocus)
+						mRightColumnSelectedEntryIndex = j;
 
 					mRightColumnSelected = true;
 
 				} else {
 					mSelectedLayoutIndex = i;
-					mSelectedEntryIndex = j;
+					if (setFirstEntityFocus)
+						mSelectedEntryIndex = j;
 
 					mRightColumnSelected = false;
 				}

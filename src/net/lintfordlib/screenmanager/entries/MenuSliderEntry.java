@@ -2,7 +2,6 @@ package net.lintfordlib.screenmanager.entries;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
@@ -211,12 +210,7 @@ public class MenuSliderEntry extends MenuEntry {
 		final var lParentScreenAlpha = screen.screenColor.a;
 
 		if (mHasFocus && mEnabled) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.end();
+			renderHighlight(core, screen, lSpriteBatch);
 		}
 
 		if (mButtonsEnabled) {
@@ -318,7 +312,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public boolean onNavigationLeft(LintfordCore core) {
-		if (mValue - mStep <= mLowerBound) {
+		if (mValue - mStep < mLowerBound) {
 			mValue = mLowerBound;
 			return false; // let the nav left propergate (we didn
 		} else {
@@ -329,7 +323,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public boolean onNavigationRight(LintfordCore core) {
-		if (mValue + mStep >= mUpperBound) {
+		if (mValue + mStep > mUpperBound) {
 			mValue = mUpperBound;
 			return false; // let the nav right propergate (we didn
 		} else {

@@ -170,10 +170,10 @@ public class MenuImageEntry extends MenuEntry {
 	@Override
 	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
 		final var lParentScreen = mParentLayout.parentScreen;
-		final var lSpriteBatch = lParentScreen.spriteBatch();
+		final var spriteBatch = lParentScreen.spriteBatch();
 
-		lSpriteBatch.begin(core.HUD());
-		lSpriteBatch.setColor(entryColor);
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(entryColor);
 
 		final var lScreenOffset = screen.screenPositionOffset();
 
@@ -182,11 +182,11 @@ public class MenuImageEntry extends MenuEntry {
 			final int lTextureHeight = mMainTexture.getTextureHeight();
 
 			if (mHasFocus)
-				lSpriteBatch.setColorRGBA(1.f, 1.f, .1f, 1.f);
+				spriteBatch.setColorRGBA(1.f, 1.f, .1f, 1.f);
 			else
-				lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+				spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
 
-			lSpriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
+			spriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .01f);
 
 		}
 
@@ -199,22 +199,25 @@ public class MenuImageEntry extends MenuEntry {
 		}
 
 		else if (mMissingTextureSpritesheet != null) {
-			lSpriteBatch.draw(mMissingTextureSpritesheet, mMissingTextureSpriteFrameIndex, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
+			spriteBatch.draw(mMissingTextureSpritesheet, mMissingTextureSpriteFrameIndex, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
 		}
 
 		else if (mCoreSpritesheet != null) {
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth - .01f);
 		}
 
-		lSpriteBatch.end();
+		spriteBatch.end();
+
+		if (mHasFocus)
+			renderHighlight(core, screen, spriteBatch);
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, 1.f);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, 1.f);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, 1.f);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, 1.f);
 
-		drawDebugCollidableBounds(core, lSpriteBatch);
+		drawDebugCollidableBounds(core, spriteBatch);
 	}
 
 	// --------------------------------------

@@ -41,7 +41,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// Constants
 	// --------------------------------------
 
-	private static final float OPEN_HEIGHT = 100;
+	private static final float OPEN_HEIGHT = 170;
 	private static final float ITEM_HEIGHT = 25.f;
 
 	private static final String NO_ITEMS_FOUND_TEXT = "No items found";
@@ -291,6 +291,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			if (mOpen && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
 				mSelectedIndex = mHighlightedIndex;
 				mOpen = false;
+				mIsInputActive = false;
 				mParentScreen.onMenuEntryDeactivated(this);
 			}
 
@@ -333,6 +334,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				mParentScreen.onMenuEntryDeactivated(this);
 			}
 
+			// TODO: add tool tip triangle to all entries
 			if (mShowInfoIcon && core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_TRIANGLE, this)) {
 				mToolTipEnabled = true;
 				mToolTipTimer = 1000;
@@ -401,7 +403,13 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 		mW = (int) mW;
 
+		// Applys to the box
 		if (mHasFocus && mEnabled) {
+			renderHighlight(core, screen, spriteBatch);
+
+		}
+
+		if (mIsInputActive) {
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
 			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, screenOffset.x + centerX() - mW / 2, screenOffset.y + centerY() - mH / 2, 32, mH, mZ);
@@ -484,11 +492,11 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		if (mOpen) {
 			final float lSeparatorHalfWidth = textBoldFont.getStringWidth(mSeparator, uiTextScale) * 0.5f;
 
-			final var ww = mWindowRectangle.width() * .5f;
-			final var hh = mWindowRectangle.height();
-
-			final var xx = mWindowRectangle.x() + ww;
+			// Draw the background rectangle
+			final var xx = mX + mW / 2.f;
 			final var yy = mWindowRectangle.y();
+			final var ww = mWindowRectangle.width() / 2.f;
+			final var hh = mWindowRectangle.height();
 
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);

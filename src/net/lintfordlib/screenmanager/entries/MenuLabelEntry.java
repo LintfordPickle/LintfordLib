@@ -1,7 +1,5 @@
 package net.lintfordlib.screenmanager.entries;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
@@ -69,33 +67,26 @@ public class MenuLabelEntry extends MenuEntry {
 		if (!enabled())
 			return;
 
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-
 		final var lTextBoldFont = mParentScreen.fontBold();
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lUiTextScale = mParentScreen.uiTextScale();
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
 		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
-		final var lSpriteBatch = mParentScreen.spriteBatch();
+		final var spriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
 			final float lMidLength = mW - 64;
 
-			lSpriteBatch.setColor(entryColor);
+			spriteBatch.setColor(entryColor);
 
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, lScreenOffset.x + mX + 32, lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + mX + lMidLength + 32, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f);
-			lSpriteBatch.end();
-		} else if (mHasFocus && mEnabled) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.end();
-		}
+			spriteBatch.begin(core.HUD());
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, lScreenOffset.x + mX + 32, lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + mX + lMidLength + 32, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f);
+			spriteBatch.end();
+
+		} else if (mHasFocus && mEnabled)
+			renderHighlight(core, screen, spriteBatch);
 
 		float lX;
 		switch (mHorizontalAlignment) {
@@ -116,11 +107,11 @@ public class MenuLabelEntry extends MenuEntry {
 		lTextBoldFont.end();
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, mParentScreen.screenColor.a);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, mParentScreen.screenColor.a);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
 
-		drawDebugCollidableBounds(core, lSpriteBatch);
+		drawDebugCollidableBounds(core, spriteBatch);
 	}
 }

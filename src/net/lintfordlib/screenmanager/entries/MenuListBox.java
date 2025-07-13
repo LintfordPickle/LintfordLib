@@ -3,15 +3,18 @@ package net.lintfordlib.screenmanager.entries;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
+import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
+import net.lintfordlib.renderers.windows.components.StencilHelper;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.screenmanager.IListBoxItemDoubleClick;
 import net.lintfordlib.screenmanager.IListBoxItemSelected;
@@ -45,6 +48,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	protected IListBoxItemSelected mSelecterListener;
 	protected IListBoxItemDoubleClick mItemDoubleClickListener;
 	protected int mSelectedItemIndex = -1;
+	protected boolean mIsInputActive;
 	protected boolean mClickActive;
 	protected int mItemHeight;
 
@@ -153,8 +157,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 		mMinWidth = LISTBOX_MIN_WIDTH;
 		mMaxWidth = LISTBOX_MAX_WIDTH;
-		mMaxHeight = 400;
-		mMaxHeight = 1000;
+		mMinHeight = 200;
+		mMaxHeight = 600;
 
 		mVerticalFillType = FILLTYPE.FILL_CONTAINER;
 	}
@@ -192,7 +196,96 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
+	public boolean onHandleKeyboardInput(LintfordCore core) {
+		if (!mIsActive || !mIsInputActive)
+			return false;
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
+			mSelectedItemIndex--;
+
+			if (mSelectedItemIndex < 0)
+				mSelectedItemIndex = 0;
+
+			// scrollContentItemIntoView(mHighlightedIndex);
+			return true;
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
+			mSelectedItemIndex++;
+
+			if (mSelectedItemIndex >= mItems.size())
+				mSelectedItemIndex = mItems.size() - 1;
+
+			// scrollContentItemIntoView(mHighlightedIndex);
+			return true;
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
+
+			// The capture is managed in the onClick() method
+			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
+
+			mParentScreen.onMenuEntryDeactivated(this);
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean onHandleGamepadInput(LintfordCore core) {
+		if (!mIsActive || !mIsInputActive)
+			return false;
+
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+			mSelectedItemIndex--;
+
+			if (mSelectedItemIndex < 0)
+				mSelectedItemIndex = 0;
+
+			// scrollContentItemIntoView(mHighlightedIndex);
+			return true;
+		}
+
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+			mSelectedItemIndex++;
+
+			if (mSelectedItemIndex >= mItems.size())
+				mSelectedItemIndex = mItems.size() - 1;
+
+			// scrollContentItemIntoView(mHighlightedIndex);
+			return true;
+		}
+
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CROSS, this)) {
+
+			// The capture is managed in the onClick() method
+			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
+
+			mParentScreen.onMenuEntryDeactivated(this);
+		}
+
+		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CIRCLE, this)) {
+
+			// The capture is managed in the onClick() method
+			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
+
+			mParentScreen.onMenuEntryDeactivated(this);
+			mIsInputActive = false;
+		}
+
+		return false;
+	}
+
+	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
+		if (!mIsActive || !mAffectParentStructure && !mEnableUpdateDraw)
+			return;
+
+		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
+
+		if (mInputTimer >= 0)
+			mInputTimer -= lDeltaTime;
+
 		final int lCount = mItems.size();
 		float mItemYPos = 0;
 
@@ -217,6 +310,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			mItemYPos += lItem.height() + LISTBOX_ITEM_VPADDING;
 			lTotalContentHeight += lItem.height() + LISTBOX_ITEM_VPADDING;
 		}
+		mDesiredHeight = lTotalContentHeight;
 
 		mContentArea.set(this);
 
@@ -233,12 +327,22 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		final var lFontUnit = mParentScreen.font();
 		final var lScreenOffset = screen.screenPositionOffset();
 
+		if (mIsInputActive) {
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			lSpriteBatch.end();
+		}
+
 		lSpriteBatch.begin(core.HUD());
 		final var lTileSize = 32;
 		if (mHasFocus)
 			lSpriteBatch.setColorRGBA(.15f, .45f, .45f, 0.74f);
 		else
 			lSpriteBatch.setColorRGBA(.15f, .15f, .65f, 0.74f);
+
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY, mW - lTileSize * 2, lTileSize, parentZDepth);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth);
@@ -252,30 +356,22 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY + mH - lTileSize, lTileSize, lTileSize, parentZDepth);
 		lSpriteBatch.end();
 
-		GL11.glEnable(GL11.GL_STENCIL_TEST);
+		if (mHasFocus || mIsInputActive) {
+			renderHighlight(core, screen, lSpriteBatch);
+		}
 
-		GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
-		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
-
-		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
-
-		// Fill in the renderable parts of the list box (although alpha is 0, this is needed!)
-		lSpriteBatch.begin(core.HUD());
-		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_BLACK, mX, mY + 2, mW, mH - 4, parentZDepth);
-		lSpriteBatch.end();
-
-		GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+		StencilHelper.preDraw(core, lSpriteBatch, mX, mY + 2, mW, mH - 4, -0, 2);
 
 		lFontUnit.begin(core.HUD());
 		lSpriteBatch.begin(core.HUD());
-		for (int i = 0; i < mItems.size(); i++)
+		for (int i = 0; i < mItems.size(); i++) {
 			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth, mSelectedItemIndex == i);
+		}
 
 		lSpriteBatch.end();
 		lFontUnit.end();
 
-		GL11.glDisable(GL11.GL_STENCIL_TEST);
+		StencilHelper.postDraw(core);
 
 		drawDebugCollidableBounds(core, lSpriteBatch);
 		if (mScrollBar.scrollBarEnabled()) {
@@ -301,10 +397,34 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	// Methods
 	// --------------------------------------
 
+	@Override
+	public void onClick(InputManager inputManager) {
+		super.onClick(inputManager);
+
+		mIsInputActive = !mIsInputActive;
+		if (mIsInputActive) {
+			mParentScreen.onMenuEntryActivated(this);
+			resetCoolDownTimer();
+		} else {
+			mParentScreen.onMenuEntryDeactivated(this);
+		}
+
+	}
+
+	@Override
+	public void onDeactivation(InputManager inputManager) {
+		super.onDeactivation(inputManager);
+
+		mIsInputActive = false;
+	}
+
 	public void addEntry(MenuListBoxItem item) {
 		if (!mItems.contains(item)) {
 			mItems.add(item);
 		}
+
+		if (mSelectedItemIndex < 0)
+			mSelectedItemIndex = 0; // Select the first item by default
 	}
 
 	public void removeEntry(MenuListBoxItem item) {

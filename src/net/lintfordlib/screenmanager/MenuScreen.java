@@ -218,9 +218,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.handleInput(core);
 
-		if (mESCBackEnabled && (mScreenState == ScreenState.ACTIVE) && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this)) {
-			onEscPressed();
-			return;
+		if (mESCBackEnabled) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
+				if (mScreenState == ScreenState.ACTIVE) {
+					exitScreen();
+					return;
+				}
+			}
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {

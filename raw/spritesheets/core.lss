@@ -1,8 +1,8 @@
 {
-  "outputDataFilename": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\res\\res\\spritesheets\\core\\spritesheetCore.json",
-  "outputNameDataFilename": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\src\\net\\lintfordlib\\core\\graphics\\textures\\CoreTextureNames.java",
-  "outputImageFilename": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\res\\res\\textures\\core\\textureCore.png",
-  "workingDirectory": "D:\\dev\\java\\_razorrunner\\projects\\LintfordLib\\raw\\spritesheets\\core",
+  "outputDataFilename": "..\\..\\res\\res\\spritesheets\\core\\spritesheetCore.json",
+  "outputNameDataFilename": "..\\..\\src\\net\\lintfordlib\\core\\graphics\\textures\\CoreTextureNames.java",
+  "outputImageFilename": "..\\..\\res\\res\\textures\\core\\textureCore.png",
+  "workingDirectory": "core",
   "spriteSheetName": "SPRITESHEET_CORE",
   "textureName": "TEXTURE_CORE",
   "dataPackageName": "net.lintfordlib.core.graphics.textures",

@@ -2018,7 +2018,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_GREEN",
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_BL",
       "x": 84,
       "y": 0,
       "w": 16,
@@ -2031,7 +2031,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_OUTLINE_SMALL",
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_BR",
       "x": 101,
       "y": 0,
       "w": 16,
@@ -2044,7 +2044,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_RED",
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_TL",
       "x": 118,
       "y": 0,
       "w": 16,
@@ -2057,7 +2057,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_SCROLLBAR_DOWN",
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_TR",
       "x": 135,
       "y": 0,
       "w": 16,
@@ -2070,7 +2070,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_SCROLLBAR_LEFT",
+      "name": "TEXTURE_GREEN",
       "x": 152,
       "y": 0,
       "w": 16,
@@ -2083,7 +2083,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_SCROLLBAR_RIGHT",
+      "name": "TEXTURE_OUTLINE_SMALL",
       "x": 169,
       "y": 0,
       "w": 16,
@@ -2096,7 +2096,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_SCROLLBAR_UP",
+      "name": "TEXTURE_RED",
       "x": 186,
       "y": 0,
       "w": 16,
@@ -2109,7 +2109,7 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_SELECTED_SMALL",
+      "name": "TEXTURE_SCROLLBAR_DOWN",
       "x": 203,
       "y": 0,
       "w": 16,
@@ -2122,8 +2122,60 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_WHITE",
+      "name": "TEXTURE_SCROLLBAR_LEFT",
       "x": 220,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_SCROLLBAR_RIGHT",
+      "x": 237,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_SCROLLBAR_UP",
+      "x": 254,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_SELECTED_SMALL",
+      "x": 271,
+      "y": 0,
+      "w": 16,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_WHITE",
+      "x": 288,
       "y": 0,
       "w": 16,
       "h": 16,

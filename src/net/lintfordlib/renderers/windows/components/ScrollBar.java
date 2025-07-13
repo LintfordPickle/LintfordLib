@@ -242,11 +242,10 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 		if (!mIsActive)
 			return;
 
-		if (mScrollbarAutoHide) {
+		if (mScrollbarAutoHide)
 			mScrollbarEnabled = mScrollBarArea.fullContentArea().height() - mScrollBarArea.contentDisplayArea().height() > 0;
-		} else {
+		else
 			mScrollbarEnabled = true;
-		}
 
 		if (mScrollbarEnabled) {
 			updateMovement(core);

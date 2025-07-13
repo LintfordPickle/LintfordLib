@@ -92,6 +92,9 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 			if (lEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				lHeightTaken += lEntry.marginTop() + lEntry.height() + lEntry.marginBottom();
+			} else if (lEntry.verticalFillType() == FILLTYPE.TAKE_DESIRED_SIZE) {
+				lCountOfTakers++;
+				lHeightTaken += lEntry.marginTop() + lEntry.desiredHeight() + lEntry.marginBottom();
 			}
 		}
 
@@ -134,6 +137,8 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 
 			// Assign the entry height here
 			if (lMenuEntry.verticalFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
+				lMenuEntry.height(MathHelper.clamp(lMenuEntry.desiredHeight(), lMenuEntry.minHeight(), lMenuEntry.maxHeight()));
+			} else if (lMenuEntry.verticalFillType() == FILLTYPE.TAKE_DESIRED_SIZE) {
 				lMenuEntry.height(MathHelper.clamp(lMenuEntry.desiredHeight(), lMenuEntry.minHeight(), lMenuEntry.maxHeight()));
 			} else {
 				lMenuEntry.height(lSizeOfEachFillElement - lMenuEntry.marginBottom() - lMenuEntry.marginTop());

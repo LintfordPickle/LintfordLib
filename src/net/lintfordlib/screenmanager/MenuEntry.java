@@ -616,13 +616,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			spriteBatch.end();
 		}
 
-		else if (mHasFocus && mEnabled) {
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			spriteBatch.end();
+		if (mHasFocus && mEnabled) {
+			renderHighlight(core, screen, spriteBatch);
 		}
 
 		// Render the MenuEntry label
@@ -638,7 +633,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 				if (mHasFocus && mEnabled)
 					lMenuFont.setTextColor(ColorConstants.MenuEntrySelectedColor);
-				else 
+				else
 					lMenuFont.setTextColor(lTextColor);
 				lMenuFont.setShadowColorRGBA(0.f, 0.f, 0.f, lParentScreenAlpha);
 				lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale);
@@ -659,6 +654,28 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, mZ);
 			spriteBatch.end();
 		}
+	}
+
+	protected void renderHighlight(LintfordCore core, Screen screen, SpriteBatch spriteBatch) {
+		final var lScreenOffset = screen.screenPositionOffset();
+
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColorWhite();
+
+		final var spriteFrameTL = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_TL);
+		final var spriteFrameTR = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_TR);
+		final var spriteFrameBL = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_BL);
+		final var spriteFrameBR = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_BR);
+
+		final var highlightOverlapPx = 2;
+		final var dimension = 32.f;
+		spriteBatch.draw(mCoreSpritesheet, spriteFrameTL, lScreenOffset.x + centerX() - mW / 2 - highlightOverlapPx, lScreenOffset.y + centerY() - mH / 2 - highlightOverlapPx, dimension, dimension, mZ);
+		spriteBatch.draw(mCoreSpritesheet, spriteFrameTR, lScreenOffset.x + centerX() + mW / 2 - dimension + highlightOverlapPx, lScreenOffset.y + centerY() - mH / 2 - highlightOverlapPx, dimension, dimension, mZ);
+
+		spriteBatch.draw(mCoreSpritesheet, spriteFrameBL, lScreenOffset.x + centerX() - mW / 2 - highlightOverlapPx, lScreenOffset.y + centerY() + mH / 2 - dimension + highlightOverlapPx, dimension, dimension, mZ);
+		spriteBatch.draw(mCoreSpritesheet, spriteFrameBR, lScreenOffset.x + centerX() + mW / 2 - dimension + highlightOverlapPx, lScreenOffset.y + centerY() + mH / 2 - dimension + highlightOverlapPx, dimension, dimension, mZ);
+
+		spriteBatch.end();
 	}
 
 	public void postStencilDraw(LintfordCore core, Screen screen, float parentZDepth) {

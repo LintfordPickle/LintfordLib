@@ -1,7 +1,6 @@
 package net.lintfordlib.screenmanager.entries;
 
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -161,7 +160,7 @@ public class MenuToggleEntry extends MenuEntry {
 		final var lTextHeight = lTextBoldFont.fontHeight() * lUiTextScale;
 		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(SEPARATOR_STRING, lUiTextScale) * 0.5f;
 
-		final var lSpriteBatch = mParentScreen.spriteBatch();
+		final var spriteBatch = mParentScreen.spriteBatch();
 
 		final var lTileSize = 32.f;
 
@@ -174,23 +173,18 @@ public class MenuToggleEntry extends MenuEntry {
 		mZ = parentZDepth;
 
 		if (mHasFocus) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.end();
+			renderHighlight(core, screen, spriteBatch);
 		}
 
-		lSpriteBatch.begin(core.HUD());
-		lSpriteBatch.setColor(entryColor);
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(entryColor);
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY, lTileSize, lTileSize, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY, lTileSize, lTileSize, mZ);
 		else
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ);
 
-		lSpriteBatch.end();
+		spriteBatch.end();
 
 		lTextBoldFont.begin(core.HUD());
 		lTextBoldFont.setTextColor(textColor);
@@ -207,12 +201,12 @@ public class MenuToggleEntry extends MenuEntry {
 		lTextBoldFont.end();
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
 
-		drawDebugCollidableBounds(core, lSpriteBatch);
+		drawDebugCollidableBounds(core, spriteBatch);
 	}
 
 	// --------------------------------------

@@ -157,17 +157,21 @@ public class CoreTextureNames {
 	public static final int TEXTURE_BLACK = 152;
 	public static final int TEXTURE_BLUE = 153;
 	public static final int TEXTURE_DESELECTED_SMALL = 154;
-	public static final int TEXTURE_GREEN = 155;
-	public static final int TEXTURE_OUTLINE_SMALL = 156;
-	public static final int TEXTURE_RED = 157;
-	public static final int TEXTURE_SCROLLBAR_DOWN = 158;
-	public static final int TEXTURE_SCROLLBAR_LEFT = 159;
-	public static final int TEXTURE_SCROLLBAR_RIGHT = 160;
-	public static final int TEXTURE_SCROLLBAR_UP = 161;
-	public static final int TEXTURE_SELECTED_SMALL = 162;
-	public static final int TEXTURE_WHITE = 163;
-	public static final int TEXTURE_KEY_END_LEFT = 164;
-	public static final int TEXTURE_KEY_END_RIGHT = 165;
-	public static final int TEXTURE_KEY_MID = 166;
+	public static final int TEXTURE_ENTRY_HIGHLIGHT_CORNER_BL = 155;
+	public static final int TEXTURE_ENTRY_HIGHLIGHT_CORNER_BR = 156;
+	public static final int TEXTURE_ENTRY_HIGHLIGHT_CORNER_TL = 157;
+	public static final int TEXTURE_ENTRY_HIGHLIGHT_CORNER_TR = 158;
+	public static final int TEXTURE_GREEN = 159;
+	public static final int TEXTURE_OUTLINE_SMALL = 160;
+	public static final int TEXTURE_RED = 161;
+	public static final int TEXTURE_SCROLLBAR_DOWN = 162;
+	public static final int TEXTURE_SCROLLBAR_LEFT = 163;
+	public static final int TEXTURE_SCROLLBAR_RIGHT = 164;
+	public static final int TEXTURE_SCROLLBAR_UP = 165;
+	public static final int TEXTURE_SELECTED_SMALL = 166;
+	public static final int TEXTURE_WHITE = 167;
+	public static final int TEXTURE_KEY_END_LEFT = 168;
+	public static final int TEXTURE_KEY_END_RIGHT = 169;
+	public static final int TEXTURE_KEY_MID = 170;
 
 }
