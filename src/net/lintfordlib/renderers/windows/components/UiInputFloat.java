@@ -440,14 +440,14 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		lSpriteBatch.end();
 
 		final int lCancelRectSize = 16;
-		ContentRectangle.preDraw(core, lSpriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
+		StencilHelper.preDraw(core, lSpriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(lTextColor);
 		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
 		textFont.end();
 
-		ContentRectangle.postDraw(core);
+		StencilHelper.postDraw(core);
 
 	}
 

@@ -72,7 +72,9 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
 		if (mContentArea.height() < lLayoutHeight) {
-			mScrollBar.AbsCurrentYPos(0);
+			if (mScrollBar.scrollBarEnabled())
+				mScrollBar.AbsCurrentYPos(0);
+
 			lYPos += 5f;
 		}
 
@@ -142,10 +144,6 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 
 			lYPos += lMenuEntry.height();
 			lYPos += lMenuEntry.marginBottom();
-		}
-
-		if (!mScrollBar.scrollBarEnabled()) {
-			mScrollBar.resetBarTop();
 		}
 	}
 

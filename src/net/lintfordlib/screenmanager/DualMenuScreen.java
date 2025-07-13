@@ -223,6 +223,26 @@ public abstract class DualMenuScreen extends MenuScreen {
 	// --------------------------------------
 
 	@Override
+	protected void scrollItemIntoLayoutView() {
+
+		if (!mRightColumnSelected) {
+
+			// left column scroll
+
+			final var selectedLayout = mLayouts.get(mSelectedLayoutIndex);
+			selectedLayout.scrollContentItemIntoView(mSelectedEntryIndex);
+
+		} else {
+
+			// right column scroll
+
+			final var selectedLayout = mRightLayouts.get(mRightColumnSelectedLayoutIndex);
+			selectedLayout.scrollContentItemIntoView(mRightColumnSelectedEntryIndex);
+		}
+
+	}
+
+	@Override
 	protected void onNavigationUp(LintfordCore core, InputType inputType) {
 		if (isEntryActive())
 			return;
@@ -235,7 +255,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
+		// in the dual menu screen, up/down should only toggle layers I guess?
 		getPreviousEnabledEntry();
+
+		scrollItemIntoLayoutView();
 
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, !mRightColumnSelected);
 		updateAllEntriesToMatchSelected(mRightLayouts, mRightColumnSelectedLayoutIndex, mRightColumnSelectedEntryIndex, mRightColumnSelected);
@@ -258,7 +281,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
+		// in the dual menu screen, up/down should only toggle layers I guess?
 		getNextEnabledEntry();
+
+		scrollItemIntoLayoutView();
 
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, !mRightColumnSelected);
 		updateAllEntriesToMatchSelected(mRightLayouts, mRightColumnSelectedLayoutIndex, mRightColumnSelectedEntryIndex, mRightColumnSelected);
@@ -297,9 +323,13 @@ public abstract class DualMenuScreen extends MenuScreen {
 			if (selectedEntry.onNavigationLeft(core))
 				return;
 
+			selectFirstSelectableEntryInColumn(false);
+
 		}
 
-		mRightColumnSelected = !mRightColumnSelected;
+		scrollItemIntoLayoutView();
+
+		// mRightColumnSelected = !mRightColumnSelected;
 		final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
 		final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 
@@ -322,12 +352,14 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 		// first give the entries a chance to react to the nav right
 		if (!mRightColumnSelected) {
-
 			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
 			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 			final var selectedEntry = mLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
 			if (selectedEntry.onNavigationRight(core))
 				return;
+
+			// we weren't able to move right within a container entry - so try to switch to the right layout column
+			selectFirstSelectableEntryInColumn(true);
 
 		} else {
 			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
@@ -336,14 +368,53 @@ public abstract class DualMenuScreen extends MenuScreen {
 			if (selectedEntry.onNavigationRight(core))
 				return;
 
+			// Cannot go right from the right hand column
+
 		}
 
-		mRightColumnSelected = !mRightColumnSelected;
+		scrollItemIntoLayoutView();
+
+		// mRightColumnSelected = !mRightColumnSelected;
 		final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
 		final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 
 		updateAllEntriesToMatchSelected(mLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, !mRightColumnSelected);
 		updateAllEntriesToMatchSelected(mRightLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, mRightColumnSelected);
+	}
+
+	private boolean selectFirstSelectableEntryInColumn(boolean rightColumn) {
+		final var columnLayout = rightColumn ? mRightLayouts : mLayouts;
+		if (columnLayout == null || columnLayout.size() == 0)
+			return false;
+
+		final var numLayouts = columnLayout.size();
+		for (int i = 0; i < numLayouts; i++) {
+			final var layout = columnLayout.get(i);
+			final var numEntries = layout.entries().size();
+			for (int j = 0; j < numEntries; j++) {
+				final var entry = layout.entries().get(j);
+
+				if (entry == null || !entry.enabled() || entry == MenuEntry.menuSeparator())
+					continue;
+
+				if (rightColumn) {
+					mRightColumnSelectedLayoutIndex = i;
+					mRightColumnSelectedEntryIndex = j;
+
+					mRightColumnSelected = true;
+
+				} else {
+					mSelectedLayoutIndex = i;
+					mSelectedEntryIndex = j;
+
+					mRightColumnSelected = false;
+				}
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// --------------------------------------
@@ -364,6 +435,9 @@ public abstract class DualMenuScreen extends MenuScreen {
 			final var lLayout = selectedLayouts.get(mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex);
 
 			if (checkEntryIndex >= lLayout.entries().size()) {
+
+				// we have extended passed number of entries in this layout
+
 				getNextEnabledLayout();
 				checkEntryIndex = 0;
 
@@ -648,7 +722,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 	public void setFocusOnEntry(MenuEntry entry) {
 		if (mActiveEntry != null)
-			mActiveEntry.onDeselection(screenManager.core().input());
+			mActiveEntry.onDeactivation(screenManager.core().input());
 
 		screenManager.contextHintManager().contextHintProvider(null);
 		mActiveEntry = null;

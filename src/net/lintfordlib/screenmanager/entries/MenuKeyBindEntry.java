@@ -228,7 +228,7 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 
 		} else if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2 + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + mW / 2 - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f);

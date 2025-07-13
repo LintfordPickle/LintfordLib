@@ -79,7 +79,7 @@ public class HorizontalLayout extends BaseLayout implements IInputProcessor {
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
 		if (mContentArea.height() < lLayoutHeight) {
-			mScrollBar.AbsCurrentYPos(0);
+			// mScrollBar.AbsCurrentYPos(0);
 			lYPos += 5f;
 		}
 
@@ -151,7 +151,7 @@ public class HorizontalLayout extends BaseLayout implements IInputProcessor {
 			lYPos += lMenuEntry.marginBottom();
 		}
 
-		if (mScrollBar.scrollBarEnabled() == false) {
+		if (mScrollBar.scrollBarEnabled()) {
 			mScrollBar.resetBarTop();
 		}
 	}

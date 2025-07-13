@@ -18,7 +18,7 @@ import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.keyboard.IBufferedTextInputCallback;
-import net.lintfordlib.renderers.windows.components.ContentRectangle;
+import net.lintfordlib.renderers.windows.components.StencilHelper;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -327,14 +327,14 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 
 		lTextBoldFont.end();
 
-		ContentRectangle.preDraw(core, lSpriteBatch, mInputAreaRectangle.x() + 2.f, mY, mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
+		StencilHelper.preDraw(core, lSpriteBatch, mInputAreaRectangle.x() + 2.f, mY, mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
 
 		lTextBoldFont.begin(hud);
 		lTextBoldFont.setTextColor(textColor);
 		lTextBoldFont.drawText(mInputField.toString(), lTextPosX + 8, mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, 1.f);
 		lTextBoldFont.end();
 
-		ContentRectangle.postDraw(core);
+		StencilHelper.postDraw(core);
 
 		if (mShowCaret && mHasFocus) {
 			final var lCaretPositionX = lScreenOffset.x + lTextPosX + lCarotPositionX + 7;
@@ -396,7 +396,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 	}
 
 	@Override
-	public void onDeselection(InputManager inputManager) {
+	public void onDeactivation(InputManager inputManager) {
 		if (mIsActive)
 			inputManager.keyboard().stopBufferedTextCapture();
 

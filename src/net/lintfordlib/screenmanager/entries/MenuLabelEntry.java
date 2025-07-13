@@ -88,6 +88,13 @@ public class MenuLabelEntry extends MenuEntry {
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_MID, lScreenOffset.x + mX + 32, lScreenOffset.y + mY, lMidLength, 32, parentZDepth + .15f);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_LABEL_RIGHT, lScreenOffset.x + mX + lMidLength + 32, lScreenOffset.y + mY, 32, 32, parentZDepth + .15f);
 			lSpriteBatch.end();
+		} else if (mHasFocus && mEnabled) {
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			lSpriteBatch.end();
 		}
 
 		float lX;

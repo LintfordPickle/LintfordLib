@@ -114,12 +114,17 @@ public class MenuSliderEntry extends MenuEntry {
 	// --------------------------------------
 
 	public MenuSliderEntry(ScreenManager screenManager, MenuScreen parentScreen) {
-		super(screenManager, parentScreen, "");
+		this(screenManager, parentScreen, "Label");
+	}
 
-		mLabel = "Label:";
+	public MenuSliderEntry(ScreenManager screenManager, MenuScreen parentScreen, String label) {
+		super(screenManager, parentScreen, "");
+		mLabel = label;
 
 		mDownButton = new Rectangle(0, 0, 32, 32);
 		mUpButton = new Rectangle(0, 0, 32, 32);
+
+		mStep = 1;
 	}
 
 	// --------------------------------------
@@ -174,8 +179,7 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public boolean onHandleKeyboardInput(LintfordCore core) {
-		mStep = 1;
-		if (mIsActive) {
+		if (mHasFocus) {
 			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT)) {
 				mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_TICK);
 				setValue(mValue - mStep);
@@ -234,16 +238,9 @@ public class MenuSliderEntry extends MenuEntry {
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lParentScreenAlpha = screen.screenColor.a;
 
-		if (mIsActive) {
+		if (mHasFocus && mEnabled) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.end();
-		} else if (mHasFocus && mEnabled) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
@@ -319,6 +316,12 @@ public class MenuSliderEntry extends MenuEntry {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	@Override
+	public void onDeactivation(InputManager inputManager) {
+		super.onDeactivation(inputManager);
+
+	}
 
 	@Override
 	public void onClick(InputManager inputManager) {

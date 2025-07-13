@@ -46,10 +46,15 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	@Override
 	public void hasFocus(boolean pNewValue) {
-		if (!pNewValue) {
-			int lCount = entries().size();
-			for (int i = 0; i < lCount; i++) {
-				// entries().get(i).hasFocus(false);
+		if (!mHasFocus && pNewValue) {
+			// try to set the index to the first available selectable child entry
+			final var numEntries = entries().size();
+			for (int i = 0; i < numEntries; i++) {
+				final var entry = entries().get(i);
+				if (entry != null && entry.enabled() && entry != MenuEntry.menuSeparator()) {
+					mSelectedEntryUid = i;
+					break;
+				}
 			}
 
 		}
@@ -249,6 +254,36 @@ public class HorizontalEntryGroup extends MenuEntry {
 		}
 
 		return false;
+
+	}
+
+	@Override
+	public boolean leftMostChildSelected() {
+		var isMultipleChildren = getChildCount(true) > 1;
+		if (!isMultipleChildren)
+			return true;
+		return mSelectedEntryUid > 0;
+	}
+
+	@Override
+	public boolean rightMostChildSelected() {
+		var isMultipleChildren = getChildCount(true) > 1;
+		if (!isMultipleChildren)
+			return true;
+		return mSelectedEntryUid < mChildEntries.size();
+	}
+
+	public int getChildCount(boolean filterOutDisabled) {
+		final var numEntries = mChildEntries.size();
+		int result = 0;
+		for (int i = 0; i < numEntries; i++) {
+			final var entry = mChildEntries.get(i);
+			if (entry == null || !entry.enabled() || entry == MenuEntry.menuSeparator())
+				continue;
+
+			result++;
+		}
+		return result;
 
 	}
 

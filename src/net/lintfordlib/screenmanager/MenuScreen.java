@@ -156,6 +156,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mClickAction = new ClickAction();
 		mESCBackEnabled = true;
 
+		mSelectedLayoutIndex = 0;
+		mSelectedEntryIndex = 0;
+
 		screenManager.contextHintManager().contextHintProvider(null);
 	}
 
@@ -254,13 +257,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			screenManager.contextHintManager().setGamePadHints();
 			onNavigationRight(core, InputType.Gamepad);
 		}
-		
+
 		final var lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(core);
 		}
-		
+
 		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
 			onNavigationBack(core, InputType.Gamepad);
 		}
@@ -606,7 +609,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	public void setFocusOnEntry(MenuEntry entry) {
 		screenManager.contextHintManager().contextHintProvider(null);
-		mActiveEntry = null;
+
+		if (mActiveEntry != null) {
+			mActiveEntry.onDeactivation(screenManager.core().input());
+			mActiveEntry = null;
+		}
 
 		final int lNumLayouts = mLayouts.size();
 		for (int i = 0; i < lNumLayouts; i++) {
@@ -662,10 +669,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				final var lIsEntrySelected = lIsLayoutSelected && j == selectedEntryIndex;
 
 				if (lIsEntrySelected) {
-					lEntry.mHasFocus = true;
+					lEntry.hasFocus(true);
 					screenManager.contextHintManager().contextHintProvider(lEntry);
 				} else {
-					lEntry.mHasFocus = false;
+					lEntry.hasFocus(false);
 				}
 			}
 		}
@@ -706,6 +713,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	}
 
+	protected void scrollItemIntoLayoutView() {
+		final var selectedLayout = mLayouts.get(mSelectedLayoutIndex);
+		selectedLayout.scrollContentItemIntoView(mSelectedEntryIndex);
+	}
+
 	protected void onNavigationUp(LintfordCore core, InputType inputType) {
 		System.out.println("nav up");
 
@@ -720,6 +732,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 		getPreviousEnabledEntry();
+
+		scrollItemIntoLayoutView();
 
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
@@ -743,6 +757,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 		getNextEnabledEntry();
 
+		scrollItemIntoLayoutView();
+
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
 		screenManager.toolTip().toolTipProvider(null);
@@ -758,6 +774,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		final var selectedEntry = mLayouts.get(mSelectedLayoutIndex).entries().get(mSelectedEntryIndex);
 		selectedEntry.onNavigationLeft(core);
 
+		scrollItemIntoLayoutView();
+
 	}
 
 	protected void onNavigationRight(LintfordCore core, InputType inputType) {
@@ -767,6 +785,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		final var selectedEntry = mLayouts.get(mSelectedLayoutIndex).entries().get(mSelectedEntryIndex);
 		selectedEntry.onNavigationRight(core);
+
+		scrollItemIntoLayoutView();
 
 	}
 

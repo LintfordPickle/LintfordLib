@@ -259,23 +259,23 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 
 	private void updateMovement(LintfordCore core) {
 		final var lContent = mScrollBarArea.fullContentArea();
-		if (mScrollbarEnabled) {
-			final float lDeltaTime = (float) core.appTime().elapsedTimeMilli() / 1000f;
-			float lScrollSpeedFactor = mScrollPosition;
+		final float lDeltaTime = (float) core.appTime().elapsedTimeMilli() / 1000f;
+		float lScrollSpeedFactor = mScrollPosition;
 
-			mScrollVelocity += mScrollAcceleration;
-			lScrollSpeedFactor += mScrollVelocity * lDeltaTime;
-			mScrollVelocity *= 0.85f;
-			mScrollAcceleration = 0.0f;
-			mScrollPosition = lScrollSpeedFactor;
+		mScrollVelocity += mScrollAcceleration;
+		lScrollSpeedFactor += mScrollVelocity * lDeltaTime;
+		mScrollVelocity *= 0.85f;
+		mScrollAcceleration = 0.0f;
+		mScrollPosition = lScrollSpeedFactor;
 
-			// Constrain
-			if (mScrollPosition > 0)
-				mScrollPosition = 0;
-			if (mScrollPosition < -(lContent.height() - this.mH + mHeaderOffset + mFooterOffset)) {
-				mScrollPosition = -(lContent.height() - this.mH + mHeaderOffset + mFooterOffset);
-			}
-		}
+		// Constrain the position to within the valid bounds
+
+		if (mScrollPosition > 0)
+			mScrollPosition = 0;
+
+		if (mScrollPosition < -(lContent.height() - this.mH + mHeaderOffset + mFooterOffset))
+			mScrollPosition = -(lContent.height() - this.mH + mHeaderOffset + mFooterOffset);
+
 	}
 
 	private void updateBar(LintfordCore core) {
@@ -402,6 +402,7 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 
 	public void AbsCurrentYPos(float value) {
 		mScrollPosition = value;
+		System.out.println(mScrollPosition);
 	}
 
 }

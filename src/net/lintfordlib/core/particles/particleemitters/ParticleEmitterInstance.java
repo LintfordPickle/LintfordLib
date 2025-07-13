@@ -261,7 +261,8 @@ public class ParticleEmitterInstance extends GridEntity {
 				final var lObjForceX = RandomNumbers.random(lObjForceMin, lObjForceMax);
 				final var lObjForceY = RandomNumbers.random(lObjForceMin, lObjForceMax);
 
-				// global force is the force passed down from a parent emitter to a nested child. It can be 0 if not set, so as a coefficient, wie should take 1.
+				// global force is the force passed down from a parent emitter to a nested child. 
+				// It can be 0 if not set, so as a coefficient, wie should take 1.
 				final var fx = globalForceX == 0 ? 1.f : globalForceX;
 				final var fy = globalForceY == 0 ? 1.f : globalForceY;
 
@@ -335,7 +336,8 @@ public class ParticleEmitterInstance extends GridEntity {
 					final var lVelX = (float) Math.cos(lHeadingRads) * lObjForceX * fx;
 					final var lVelY = (float) Math.sin(lHeadingRads) * lObjForceY * fy;
 
-					particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, lVelX, lVelY);
+					if (particleSystemInstance != null)
+						particleSystemInstance.spawnParticle(aabb.x(), aabb.y(), zDepth, lVelX, lVelY);
 				} else {
 					mEmitterDefinition.ParticleEmitterShape.spawn(particleSystemInstance, aabb.x(), aabb.y(), zDepth, lHeadingRads, lObjForceX * fx, lObjForceY * fy);
 				}
@@ -347,7 +349,10 @@ public class ParticleEmitterInstance extends GridEntity {
 	}
 
 	public void triggerSpawn(LintfordCore core) {
-		updateTriggerEmitter(core);
+		if (mTriggerCooldownTimer > 0)
+			return; // on cooldown
+
+		mTriggered = true;
 	}
 
 	// --------------------------------------

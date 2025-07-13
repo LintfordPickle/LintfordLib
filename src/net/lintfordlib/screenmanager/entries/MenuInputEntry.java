@@ -10,7 +10,7 @@ import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.keyboard.IBufferedTextInputCallback;
-import net.lintfordlib.renderers.windows.components.ContentRectangle;
+import net.lintfordlib.renderers.windows.components.StencilHelper;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -198,7 +198,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		if (mHasFocus || mIsInputActive) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
@@ -267,14 +267,14 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		lTextBoldFont.end();
 
-		ContentRectangle.preDraw(core, lSpriteBatch, lScreenOffset.x + mInputAreaRectangle.x() + 2.f, mY, lScreenOffset.y + mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 1);
+		StencilHelper.preDraw(core, lSpriteBatch, lScreenOffset.x + mInputAreaRectangle.x() + 2.f, mY, lScreenOffset.y + mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 2);
 
 		lTextBoldFont.begin(core.HUD());
 		lTextBoldFont.setTextColor(textColor);
 		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8 + lSingleLineTextOffsetX, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, 1.f);
 		lTextBoldFont.end();
 
-		ContentRectangle.postDraw(core);
+		StencilHelper.postDraw(core);
 
 		if (mShowCaret && mHasFocus) {
 			final var lCaretWidth = 0.f;
@@ -333,9 +333,13 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 	}
 
 	@Override
-	public void onDeselection(InputManager inputManager) {
-		if (mIsInputActive)
+	public void onDeactivation(InputManager inputManager) {
+		super.onDeactivation(inputManager);
+
+		if (mIsInputActive) {
 			inputManager.keyboard().stopBufferedTextCapture();
+			mIsInputActive = false;
+		}
 
 	}
 

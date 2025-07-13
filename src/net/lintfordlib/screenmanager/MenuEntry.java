@@ -391,6 +391,16 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mScale = newValue;
 	}
 
+	/** Returns false if this is a container entry and there is another child in the *nav left* position. Otherwise false. */
+	public boolean leftMostChildSelected() {
+		return true;
+	}
+
+	/** Returns false if this is a container entry and there is another child in the *nav right* position. Otherwise false. */
+	public boolean rightMostChildSelected() {
+		return true;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -562,10 +572,20 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		final var isAnimationActive = mAnimationTimer > 0.f;
 
 		if (mEnabled) {
-			if (isAnimationActive) {
+			if (isInClickedState()) {
+				entryColor.r = 1.f;
+				entryColor.g = 1.f;
+				entryColor.b = 1.f;
+			} else if (mHasFocus) {
+				entryColor.r = .8f;
+				entryColor.g = .8f;
+				entryColor.b = .8f;
+			} else if (isAnimationActive) {
 				entryColor.setFromColor(ColorConstants.getColorWithAlpha(ColorConstants.SecondaryColor, (mAnimationTimer / 255.f) * lParentScreenAlpha));
 			} else {
-				entryColor.setFromColor(ColorConstants.getColorWithAlpha(ColorConstants.SecondaryColor, lParentScreenAlpha));
+				entryColor.r = .6f;
+				entryColor.g = .6f;
+				entryColor.b = .6f;
 			}
 			entryColor.a = lParentScreenAlpha;
 
@@ -574,7 +594,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			entryColor.a = lParentScreenAlpha * .6f;
 		}
 
-		final var lSpriteBatch = mParentScreen.spriteBatch();
+		final var spriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
 			boolean use5Steps = mW > 32 * 8;
@@ -584,45 +604,25 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			final var lInnerWidth = (mW - 32 * (use5Steps ? 4 : 2));
 			entryColor.a = lParentScreenAlpha;
 
-			if (mEnabled) {
-				if (isInClickedState()) {
-					entryColor.r = 1.f;
-					entryColor.g = 1.f;
-					entryColor.b = 1.f;
-				} else if (mHasFocus) {
-					entryColor.r = .8f;
-					entryColor.g = .8f;
-					entryColor.b = .8f;
-				} else {
-					entryColor.r = .6f;
-					entryColor.g = .6f;
-					entryColor.b = .6f;
-				}
-			}
-
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(entryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(entryColor);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
 			if (use5Steps)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, lLeft += 32.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ);
+				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, lLeft += 32.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ);
 			if (use5Steps)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2.f - 96.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
-			lSpriteBatch.end();
+				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2.f - 96.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+			spriteBatch.end();
 		}
 
 		else if (mHasFocus && mEnabled) {
-			final float lColorMod = 1.f;
-			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
-			lColor.a = 0.25f;
-
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			spriteBatch.end();
 		}
 
 		// Render the MenuEntry label
@@ -645,16 +645,16 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		}
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, 1.f);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, 1.f);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, 1.f);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, 1.f);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, mZ);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, mZ);
+			spriteBatch.end();
 		}
 	}
 
@@ -674,6 +674,9 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public boolean setFocusOnChildEntry(MenuEntry entry) {
+
+		// to be overriden in container entries. Given a MenuEntry, if it exists within the container, the selectedEntry index should be updated to match it, and the focus is set to that entry.
+
 		return false;
 	}
 
@@ -775,7 +778,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		return !mParentScreen.isExiting() && mParentScreen.screenState() == ScreenState.ACTIVE;
 	}
 
-	public void onDeselection(InputManager inputManager) {
+	public void onDeactivation(InputManager inputManager) {
 		// ignored in base
 	}
 

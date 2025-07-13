@@ -11,6 +11,7 @@ import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
@@ -391,23 +392,16 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 				return lInputHandled;
 		}
 
-		if (mScrollBar.scrollBarEnabled()) {
+		if (mScrollBar.scrollBarEnabled())
 			mScrollBar.handleInput(core, screenManager);
-		}
 
 		return false;
 	}
 
 	public void update(LintfordCore core) {
-		var lFocusedEntry = (MenuEntry) null;
-
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
 			mMenuEntries.get(i).update(core, parentScreen);
-
-			if (mMenuEntries.get(i).hasFocus() || mMenuEntries.get(i).isActive()) {
-				lFocusedEntry = mMenuEntries.get(i);
-			}
 		}
 
 		final var lScreenOffset = parentScreen.screenPositionOffset();
@@ -419,33 +413,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		contentDisplayRectange.set(mX, mY + lCropHeaderHeight, mW, mH - lCropHeaderHeight - lCropFooterHeight);
 
 		mScrollBar.update(core);
-
-		final var lMouseMenuControls = core.input().mouse().isMouseMenuSelectionEnabled();
-		if (lFocusedEntry != null && mScrollBar.scrollBarEnabled() && !lMouseMenuControls) {
-			final var lWindowTopExtent = contentDisplayRectange.y() + mCropPaddingTop;
-			final var lWindowBottomExtent = contentDisplayRectange.bottom() - mCropPaddingBottom;
-
-			final var lEntryTopExtent = lFocusedEntry.y();
-			final var lEntryBottomExtent = lFocusedEntry.bottom();
-
-			if (lEntryTopExtent < lWindowTopExtent) {
-				if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 20)
-					mScrollBar.RelCurrentYPos(20);
-				else if (Math.abs(lEntryTopExtent - lWindowTopExtent) > 5)
-					mScrollBar.RelCurrentYPos(5);
-				else
-					mScrollBar.RelCurrentYPos(1);
-			}
-
-			if (lEntryBottomExtent > lWindowBottomExtent) {
-				if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 20)
-					mScrollBar.RelCurrentYPos(-20);
-				else if (Math.abs(lEntryBottomExtent - lWindowBottomExtent) > 5)
-					mScrollBar.RelCurrentYPos(-5);
-				else
-					mScrollBar.RelCurrentYPos(-1);
-			}
-		}
 	}
 
 	public void draw(LintfordCore core, float componentDepth) {
@@ -482,12 +449,18 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			lTitleFont.end();
 		}
 
+		final var layoutStencilRef = 0x01;
 		if (mScrollBar.scrollBarEnabled()) {
-			mContentArea.preDraw(core, lSpriteBatch);
+			mContentArea.stencilClear();
+			mContentArea.preDraw(core, lSpriteBatch, contentDisplayArea(), layoutStencilRef, false);
 		}
 
 		final int lMenuEntryCount = mMenuEntries.size();
 		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
+
+			if (mScrollBar.scrollBarEnabled())
+				mContentArea.restoreRef(layoutStencilRef);
+
 			mMenuEntries.get(i).draw(core, parentScreen, componentDepth + i * .001f);
 		}
 
@@ -502,8 +475,18 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			lSpriteBatch.end();
 		}
 
+		// Because some entries 'overlap' outside of the layout (like a dropdown list near the bottom of a layout), we have a post stencil draw section.
+
 		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
 			mMenuEntries.get(i).postStencilDraw(core, parentScreen, componentDepth + i * .001f);
+		}
+
+		// TODO: Delete when finished testing stencil
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
+			lSpriteBatch.begin(core.HUD());
+			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, contentDisplayArea(), ZLayers.LAYER_DEBUG);
+			lSpriteBatch.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
@@ -555,7 +538,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public boolean hasEntry(int menuIndex) {
-		return menuIndex < 0 || menuIndex >= mMenuEntries.size();
+		var hasEntry = menuIndex < 0 || menuIndex >= mMenuEntries.size();
+		return !hasEntry;
 	}
 
 	public float getEntryWidth() {
@@ -603,6 +587,18 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			return mForcedHeight;
 
 		return getEntryHeight();
+	}
+
+	public void scrollContentItemIntoView(int itemIndex) {
+
+		float itopPos = 0.f;
+		for (int i = 0; i <= itemIndex - 1; i++) {
+			final var menuEntry = mMenuEntries.get(i);
+			itopPos += menuEntry.marginTop() + menuEntry.desiredHeight() + menuEntry.marginBottom();
+		}
+
+		final var topPosition = MathHelper.clamp(-itopPos, -(mContentArea.height() - contentDisplayRectange.height()), 0);
+		mScrollBar.AbsCurrentYPos(topPosition);
 	}
 
 	// --------------------------------------

@@ -124,7 +124,7 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 		int cacheDestBlendFactor = -1;
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDepthMask(false);
+		GL11.glDepthMask(true);
 
 		final var lSpriteBatch = core.sharedResources().uiSpriteBatch();
 

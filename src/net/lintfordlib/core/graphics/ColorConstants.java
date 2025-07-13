@@ -201,16 +201,18 @@ public class ColorConstants {
 	 */
 	public static final Color YELLOW() { return getTempColorCopy(YELLOW); }
 
+	// TODO: Move these into the 
+	
 	public static final Color PrimaryColor = new Color(112.f / 255.f, 67.5f / 255.f, 60.f / 255.f, 1.f);
 	public static final Color SecondaryColor = new Color(71.f / 255.f, 87.f / 255.f, 130.f / 255.f, 1.f);
 	public static final Color TertiaryColor = new Color(73.f / 255.f, 112.f / 255.f, 61.f / 255.f, 1.f);
 
 	public static final Color MenuPanelPrimaryColor = new Color(PrimaryColor.r, PrimaryColor.g, PrimaryColor.b, 1.f);
 	public static final Color MenuPanelSecondaryColor = new Color(SecondaryColor.r, SecondaryColor.g, SecondaryColor.b, 1.f);
-	public static final Color MenuPanelTertiaryColor = new Color(TertiaryColor.r, TertiaryColor.g, TertiaryColor.b, 1.f);
+	public static final Color MenuPanelTertiaryColor = new Color(PrimaryColor.r, PrimaryColor.g, PrimaryColor.b, .64f);
 
 	public static final Color MenuEntryHighlightColor = new Color(PrimaryColor.r, PrimaryColor.g, PrimaryColor.b, .32f);
-	public static final Color MenuEntrySelectedColor = new Color(PrimaryColor.r, PrimaryColor.g, PrimaryColor.b, .64f);
+	public static final Color MenuEntrySelectedColor = new Color(.75f, .72f, .24f, .4f);
 
 	public static final Color TextHeadingColor = new Color(.96f, .96f, .96f, 1.f);
 	public static final Color TextSubHeadingColor = new Color(.94f, .94f, .94f, 1.f);

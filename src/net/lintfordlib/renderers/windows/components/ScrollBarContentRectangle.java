@@ -47,6 +47,11 @@ public class ScrollBarContentRectangle extends Rectangle {
 	// Core-Methods
 	// --------------------------------------
 
+	public void stencilClear() {
+		GL11.glClearStencil(0x00);
+		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
+	}
+
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch) {
 		preDraw(core, spriteBatch, mParentArea.contentDisplayArea(), 1);
 	}
@@ -55,7 +60,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 		preDraw(core, spriteBatch, rectangle, 1, false);
 	}
 
-	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilValue, boolean scrollBarEnabled) {
+	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilRefValue, boolean scrollBarEnabled) {
 		if (mPreDrawing)
 			return;
 
@@ -64,10 +69,8 @@ public class ScrollBarContentRectangle extends Rectangle {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
-		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilValue, 0xFF);
+		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilRefValue, 0xFF);
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
-
-		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
@@ -75,10 +78,15 @@ public class ScrollBarContentRectangle extends Rectangle {
 		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - lScrolbarWidth, rectangle.height() - mDepthPadding * 2, 10.f);
 		spriteBatch.end();
 
-		// GL_EQUAL: Passes if ( ref & mask ) = ( stencil & mask ).
+		// (ref & mask) <func> (stencil_value & mask)
+		// <stencilRefValue> EQUAL <buffervalue>
 
-		GL11.glStencilFunc(GL11.GL_EQUAL, stencilValue, 0xFFFFFFFF); // Pass test if stencil value is stencilValue
+		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, 0xFF);
+	}
 
+	public void restoreRef(int stencilRefValue) {
+		GL11.glEnable(GL11.GL_STENCIL_TEST);
+		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, 0xFF);
 	}
 
 	public void postDraw(LintfordCore core) {

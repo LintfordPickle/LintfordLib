@@ -349,14 +349,14 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		lSpriteBatch.end();
 
-		ContentRectangle.preDraw(core, lSpriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
+		StencilHelper.preDraw(core, lSpriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(lTextColor);
 		textFont.drawText(lText, lTextPosX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth - .01f, mTextScale);
 		textFont.end();
 
-		ContentRectangle.postDraw(core);
+		StencilHelper.postDraw(core);
 
 	}
 

@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.graphics.textures.Texture;
-import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
@@ -26,7 +25,6 @@ public class MenuImageEntry extends MenuEntry {
 	private float mForceHeight;
 	private float mFittedWidth;
 	private float mFittedHeight;
-	private int mMaximumWidth;
 	private FontUnit mUiFont;
 	private Texture mMainTexture;
 	private SpriteSheetDefinition mMissingTextureSpritesheet;
@@ -50,16 +48,17 @@ public class MenuImageEntry extends MenuEntry {
 		mShowMissingTextureText = true;
 	}
 
-	public void setMaximumImageWidth(int widthLimit) {
-		mMaximumWidth = widthLimit;
-	}
-
 	@Override
 	public float height() {
 		if (forceHeight() < 0)
 			return mFittedHeight;
 
 		return mFittedHeight;
+	}
+
+	@Override
+	public float desiredHeight() {
+		return height();
 	}
 
 	public void forceHeight(float forceHeight) {
@@ -81,8 +80,6 @@ public class MenuImageEntry extends MenuEntry {
 		mText = "Add your message";
 
 		mCanHaveFocus = false;
-
-		mMaximumWidth = 2048;
 
 		mLeftMargin = 20;
 		mRightMargin = 20;
@@ -121,7 +118,7 @@ public class MenuImageEntry extends MenuEntry {
 		final var lParentLayoutCropped = mParentLayout.cropPaddingBottom() + mParentLayout.cropPaddingTop();
 
 		final var lAvailableHeight = mParentLayout.height() - mParentLayout.marginBottom() - mParentLayout.marginTop() - lParentLayoutCropped - mParentLayout.titleBarSize();
-		final var lAvailableWidth = MathHelper.clamp(mParentLayout.width() - mParentLayout.marginLeft() - mParentLayout.marginRight(), 120, mMaximumWidth);
+		final var lAvailableWidth = mW;
 
 		if (mMainTexture != null) {
 			mFittedWidth = mMainTexture.getTextureWidth();
@@ -183,6 +180,11 @@ public class MenuImageEntry extends MenuEntry {
 		if (mMainTexture != null) {
 			final int lTextureWidth = mMainTexture.getTextureWidth();
 			final int lTextureHeight = mMainTexture.getTextureHeight();
+
+			if (mHasFocus)
+				lSpriteBatch.setColorRGBA(1.f, 1.f, .1f, 1.f);
+			else
+				lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
 
 			lSpriteBatch.draw(mMainTexture, 0, 0, lTextureWidth, lTextureHeight, lScreenOffset.x + mX, lScreenOffset.y + mY, mFittedWidth, mFittedHeight, parentZDepth + .1f);
 

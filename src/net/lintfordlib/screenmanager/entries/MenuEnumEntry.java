@@ -294,9 +294,8 @@ public class MenuEnumEntry extends MenuEntry {
 		super.onClick(inputManager);
 
 		mSelectedIndex++;
-		if (mSelectedIndex >= mItems.size()) {
+		if (mSelectedIndex >= mItems.size())
 			mSelectedIndex = 0;
-		}
 
 		if (mClickListener != null)
 			mClickListener.onMenuEntryChanged(this);

@@ -235,7 +235,10 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 		lSpriteBatch.begin(core.HUD());
 		final var lTileSize = 32;
-		lSpriteBatch.setColorRGBA(.15f, .15f, .65f, 0.74f);
+		if (mHasFocus)
+			lSpriteBatch.setColorRGBA(.15f, .45f, .45f, 0.74f);
+		else
+			lSpriteBatch.setColorRGBA(.15f, .15f, .65f, 0.74f);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY, mW - lTileSize * 2, lTileSize, parentZDepth);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth);

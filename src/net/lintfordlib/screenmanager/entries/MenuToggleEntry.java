@@ -72,7 +72,11 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	public MenuToggleEntry(ScreenManager screenManager, MenuScreen parentScreen) {
-		super(screenManager, parentScreen, "");
+		this(screenManager, parentScreen, "");
+	}
+
+	public MenuToggleEntry(ScreenManager screenManager, MenuScreen parentScreen, String label) {
+		super(screenManager, parentScreen, label);
 
 		mHighlightOnHover = false;
 		mDrawBackground = false;
@@ -130,7 +134,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		return false;
 	}
-	
+
 	@Override
 	public void update(LintfordCore core, MenuScreen screen) {
 		if (!mEnableUpdateDraw)
@@ -171,7 +175,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntryHighlightColor);
+			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
