@@ -1,14 +1,11 @@
 package net.lintfordlib.screenmanager.entries;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
-import net.lintfordlib.screenmanager.ConstantsScreenManagerAudio;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -179,38 +176,13 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public boolean onHandleKeyboardInput(LintfordCore core) {
-		if (mHasFocus) {
-			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT)) {
-				mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_TICK);
-				setValue(mValue - mStep);
-				return true;
-			}
-
-			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
-				mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_TICK);
-				setValue(mValue + mStep);
-				return true;
-			}
-		}
-
+		// slider left/right handled in oNNavigationLeft/Right methods
 		return false;
 	}
 
 	@Override
 	public boolean onHandleGamepadInput(LintfordCore core) {
-		mStep = 1;
-		if (mIsActive) {
-			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
-				setValue(mValue - mStep);
-				return true;
-			}
-
-			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
-				setValue(mValue + mStep);
-				return true;
-			}
-		}
-
+		// slider left/right handled in oNNavigationLeft/Right methods
 		return false;
 	}
 
@@ -343,4 +315,27 @@ public class MenuSliderEntry extends MenuEntry {
 	public void resetCoolDownTimer() {
 		mInputTimer = 50;
 	}
+
+	@Override
+	public boolean onNavigationLeft(LintfordCore core) {
+		if (mValue - mStep <= mLowerBound) {
+			mValue = mLowerBound;
+			return false; // let the nav left propergate (we didn
+		} else {
+			mValue -= mStep;
+			return true;
+		}
+	}
+
+	@Override
+	public boolean onNavigationRight(LintfordCore core) {
+		if (mValue + mStep >= mUpperBound) {
+			mValue = mUpperBound;
+			return false; // let the nav right propergate (we didn
+		} else {
+			mValue += mStep;
+			return true;
+		}
+	}
+
 }

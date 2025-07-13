@@ -636,7 +636,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 				final var lTextColor = ColorConstants.getTempColorCopy(!mEnabled ? ColorConstants.GREY_DARK() : mHasFocus ? ColorConstants.MenuEntryHighlightColor : ColorConstants.TextHeadingColor);
 				lTextColor.a = lParentScreenAlpha;
 
-				lMenuFont.setTextColor(lTextColor);
+				if (mHasFocus && mEnabled)
+					lMenuFont.setTextColor(ColorConstants.MenuEntrySelectedColor);
+				else 
+					lMenuFont.setTextColor(lTextColor);
 				lMenuFont.setShadowColorRGBA(0.f, 0.f, 0.f, lParentScreenAlpha);
 				lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale);
 

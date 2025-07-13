@@ -68,6 +68,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Properties
 	// --------------------------------------
 
+	public MenuEntry getFocusedEntry() {
+		final var selectedLayout = mLayouts.get(mSelectedLayoutIndex);
+		return selectedLayout.getMenuEntryByIndex(mSelectedEntryIndex);
+	}
+
 	public boolean isEntryActive() {
 		return mActiveEntry != null;
 	}
@@ -810,19 +815,19 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					getPreviousEnabledLayout();
 
 					// whatever layout is now active, go with it
-					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
+					final var layout = mLayouts.get(mSelectedLayoutIndex);
 
-					if (lLayout.entries().isEmpty()) {
+					if (layout.entries().isEmpty()) {
 						mSelectedEntryIndex = 0;
 						return;
 					}
 
-					checkEntryIndex = lLayout.entries().size() - 1;
+					checkEntryIndex = layout.entries().size() - 1;
 
 					if (checkEntryIndex == mSelectedEntryIndex)
 						return;
 
-					if (!lLayout.hasEntry(checkEntryIndex)) {
+					if (!layout.hasEntry(checkEntryIndex)) {
 						mSelectedEntryIndex = 0;
 						return;
 					}
@@ -831,10 +836,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					return;
 
 				} else {
-					final var lLayout = mLayouts.get(mSelectedLayoutIndex);
-					checkEntryIndex = lLayout.entries().size() - 1;
+					final var layout = mLayouts.get(mSelectedLayoutIndex);
+					checkEntryIndex = layout.entries().size() - 1;
 
-					if (lLayout.entries().isEmpty()) {
+					if (layout.entries().isEmpty()) {
 						mSelectedEntryIndex = 0;
 						return;
 					}
@@ -842,8 +847,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					if (checkEntryIndex == mSelectedEntryIndex)
 						return;
 
-					final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
-					if (!lFoundEntry.enabled())
+					final var foundEntry = layout.entries().get(checkEntryIndex);
+					if (!foundEntry.enabled() || !foundEntry.canHaveFocus())
 						continue;
 
 					mSelectedEntryIndex = checkEntryIndex;
@@ -857,8 +862,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					return;
 				}
 
-				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
-				if (!lFoundEntry.enabled())
+				final var foundEntry = lLayout.entries().get(checkEntryIndex);
+				if (!foundEntry.enabled() || !foundEntry.canHaveFocus())
 					continue;
 
 				mSelectedEntryIndex = checkEntryIndex;
@@ -923,14 +928,15 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		while (currentTry < maxTries) {
 			checkEntryIndex++;
-			final var lLayout = mLayouts.get(mSelectedLayoutIndex);
+			final var layout = mLayouts.get(mSelectedLayoutIndex);
 
-			if (checkEntryIndex >= lLayout.entries().size()) {
+			if (checkEntryIndex >= layout.entries().size()) {
 				getNextEnabledLayout();
 				checkEntryIndex = 0;
 
 				final var lNextLayout = mLayouts.get(mSelectedLayoutIndex);
-				if (!lNextLayout.entries().get(checkEntryIndex).enabled())
+				final var foundEntry = lNextLayout.entries().get(checkEntryIndex);
+				if (!foundEntry.enabled() || !foundEntry.canHaveFocus())
 					continue;
 
 				mSelectedEntryIndex = 0;
@@ -941,8 +947,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					return;
 				}
 
-				final var lFoundEntry = lLayout.entries().get(checkEntryIndex);
-				if (!lFoundEntry.enabled()) {
+				final var foundEntry = layout.entries().get(checkEntryIndex);
+				if (!foundEntry.enabled() || !foundEntry.canHaveFocus()) {
 					currentTry++;
 					continue;
 				}
