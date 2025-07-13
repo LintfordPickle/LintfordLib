@@ -596,8 +596,13 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			return; // no need to scroll, the content fits within the display area
 		}
 
+		if (itemIndex == 0) {
+			mScrollBar.AbsCurrentYPos(0);
+			return;
+		}
+
 		float itopPos = 0.f;
-		for (int i = 0; i <= itemIndex - 1; i++) {
+		for (int i = 1; i <= itemIndex - 1; i++) {
 			final var menuEntry = mMenuEntries.get(i);
 			itopPos += menuEntry.marginTop() + menuEntry.desiredHeight() + menuEntry.marginBottom();
 		}
