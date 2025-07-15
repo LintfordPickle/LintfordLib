@@ -48,7 +48,11 @@ public class ScrollBarContentRectangle extends Rectangle {
 	// --------------------------------------
 
 	public void stencilClear() {
-		GL11.glClearStencil(0x00);
+		stencilClear(0x00);
+	}
+
+	public void stencilClear(int value) {
+		GL11.glClearStencil(value);
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
 	}
 
@@ -61,15 +65,19 @@ public class ScrollBarContentRectangle extends Rectangle {
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilRefValue, boolean scrollBarEnabled) {
+		preDraw(core, spriteBatch, rectangle, stencilRefValue, scrollBarEnabled, 0xFFFFFFFF);
+	}
+
+	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilRefValue, boolean scrollBarEnabled, int mask) {
 		if (mPreDrawing)
 			return;
 
 		mPreDrawing = true;
 
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
-		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilRefValue, 0xFF);
+		// GL_GEQUAL: Passes if ( ref & mask ) >= ( stencil & mask ).
+		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilRefValue, mask);
 		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
 
 		spriteBatch.begin(core.HUD());
@@ -81,7 +89,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 		// (ref & mask) <func> (stencil_value & mask)
 		// <stencilRefValue> EQUAL <buffervalue>
 
-		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, 0xFF);
+		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, mask);
 	}
 
 	public void restoreRef(int stencilRefValue) {

@@ -743,6 +743,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		getPreviousEnabledEntry();
 
 		scrollItemIntoLayoutView();
+		playSelectedEntryFocusAnimation();
 
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
@@ -767,6 +768,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		getNextEnabledEntry();
 
 		scrollItemIntoLayoutView();
+		playSelectedEntryFocusAnimation();
 
 		updateAllEntriesToMatchSelected(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex, true);
 
@@ -784,6 +786,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		selectedEntry.onNavigationLeft(core);
 
 		scrollItemIntoLayoutView();
+		playSelectedEntryFocusAnimation();
 
 	}
 
@@ -796,7 +799,16 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		selectedEntry.onNavigationRight(core);
 
 		scrollItemIntoLayoutView();
+		playSelectedEntryFocusAnimation();
 
+	}
+
+	private void playSelectedEntryFocusAnimation() {
+		final var selectedLayout = mLayouts.get(mSelectedLayoutIndex);
+		if (selectedLayout == null)
+			return;
+		final var selectedEntry = selectedLayout.getMenuEntryByIndex(mSelectedEntryIndex);
+		selectedEntry.startAnimation();
 	}
 
 	protected void getPreviousEnabledEntry() {

@@ -6,6 +6,7 @@ import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
@@ -90,5 +91,29 @@ public abstract class MenuListBoxItem extends Rectangle {
 	public void update(LintfordCore core, MenuScreen screen) {
 	}
 
-	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isSelected);
+	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isSelected, boolean isHighlighted);
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	protected void renderHighlight(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float zDepth) {
+		final var lScreenOffset = screen.screenPositionOffset();
+
+		spriteBatch.setColorWhite();
+
+		final var spriteFrameTL = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_TL);
+		final var spriteFrameTR = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_TR);
+		final var spriteFrameBL = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_BL);
+		final var spriteFrameBR = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_CORNER_BR);
+
+		final var highlightOverlapPx = 2;
+		final var dimension = 32.f;
+		spriteBatch.draw(coreSpritesheet, spriteFrameTL, lScreenOffset.x + centerX() - mW / 2 - highlightOverlapPx, lScreenOffset.y + centerY() - mH / 2 - highlightOverlapPx, dimension, dimension, zDepth);
+		spriteBatch.draw(coreSpritesheet, spriteFrameTR, lScreenOffset.x + centerX() + mW / 2 - dimension + highlightOverlapPx, lScreenOffset.y + centerY() - mH / 2 - highlightOverlapPx, dimension, dimension, zDepth);
+
+		spriteBatch.draw(coreSpritesheet, spriteFrameBL, lScreenOffset.x + centerX() - mW / 2 - highlightOverlapPx, lScreenOffset.y + centerY() + mH / 2 - dimension + highlightOverlapPx, dimension, dimension, zDepth);
+		spriteBatch.draw(coreSpritesheet, spriteFrameBR, lScreenOffset.x + centerX() + mW / 2 - dimension + highlightOverlapPx, lScreenOffset.y + centerY() + mH / 2 - dimension + highlightOverlapPx, dimension, dimension, zDepth);
+
+	}
 }

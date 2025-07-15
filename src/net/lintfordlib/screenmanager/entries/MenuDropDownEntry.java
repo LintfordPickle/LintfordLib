@@ -291,7 +291,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			if (mOpen && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
 				mSelectedIndex = mHighlightedIndex;
 				mOpen = false;
-				mIsInputActive = false;
+				// mIsInputActive = false; // handled below in onClick
 				mParentScreen.onMenuEntryDeactivated(this);
 			}
 

@@ -12,6 +12,7 @@ import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
 import net.lintfordlib.renderers.windows.components.StencilHelper;
@@ -42,7 +43,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	protected List<MenuListBoxItem> mItems;
-	protected ScrollBarContentRectangle mContentArea;
+	protected ScrollBarContentRectangle mFullContentArea;
 	protected ScrollBar mScrollBar;
 	protected float mLastMouseYPos;
 	protected IListBoxItemSelected mSelecterListener;
@@ -119,11 +120,6 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		return mItems;
 	}
 
-	@Override
-	public float height() {
-		return mH;
-	}
-
 	public int itemHeight() {
 		return mItemHeight;
 	}
@@ -146,7 +142,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		mItems = new ArrayList<>();
 		mItemHeight = itemHeight;
 
-		mContentArea = new ScrollBarContentRectangle(this);
+		mFullContentArea = new ScrollBarContentRectangle(this);
 
 		mScrollBar = new ScrollBar(this, new Rectangle(mX + mW - ScrollBar.BAR_WIDTH, mY, 20, mH));
 
@@ -206,7 +202,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			if (mSelectedItemIndex < 0)
 				mSelectedItemIndex = 0;
 
-			// scrollContentItemIntoView(mHighlightedIndex);
+			scrollContentItemIntoView(mSelectedItemIndex);
 			return true;
 		}
 
@@ -216,7 +212,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			if (mSelectedItemIndex >= mItems.size())
 				mSelectedItemIndex = mItems.size() - 1;
 
-			// scrollContentItemIntoView(mHighlightedIndex);
+			scrollContentItemIntoView(mSelectedItemIndex);
 			return true;
 		}
 
@@ -294,7 +290,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			final var lItem = mItems.get(i);
 
 			if (i == mSelectedItemIndex) {
-				lItem.entryColor.setRGBA(1.f, .44f, .1f, 0.4f);
+				lItem.entryColor.setFromColor(ColorConstants.MenuEntrySelectedColor);
+				lItem.entryColor.a = .3f;
 			} else {
 				lItem.entryColor.setRGBA(.3f, .3f, .3f, 0.2f);
 			}
@@ -310,15 +307,34 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			mItemYPos += lItem.height() + LISTBOX_ITEM_VPADDING;
 			lTotalContentHeight += lItem.height() + LISTBOX_ITEM_VPADDING;
 		}
-		mDesiredHeight = lTotalContentHeight;
 
-		mContentArea.set(this);
+		mFullContentArea.set(this);
+		mFullContentArea.height(lTotalContentHeight);
 
-		if (mVerticalFillType == FILLTYPE.FILL_CONTAINER || mVerticalFillType == FILLTYPE.TAKE_WHATS_NEEDED)
-			mContentArea.height(lTotalContentHeight);
-
-		mScrollBar.scrollBarEnabled(mContentArea.height() - mH > 0);
+		mScrollBar.scrollBarEnabled(mFullContentArea.height() > mH);
 		mScrollBar.update(core);
+	}
+
+	public void scrollContentItemIntoView(int itemIndex) {
+
+		if (contentDisplayArea().height() > mFullContentArea.height()) {
+			mScrollBar.AbsCurrentYPos(0);
+			return; // no need to scroll, the content fits within the display area
+		}
+
+		if (itemIndex == 0) {
+			mScrollBar.AbsCurrentYPos(0);
+			return;
+		}
+
+		float itopPos = 0.f;
+		for (int i = 1; i <= itemIndex - 1; i++) {
+			final var menuEntry = mItems.get(i);
+			itopPos += menuEntry.height();
+		}
+
+		final var topPosition = MathHelper.clamp(-itopPos, -(mFullContentArea.height() - contentDisplayArea().height()), 0);
+		mScrollBar.AbsCurrentYPos(topPosition);
 	}
 
 	@Override
@@ -327,21 +343,9 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		final var lFontUnit = mParentScreen.font();
 		final var lScreenOffset = screen.screenPositionOffset();
 
-		if (mIsInputActive) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			lSpriteBatch.end();
-		}
-
 		lSpriteBatch.begin(core.HUD());
 		final var lTileSize = 32;
-		if (mHasFocus)
-			lSpriteBatch.setColorRGBA(.15f, .45f, .45f, 0.74f);
-		else
-			lSpriteBatch.setColorRGBA(.15f, .15f, .65f, 0.74f);
+		lSpriteBatch.setColorRGBA(.15f, .15f, .65f, 0.74f);
 
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_LEFT, lScreenOffset.x + mX, lScreenOffset.y + mY, lTileSize, lTileSize, parentZDepth);
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_TOP_MID, lScreenOffset.x + mX + lTileSize, lScreenOffset.y + mY, mW - lTileSize * 2, lTileSize, parentZDepth);
@@ -356,22 +360,18 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY + mH - lTileSize, lTileSize, lTileSize, parentZDepth);
 		lSpriteBatch.end();
 
-		if (mHasFocus || mIsInputActive) {
-			renderHighlight(core, screen, lSpriteBatch);
-		}
+		Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mX, mY + 2, mW, mH - 4);
 
-		StencilHelper.preDraw(core, lSpriteBatch, mX, mY + 2, mW, mH - 4, -0, 2);
+		StencilHelper.preDraw(core, lSpriteBatch, mX, mY + 2, mW, mH - 4, -0, 55);
 
 		lFontUnit.begin(core.HUD());
 		lSpriteBatch.begin(core.HUD());
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth, mSelectedItemIndex == i);
+			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth, mSelectedItemIndex == i, mIsInputActive && mSelectedItemIndex == i);
 		}
 
 		lSpriteBatch.end();
 		lFontUnit.end();
-
-		StencilHelper.postDraw(core);
 
 		drawDebugCollidableBounds(core, lSpriteBatch);
 		if (mScrollBar.scrollBarEnabled()) {
@@ -385,6 +385,11 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			mScrollBar.draw(core, lSpriteBatch, mCoreSpritesheet, parentZDepth);
 			lSpriteBatch.end();
 		}
+
+		if (mHasFocus && !mIsInputActive)
+			renderHighlight(core, screen, lSpriteBatch);
+
+		StencilHelper.postDraw(core);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			for (int i = 0; i < mItems.size(); i++) {
@@ -467,7 +472,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 	@Override
 	public ScrollBarContentRectangle fullContentArea() {
-		return mContentArea;
+		return mFullContentArea;
 	}
 
 	@Override

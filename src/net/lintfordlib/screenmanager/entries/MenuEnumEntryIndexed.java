@@ -320,4 +320,35 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		mItems.clear();
 	}
 
+	@Override
+	public boolean onNavigationLeft(LintfordCore core) {
+		mSelectedIndex--;
+		if (mSelectedIndex < 0) {
+			mSelectedIndex = mItems.size() - 1;
+		}
+
+		if (mClickListener != null)
+			mClickListener.onMenuEntryChanged(this);
+
+		// by always returning true, we are repressing the layout left/right selection.
+		// this is probably what we want
+
+		return true;
+	}
+
+	@Override
+	public boolean onNavigationRight(LintfordCore core) {
+		mSelectedIndex++;
+		if (mSelectedIndex >= mItems.size()) {
+			mSelectedIndex = 0;
+		}
+
+		if (mClickListener != null)
+			mClickListener.onMenuEntryChanged(this);
+
+		// by always returning true, we are repressing the layout left/right selection.
+		// this is probably what we want
+
+		return true;
+	}
 }

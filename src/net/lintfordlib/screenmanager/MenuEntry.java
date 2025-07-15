@@ -132,6 +132,13 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	// Properties
 	// --------------------------------------
 
+	public void startAnimation() {
+		if (mAnimation == null || !mResourcesLoaded || !mIsinitialized)
+			return;
+
+		mAnimation.start();
+	}
+
 	public float separatorOffsetX() {
 		return mSeparatorOffsetX;
 	}

@@ -46,6 +46,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	protected List<MenuEntry> mMenuEntries;
 	protected int mFocusedEntryIndex;
+	protected boolean mCanHaveFocus;
 
 	protected boolean mDrawBackground;
 
@@ -181,6 +182,14 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		return mResourcesLoaded;
 	}
 
+	public boolean canHaveFocus() {
+		return mCanHaveFocus;
+	}
+
+	public void canHaveFocus(boolean newValue) {
+		mCanHaveFocus = newValue;
+	}
+
 	public float marginLeft() {
 		return mLeftMargin;
 	}
@@ -304,6 +313,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		mEnabled = true;
 		mVisible = true;
+		mCanHaveFocus = true;
 
 		mTopMargin = 0.f;
 		mBottomMargin = 0.f;
@@ -449,10 +459,16 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			lTitleFont.end();
 		}
 
-		final var layoutStencilRef = 0x01;
+		final var layoutStencilRef = 0x02;
+
+		// So I don't forget:
+		// each baselayout has its own stencil buffer (in that, we clear the stencil buffer per layout).
+		// we fill the stencil buffer with a high value, then render the bounds of the layout with a low value (0x01)
+		// then, for each of the nested entries that need their own stencil, we clear the region using GEQUAL, and render contents using EQUAL
+
+		mContentArea.stencilClear(0x0);
 		if (mScrollBar.scrollBarEnabled()) {
-			mContentArea.stencilClear();
-			mContentArea.preDraw(core, lSpriteBatch, contentDisplayArea(), layoutStencilRef, false);
+			mContentArea.preDraw(core, lSpriteBatch, contentDisplayRectange, layoutStencilRef, false);
 		}
 
 		final int lMenuEntryCount = mMenuEntries.size();

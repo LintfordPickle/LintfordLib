@@ -396,6 +396,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 		final var numLayouts = columnLayout.size();
 		for (int i = 0; i < numLayouts; i++) {
 			final var layout = columnLayout.get(i);
+			
+			if(!layout.canHaveFocus()) 
+				continue;
+			
 			final var numEntries = layout.entries().size();
 			for (int j = 0; j < numEntries; j++) {
 				final var entry = layout.entries().get(j);
