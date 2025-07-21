@@ -205,9 +205,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 		}
 
-		if (mHasFocus) {
-			renderHighlight(core, screen, spriteBatch);
-		}
+		if (mHasFocus)
+			renderHighlight(core, screen, true, spriteBatch);
 
 		entryColor.r = mEnabled ? 1f : 0.6f;
 		entryColor.g = mEnabled ? 1f : 0.6f;

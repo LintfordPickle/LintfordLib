@@ -49,6 +49,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 	protected IListBoxItemSelected mSelecterListener;
 	protected IListBoxItemDoubleClick mItemDoubleClickListener;
 	protected int mSelectedItemIndex = -1;
+	protected int mHoveredItemIndex = -1;
 	protected boolean mIsInputActive;
 	protected boolean mClickActive;
 	protected int mItemHeight;
@@ -168,11 +169,16 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		if (mScrollBar.scrollBarEnabled() && mScrollBar.handleInput(core, mScreenManager))
 			return true;
 
+		mHoveredItemIndex = -1;
 		if (intersectsAA(core.HUD().getMouseCameraSpace())) {
 			boolean itemSelected = false;
 			final var lNumitems = mItems.size();
 			for (int i = 0; i < lNumitems; i++) {
 				itemSelected |= mItems.get(i).handleInput(core);
+
+				if (mItems.get(i).intersectsAA(core.HUD().getMouseCameraSpace()))
+					mHoveredItemIndex = i;
+
 			}
 
 			if (itemSelected || core.input().mouse().isMouseLeftButtonDownTimed(this) && core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
@@ -367,7 +373,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lFontUnit.begin(core.HUD());
 		lSpriteBatch.begin(core.HUD());
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth, mSelectedItemIndex == i, mIsInputActive && mSelectedItemIndex == i);
+			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth, mSelectedItemIndex == i, i == mHoveredItemIndex);
 		}
 
 		lSpriteBatch.end();
@@ -387,7 +393,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		}
 
 		if (mHasFocus && !mIsInputActive)
-			renderHighlight(core, screen, lSpriteBatch);
+			renderHighlight(core, screen, false, lSpriteBatch);
 
 		StencilHelper.postDraw(core);
 

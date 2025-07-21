@@ -12,6 +12,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsApp;
@@ -199,6 +200,65 @@ public abstract class LintfordCore {
 	protected long mShowLogoTimer;
 	protected boolean mIsHeadlessMode;
 	protected boolean mIsFixedTimeStep;
+
+	private final DebugState debugState = new DebugState();
+
+	private class DebugState {
+
+		private float mDebugKeyPressTimer;
+
+		private boolean mDebugPaused;
+		private boolean mDebugStepNextFrame;
+
+		public boolean isPaused() {
+			return mDebugPaused;
+		}
+
+		private void handleInput() {
+			if (mInputState.keyboard().isKeyDown(GLFW.GLFW_KEY_F11)) {
+				if (mDebugPaused && isKeyCooldownElapsed()) {
+
+					mDebugStepNextFrame = true;
+					mDebugPaused = false;
+
+					System.out.printf("Debug step");
+
+					resetKeyCooldown();
+				}
+			}
+
+			if (mInputState.keyboard().isKeyDown(GLFW.GLFW_KEY_F12)) {
+				if (isKeyCooldownElapsed()) {
+
+					mDebugPaused = !mDebugPaused;
+					System.out.printf("Debug paused: %s\n", mDebugPaused);
+
+					resetKeyCooldown();
+				}
+			}
+		}
+
+		public void update(float dt) {
+			if (mDebugKeyPressTimer > 0)
+				mDebugKeyPressTimer -= dt;
+
+			if (mDebugStepNextFrame) {
+				mDebugPaused = true;
+				mDebugStepNextFrame = false;
+			}
+
+			handleInput();
+
+		}
+
+		private boolean isKeyCooldownElapsed() {
+			return mDebugKeyPressTimer <= 0.f;
+		}
+
+		private void resetKeyCooldown() {
+			mDebugKeyPressTimer = 200.f;
+		}
+	}
 
 	// ---------------------------------------------
 	// Properties
@@ -525,18 +585,23 @@ public abstract class LintfordCore {
 				mGameTime.elapsedTimeMilli = mCoreTime.targetElapsedTimeMilli;
 				int lStepCount = 0;
 
-				while (mCoreTime.accumulatedElapsedTimeMilli >= mCoreTime.targetElapsedTimeMilli) {
-					if (!mGameTime.isTimePaused)
-						mGameTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli * mGameTime.timeModifier;
+				debugState.update((float) mGameTime.elapsedTimeMilli);
 
-					mCoreTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli;
-					mCoreTime.accumulatedElapsedTimeMilli -= mCoreTime.targetElapsedTimeMilli;
+				if (!debugState.isPaused()) {
+					while (mCoreTime.accumulatedElapsedTimeMilli >= mCoreTime.targetElapsedTimeMilli) {
+						if (!mGameTime.isTimePaused)
+							mGameTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli * mGameTime.timeModifier;
 
-					onHandleInput();
+						mCoreTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli;
+						mCoreTime.accumulatedElapsedTimeMilli -= mCoreTime.targetElapsedTimeMilli;
 
-					onUpdate();
+						onHandleInput();
 
-					lStepCount++;
+						onUpdate();
+
+						lStepCount++;
+					}
+
 				}
 
 				// Every update after the first accumulates lag
@@ -570,12 +635,16 @@ public abstract class LintfordCore {
 
 				mCoreTime.accumulatedElapsedTimeMilli = 0.0;
 
-				onHandleInput();
+				debugState.update((float) mGameTime.elapsedTimeMilli);
 
-				onUpdate();
+				if (!debugState.isPaused()) {
+					onHandleInput();
+					onUpdate();
+				}
 			}
 
-			onDraw();
+			if (!debugState.isPaused())
+				onDraw();
 
 			Debug.debugManager().draw(this);
 
@@ -601,6 +670,7 @@ public abstract class LintfordCore {
 		Debug.debugManager().handleInput(this);
 		mHUD.handleInput(this);
 		mControllerManager.handleInput(this, CORE_ENTITY_GROUP_ID);
+
 	}
 
 	/**

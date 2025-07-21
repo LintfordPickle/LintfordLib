@@ -86,7 +86,7 @@ public class MenuLabelEntry extends MenuEntry {
 			spriteBatch.end();
 
 		} else if (mHasFocus && mEnabled)
-			renderHighlight(core, screen, spriteBatch);
+			renderHighlight(core, screen, true, spriteBatch);
 
 		float lX;
 		switch (mHorizontalAlignment) {

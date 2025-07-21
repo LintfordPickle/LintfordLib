@@ -187,7 +187,7 @@
     {
       "name": "TEXTURE_GAMEPAD_LB_DARK",
       "x": 493,
-      "y": 66,
+      "y": 83,
       "w": 48,
       "h": 32,
       "pivotX": 0,
@@ -200,7 +200,7 @@
     {
       "name": "TEXTURE_GAMEPAD_LB_LIGHT",
       "x": 542,
-      "y": 66,
+      "y": 83,
       "w": 48,
       "h": 32,
       "pivotX": 0,
@@ -213,7 +213,7 @@
     {
       "name": "TEXTURE_GAMEPAD_LT_DARK",
       "x": 657,
-      "y": 66,
+      "y": 83,
       "w": 48,
       "h": 32,
       "pivotX": 0,
@@ -226,7 +226,7 @@
     {
       "name": "TEXTURE_GAMEPAD_LT_LIGHT",
       "x": 706,
-      "y": 66,
+      "y": 83,
       "w": 48,
       "h": 32,
       "pivotX": 0,
@@ -239,7 +239,7 @@
     {
       "name": "TEXTURE_GAMEPAD_RB_DARK",
       "x": 821,
-      "y": 66,
+      "y": 83,
       "w": 48,
       "h": 32,
       "pivotX": 0,
@@ -252,7 +252,7 @@
     {
       "name": "TEXTURE_GAMEPAD_RB_LIGHT",
       "x": 870,
-      "y": 66,
+      "y": 83,
       "w": 48,
       "h": 32,
       "pivotX": 0,
@@ -705,9 +705,22 @@
       "anchorPoints": []
     },
     {
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_CENTER",
+      "x": 135,
+      "y": 66,
+      "w": 64,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
       "name": "TEXTURE_ERASER",
       "x": 130,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -720,7 +733,7 @@
     {
       "name": "TEXTURE_EXPAND",
       "x": 163,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -733,7 +746,7 @@
     {
       "name": "TEXTURE_FOOTER_32X32",
       "x": 196,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -746,7 +759,7 @@
     {
       "name": "TEXTURE_GAMEPAD_A_DARK_COLOR",
       "x": 229,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -759,7 +772,7 @@
     {
       "name": "TEXTURE_GAMEPAD_A_DARK",
       "x": 262,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -772,7 +785,7 @@
     {
       "name": "TEXTURE_GAMEPAD_B_DARK_COLOR",
       "x": 295,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -785,7 +798,7 @@
     {
       "name": "TEXTURE_GAMEPAD_B_DARK",
       "x": 328,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -798,7 +811,7 @@
     {
       "name": "TEXTURE_GAMEPAD_DOWN_DARK",
       "x": 361,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -811,7 +824,7 @@
     {
       "name": "TEXTURE_GAMEPAD_DOWN_LIGHT",
       "x": 394,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -824,7 +837,7 @@
     {
       "name": "TEXTURE_GAMEPAD_L_DARK",
       "x": 427,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -837,7 +850,7 @@
     {
       "name": "TEXTURE_GAMEPAD_L_LIGHT",
       "x": 460,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -850,7 +863,7 @@
     {
       "name": "TEXTURE_GAMEPAD_LEFT_DARK",
       "x": 591,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -863,7 +876,7 @@
     {
       "name": "TEXTURE_GAMEPAD_LEFT_LIGHT",
       "x": 624,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -876,7 +889,7 @@
     {
       "name": "TEXTURE_GAMEPAD_R_DARK",
       "x": 755,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -889,7 +902,7 @@
     {
       "name": "TEXTURE_GAMEPAD_R_LIGHT",
       "x": 788,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -902,7 +915,7 @@
     {
       "name": "TEXTURE_GAMEPAD_RIGHT_DARK",
       "x": 919,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -915,7 +928,7 @@
     {
       "name": "TEXTURE_GAMEPAD_RIGHT_LIGHT",
       "x": 952,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -928,7 +941,7 @@
     {
       "name": "TEXTURE_GAMEPAD_SELECT_DARK",
       "x": 985,
-      "y": 66,
+      "y": 83,
       "w": 32,
       "h": 32,
       "pivotX": 0,
@@ -1979,6 +1992,32 @@
       "anchorPoints": []
     },
     {
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_BOTTOM",
+      "x": 94,
+      "y": 0,
+      "w": 64,
+      "h": 8,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_TOP",
+      "x": 159,
+      "y": 0,
+      "w": 64,
+      "h": 8,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
       "name": "TEXTURE_BLACK",
       "x": 33,
       "y": 0,
@@ -2018,61 +2057,9 @@
       "anchorPoints": []
     },
     {
-      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_BL",
-      "x": 84,
-      "y": 0,
-      "w": 16,
-      "h": 16,
-      "pivotX": 0,
-      "pivotY": 0,
-      "scaleX": 1.0,
-      "scaleY": 1.0,
-      "anchorToPointName": null,
-      "anchorPoints": []
-    },
-    {
-      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_BR",
-      "x": 101,
-      "y": 0,
-      "w": 16,
-      "h": 16,
-      "pivotX": 0,
-      "pivotY": 0,
-      "scaleX": 1.0,
-      "scaleY": 1.0,
-      "anchorToPointName": null,
-      "anchorPoints": []
-    },
-    {
-      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_TL",
-      "x": 118,
-      "y": 0,
-      "w": 16,
-      "h": 16,
-      "pivotX": 0,
-      "pivotY": 0,
-      "scaleX": 1.0,
-      "scaleY": 1.0,
-      "anchorToPointName": null,
-      "anchorPoints": []
-    },
-    {
-      "name": "TEXTURE_ENTRY_HIGHLIGHT_CORNER_TR",
-      "x": 135,
-      "y": 0,
-      "w": 16,
-      "h": 16,
-      "pivotX": 0,
-      "pivotY": 0,
-      "scaleX": 1.0,
-      "scaleY": 1.0,
-      "anchorToPointName": null,
-      "anchorPoints": []
-    },
-    {
       "name": "TEXTURE_GREEN",
-      "x": 152,
-      "y": 0,
+      "x": 200,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2084,8 +2071,8 @@
     },
     {
       "name": "TEXTURE_OUTLINE_SMALL",
-      "x": 169,
-      "y": 0,
+      "x": 217,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2097,8 +2084,8 @@
     },
     {
       "name": "TEXTURE_RED",
-      "x": 186,
-      "y": 0,
+      "x": 234,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2110,8 +2097,8 @@
     },
     {
       "name": "TEXTURE_SCROLLBAR_DOWN",
-      "x": 203,
-      "y": 0,
+      "x": 251,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2123,8 +2110,8 @@
     },
     {
       "name": "TEXTURE_SCROLLBAR_LEFT",
-      "x": 220,
-      "y": 0,
+      "x": 268,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2136,8 +2123,8 @@
     },
     {
       "name": "TEXTURE_SCROLLBAR_RIGHT",
-      "x": 237,
-      "y": 0,
+      "x": 285,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2149,8 +2136,8 @@
     },
     {
       "name": "TEXTURE_SCROLLBAR_UP",
-      "x": 254,
-      "y": 0,
+      "x": 302,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2162,8 +2149,8 @@
     },
     {
       "name": "TEXTURE_SELECTED_SMALL",
-      "x": 271,
-      "y": 0,
+      "x": 319,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2175,8 +2162,8 @@
     },
     {
       "name": "TEXTURE_WHITE",
-      "x": 288,
-      "y": 0,
+      "x": 336,
+      "y": 66,
       "w": 16,
       "h": 16,
       "pivotX": 0,
@@ -2218,6 +2205,45 @@
       "y": 131,
       "w": 7,
       "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_CENTER",
+      "x": 130,
+      "y": 66,
+      "w": 4,
+      "h": 16,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_BOTTOM",
+      "x": 84,
+      "y": 0,
+      "w": 4,
+      "h": 8,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_TOP",
+      "x": 89,
+      "y": 0,
+      "w": 4,
+      "h": 8,
       "pivotX": 0,
       "pivotY": 0,
       "scaleX": 1.0,

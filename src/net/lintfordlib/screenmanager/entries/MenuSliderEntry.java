@@ -209,9 +209,8 @@ public class MenuSliderEntry extends MenuEntry {
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lParentScreenAlpha = screen.screenColor.a;
 
-		if (mHasFocus && mEnabled) {
-			renderHighlight(core, screen, lSpriteBatch);
-		}
+		if (mHasFocus && mEnabled)
+			renderHighlight(core, screen, true, lSpriteBatch);
 
 		if (mButtonsEnabled) {
 			lSpriteBatch.begin(core.HUD());

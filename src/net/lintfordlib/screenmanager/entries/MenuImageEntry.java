@@ -209,7 +209,7 @@ public class MenuImageEntry extends MenuEntry {
 		spriteBatch.end();
 
 		if (mHasFocus)
-			renderHighlight(core, screen, spriteBatch);
+			renderHighlight(core, screen, true, spriteBatch);
 
 		if (mShowInfoIcon)
 			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, 1.f);

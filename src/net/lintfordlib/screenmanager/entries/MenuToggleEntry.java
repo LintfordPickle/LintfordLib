@@ -172,9 +172,8 @@ public class MenuToggleEntry extends MenuEntry {
 
 		mZ = parentZDepth;
 
-		if (mHasFocus) {
-			renderHighlight(core, screen, spriteBatch);
-		}
+		if (mHasFocus)
+			renderHighlight(core, screen, true, spriteBatch);
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColor(entryColor);

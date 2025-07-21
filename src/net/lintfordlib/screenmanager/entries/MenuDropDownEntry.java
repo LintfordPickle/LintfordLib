@@ -404,10 +404,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		mW = (int) mW;
 
 		// Applys to the box
-		if (mHasFocus && mEnabled) {
-			renderHighlight(core, screen, spriteBatch);
-
-		}
+		if (mHasFocus && mEnabled)
+			renderHighlight(core, screen, true, spriteBatch);
 
 		if (mIsInputActive) {
 			spriteBatch.begin(core.HUD());
