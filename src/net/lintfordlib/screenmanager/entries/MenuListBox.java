@@ -366,8 +366,6 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_01_BOTTOM_RIGHT, lScreenOffset.x + mX + mW - lTileSize, lScreenOffset.y + mY + mH - lTileSize, lTileSize, lTileSize, parentZDepth);
 		lSpriteBatch.end();
 
-		Debug.debugManager().drawers().drawRectImmediate(core.HUD(), mX, mY + 2, mW, mH - 4);
-
 		StencilHelper.preDraw(core, lSpriteBatch, mX, mY + 2, mW, mH - 4, -0, 55);
 
 		lFontUnit.begin(core.HUD());
