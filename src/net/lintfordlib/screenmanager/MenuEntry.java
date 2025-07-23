@@ -663,6 +663,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	protected void renderHighlight(LintfordCore core, Screen screen, boolean renderFilled, SpriteBatch spriteBatch) {
+		renderHighlight(core, screen, renderFilled, spriteBatch, this);
+	}
+
+	public void renderHighlight(LintfordCore core, Screen screen, boolean renderFilled, SpriteBatch spriteBatch, Rectangle rect) {
 		final var lScreenOffset = screen.screenPositionOffset();
 
 		spriteBatch.begin(core.HUD());
@@ -676,15 +680,15 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		final var spriteFrameRC = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_CENTER);
 		final var spriteFrameRB = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_BOTTOM);
 
-		final var centerHeight = mH - 8 - 8;
-		spriteBatch.draw(mCoreSpritesheet, spriteFrameLT, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 4, 8, mZ);
-		spriteBatch.draw(mCoreSpritesheet, spriteFrameLC, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2 + 8, 4, centerHeight, mZ);
-		spriteBatch.draw(mCoreSpritesheet, spriteFrameLB, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, 4, 8, mZ);
+		final var centerHeight = rect.height() - 8 - 8;
+		spriteBatch.draw(mCoreSpritesheet, spriteFrameLT, lScreenOffset.x + rect.left(), lScreenOffset.y + rect.top(), 4, 8, mZ);
+		spriteBatch.draw(mCoreSpritesheet, spriteFrameLC, lScreenOffset.x + rect.left(), lScreenOffset.y + rect.top() + 8, 4, centerHeight, mZ);
+		spriteBatch.draw(mCoreSpritesheet, spriteFrameLB, lScreenOffset.x + rect.left(), lScreenOffset.y + rect.top() + centerHeight + 8, 4, 8, mZ);
 
 		if (renderFilled) {
-			spriteBatch.draw(mCoreSpritesheet, spriteFrameRT, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2, mW - 4, 8, mZ);
-			spriteBatch.draw(mCoreSpritesheet, spriteFrameRC, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + 8, mW - 4, centerHeight, mZ);
-			spriteBatch.draw(mCoreSpritesheet, spriteFrameRB, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, mW - 4, 8, mZ);
+			spriteBatch.draw(mCoreSpritesheet, spriteFrameRT, lScreenOffset.x + rect.left() + 4, lScreenOffset.y + rect.top(), rect.width() - 4, 8, mZ);
+			spriteBatch.draw(mCoreSpritesheet, spriteFrameRC, lScreenOffset.x + rect.left() + 4, lScreenOffset.y + rect.top() + 8, rect.width() - 4, centerHeight, mZ);
+			spriteBatch.draw(mCoreSpritesheet, spriteFrameRB, lScreenOffset.x + rect.left() + 4, lScreenOffset.y + rect.top() + centerHeight + 8, rect.width() - 4, 8, mZ);
 		}
 		spriteBatch.end();
 	}
