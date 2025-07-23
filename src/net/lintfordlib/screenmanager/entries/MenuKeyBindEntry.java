@@ -116,12 +116,13 @@ public class MenuKeyBindEntry extends MenuEntry implements IKeyInputCallback {
 					Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
 				} else {
 					Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mEventAction.eventActionUid());
-
 					core.input().keyboard().StartKeyInputCapture(this);
 
 					mBindingKey = true;
 					mHasFocus = true;
 				}
+
+				core.input().mouse().isMouseMenuSelectionEnabled(false);
 			}
 		}
 

@@ -244,6 +244,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			if (mSelectedItemIndex < 0)
 				mSelectedItemIndex = 0;
 
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
+
 			// scrollContentItemIntoView(mHighlightedIndex);
 			return true;
 		}
@@ -254,6 +256,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			if (mSelectedItemIndex >= mItems.size())
 				mSelectedItemIndex = mItems.size() - 1;
 
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
+
 			// scrollContentItemIntoView(mHighlightedIndex);
 			return true;
 		}
@@ -263,6 +267,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			// The capture is managed in the onClick() method
 			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
 
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
+
 			mParentScreen.onMenuEntryDeactivated(this);
 		}
 
@@ -270,6 +276,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 			// The capture is managed in the onClick() method
 			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
+
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
 			mParentScreen.onMenuEntryDeactivated(this);
 			mIsInputActive = false;
@@ -371,7 +379,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lFontUnit.begin(core.HUD());
 		lSpriteBatch.begin(core.HUD());
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth, mSelectedItemIndex == i, i == mHoveredItemIndex);
+			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth - .01f, mHasFocus && mIsInputActive && mSelectedItemIndex == i, i == mHoveredItemIndex);
 		}
 
 		lSpriteBatch.end();

@@ -273,6 +273,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 
 				mHighlightedIndex = mSelectedIndex;
 				scrollContentItemIntoView(mHighlightedIndex);
+
+				core.input().mouse().isMouseMenuSelectionEnabled(false);
+
 				return true;
 			}
 
@@ -285,6 +288,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				mHighlightedIndex = mSelectedIndex;
 				scrollContentItemIntoView(mHighlightedIndex);
 
+				core.input().mouse().isMouseMenuSelectionEnabled(false);
+
 				return true;
 			}
 
@@ -293,6 +298,9 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 				mOpen = false;
 				// mIsInputActive = false; // handled below in onClick
 				mParentScreen.onMenuEntryDeactivated(this);
+
+				core.input().mouse().isMouseMenuSelectionEnabled(false);
+
 			}
 
 		}

@@ -97,7 +97,7 @@ public abstract class MenuListBoxItem extends Rectangle {
 	// Methods
 	// --------------------------------------
 
-	protected void renderHighlight(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float zDepth) {
+	protected void renderHighlight(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, boolean renderFilled, float zDepth) {
 		final var lScreenOffset = screen.screenPositionOffset();
 
 		final var spriteFrameLT = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_TOP);
@@ -113,8 +113,10 @@ public abstract class MenuListBoxItem extends Rectangle {
 		spriteBatch.draw(coreSpritesheet, spriteFrameLC, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2 + 8, 4, centerHeight, zDepth);
 		spriteBatch.draw(coreSpritesheet, spriteFrameLB, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, 4, 8, zDepth);
 
-		spriteBatch.draw(coreSpritesheet, spriteFrameRT, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2, mW - 4, 8, zDepth);
-		spriteBatch.draw(coreSpritesheet, spriteFrameRC, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + 8, mW - 4, centerHeight, zDepth);
-		spriteBatch.draw(coreSpritesheet, spriteFrameRB, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, mW - 4, 8, zDepth);
+		if (renderFilled) {
+			spriteBatch.draw(coreSpritesheet, spriteFrameRT, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2, mW - 4, 8, zDepth);
+			spriteBatch.draw(coreSpritesheet, spriteFrameRC, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + 8, mW - 4, centerHeight, zDepth);
+			spriteBatch.draw(coreSpritesheet, spriteFrameRB, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, mW - 4, 8, zDepth);
+		}
 	}
 }
