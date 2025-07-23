@@ -90,7 +90,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 		if (mESCBackEnabled) {
 			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
 				if (mScreenState == ScreenState.ACTIVE) {
-					exitScreen();
+					onEscPressed();
 					return;
 				}
 			}
@@ -369,7 +369,11 @@ public abstract class DualMenuScreen extends MenuScreen {
 		} else {
 			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
 			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
-			final var selectedEntry = mRightLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
+
+			var selectedLayout = mRightLayouts.get(lSelectedLayoutIndex);
+			var selectedLayoutEntries = selectedLayout.entries();
+
+			final var selectedEntry = selectedLayoutEntries.get(lSelectedEntryIndex);
 
 			// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
 			if (selectedEntry.onNavigationRight(core))
@@ -396,10 +400,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 		final var numLayouts = columnLayout.size();
 		for (int i = 0; i < numLayouts; i++) {
 			final var layout = columnLayout.get(i);
-			
-			if(!layout.canHaveFocus()) 
+
+			if (!layout.canHaveFocus())
 				continue;
-			
+
 			final var numEntries = layout.entries().size();
 			for (int j = 0; j < numEntries; j++) {
 				final var entry = layout.entries().get(j);
@@ -409,6 +413,11 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 				if (rightColumn) {
 					mRightColumnSelectedLayoutIndex = i;
+
+					// switching between columns sometimes causes the selected entry index to be out of bounds (if the layout index was changed)
+					if (mRightColumnSelectedEntryIndex > layout.entries().size() - 1)
+						mRightColumnSelectedEntryIndex = layout.entries().size() - 1;
+
 					if (setFirstEntityFocus)
 						mRightColumnSelectedEntryIndex = j;
 
@@ -416,6 +425,11 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 				} else {
 					mSelectedLayoutIndex = i;
+
+					// switching between columns sometimes causes the selected entry index to be out of bounds (if the layout index was changed)
+					if (mSelectedEntryIndex > layout.entries().size() - 1)
+						mSelectedEntryIndex = layout.entries().size() - 1;
+
 					if (setFirstEntityFocus)
 						mSelectedEntryIndex = j;
 
