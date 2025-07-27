@@ -468,7 +468,6 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void exitScreen() {
-		System.out.println("exitScreen()");
 		if (mTransitionExit == null || mTransitionExit.timeSpan().equals(TimeSpan.zero())) {
 			screenManager.removeScreen(this);
 		} else {

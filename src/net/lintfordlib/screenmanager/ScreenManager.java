@@ -313,7 +313,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 			final var lNextScreenToAdd = mScreensToAdd.get(0);
 			final var lTopScreen = getTopScreen();
 			if (lTopScreen != null) {
-				if (lTopScreen.screenState() == ScreenState.ACTIVE) {
+				if (lTopScreen.screenState() == ScreenState.ACTIVE && !lNextScreenToAdd.isPopup()) {
 					lTopScreen.onLostFocus();
 					lTopScreen.transitionOff();
 

@@ -302,14 +302,6 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		float lTotalContentHeight = marginTop() + marginBottom();
 		for (int i = 0; i < lCount; i++) {
 			final var lItem = mItems.get(i);
-
-			if (i == mSelectedItemIndex) {
-				lItem.entryColor.setFromColor(ColorConstants.MenuEntrySelectedColor);
-				lItem.entryColor.a = .3f;
-			} else {
-				lItem.entryColor.setRGBA(.3f, .3f, .3f, 0.2f);
-			}
-
 			lItem.update(core, screen);
 
 			final var lTransitionOffset = screen.screenPositionOffset();
@@ -379,7 +371,19 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		lFontUnit.begin(core.HUD());
 		lSpriteBatch.begin(core.HUD());
 		for (int i = 0; i < mItems.size(); i++) {
-			mItems.get(i).draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth - .01f, mHasFocus && mIsInputActive && mSelectedItemIndex == i, i == mHoveredItemIndex);
+			final var item = mItems.get(i);
+
+			final var isItemSelected = i == mSelectedItemIndex;
+			final var isItemHighlighted = mHasFocus && i == mHoveredItemIndex;
+
+			if (isItemSelected) {
+				item.entryColor.setFromColor(ColorConstants.MenuEntrySelectedColor);
+				item.entryColor.a = .3f;
+			} else {
+				item.entryColor.setRGBA(.3f, .3f, .3f, 0.2f);
+			}
+
+			item.draw(core, screen, lSpriteBatch, mCoreSpritesheet, lFontUnit, parentZDepth - .01f, mIsInputActive && isItemSelected, isItemHighlighted);
 		}
 
 		lSpriteBatch.end();
@@ -426,6 +430,13 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			mParentScreen.onMenuEntryDeactivated(this);
 		}
 
+	}
+
+	@Override
+	public void onActivate(InputManager inputManager) {
+		super.onActivate(inputManager);
+
+		mIsInputActive = true;
 	}
 
 	@Override

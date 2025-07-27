@@ -215,6 +215,9 @@ public abstract class LintfordCore {
 		}
 
 		private void handleInput() {
+
+			// TODO: Remove this or make it nicer
+
 			if (mInputState.keyboard().isKeyDown(GLFW.GLFW_KEY_F11)) {
 				if (mDebugPaused && isKeyCooldownElapsed()) {
 

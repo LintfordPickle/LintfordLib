@@ -570,6 +570,16 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	}
 
 	@Override
+	public void onActivate(InputManager inputManager) {
+		super.onActivate(inputManager);
+
+		mOpen = true;
+		mIsInputActive = true;
+		resetCoolDownTimer();
+
+	}
+
+	@Override
 	public void onDeactivation(InputManager inputManager) {
 		super.onDeactivation(inputManager);
 

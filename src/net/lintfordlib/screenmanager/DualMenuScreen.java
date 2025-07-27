@@ -22,9 +22,46 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 	protected List<BaseLayout> mRightLayouts;
 
-	private boolean mRightColumnSelected;
-	private int mRightColumnSelectedLayoutIndex;
-	private int mRightColumnSelectedEntryIndex;
+	protected boolean mRightColumnSelected;
+	protected int mRightColumnSelectedLayoutIndex;
+	protected int mRightColumnSelectedEntryIndex;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public void activeMenuEntry(boolean leftColumn, int layoutIndex, int entryIndex) {
+
+		if (leftColumn) {
+			mRightColumnSelected = false;
+			mSelectedLayoutIndex = layoutIndex;
+			mSelectedEntryIndex = entryIndex;
+		} else {
+			mRightColumnSelected = true;
+			mRightColumnSelectedLayoutIndex = layoutIndex;
+			mRightColumnSelectedEntryIndex = entryIndex;
+		}
+
+		final var selectedColumn = mRightColumnSelected ? mRightLayouts : mLayouts;
+
+		final var selectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+		if (selectedColumn.size() <= selectedLayoutIndex) {
+			// The layout index is out of bounds, so we cannot select an entry.
+			return;
+		}
+		final var selectedLayout = selectedColumn.get(selectedLayoutIndex);
+
+		final var selectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+		if (selectedLayout.entries().size() <= selectedEntryIndex) {
+			// The entry index is out of bounds, so we cannot select an entry.
+			return;
+		}
+
+		final var selectedEntry = selectedLayout.entries().get(selectedEntryIndex);
+
+		setFocusOnEntry(selectedEntry);
+		selectedEntry.onNavigationGainFocus(screenManager.core());
+	}
 
 	// --------------------------------------
 	// Constructor
@@ -309,22 +346,31 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 		// first give the entries a chance to react to the nav right
 		if (!mRightColumnSelected) {
-			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
-			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
-			final var selectedEntry = mLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
+			
+			// left
+			final var selectedEntry = getSelectedEntry(false);
+			if (selectedEntry != null) {
 
-			// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
-			if (selectedEntry.onNavigationLeft(core))
-				return;
+				// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
+
+				if (selectedEntry.onNavigationLeft(core))
+					return;
+
+			}
+
+			// cannot navigate left from left column
 
 		} else {
-			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
-			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
-			final var selectedEntry = mRightLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
 
-			// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
-			if (selectedEntry.onNavigationLeft(core))
-				return;
+			final var selectedEntry = getSelectedEntry(true);
+			if (selectedEntry != null) {
+
+				// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
+
+				if (selectedEntry.onNavigationLeft(core))
+					return;
+
+			}
 
 			final var setFirstEntryFocus = false;
 			toggleColumns(false, setFirstEntryFocus);
@@ -353,31 +399,33 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
-		// first give the entries a chance to react to the nav right
-		if (!mRightColumnSelected) {
-			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
-			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
-			final var selectedEntry = mLayouts.get(lSelectedLayoutIndex).entries().get(lSelectedEntryIndex);
+		// First give the entries a chance to react to the nav right
 
-			// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
-			if (selectedEntry.onNavigationRight(core))
-				return;
+		if (!mRightColumnSelected) {
+			final var selectedEntry = getSelectedEntry(false);
+			if (selectedEntry != null) {
+
+				// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
+
+				if (selectedEntry.onNavigationRight(core))
+					return;
+
+			}
 
 			final var setFirstEntryFocus = false;
 			toggleColumns(true, setFirstEntryFocus);
 
 		} else {
-			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
-			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
 
-			var selectedLayout = mRightLayouts.get(lSelectedLayoutIndex);
-			var selectedLayoutEntries = selectedLayout.entries();
+			final var selectedEntry = getSelectedEntry(true);
+			if (selectedEntry != null) {
 
-			final var selectedEntry = selectedLayoutEntries.get(lSelectedEntryIndex);
+				// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
 
-			// if the current menu entry utilizes left/right navigation (e.g. the slider), then repress the navLeft/navRight feature.
-			if (selectedEntry.onNavigationRight(core))
-				return;
+				if (selectedEntry.onNavigationRight(core))
+					return;
+
+			}
 
 			// Cannot go right from the right hand column
 
@@ -392,8 +440,24 @@ public abstract class DualMenuScreen extends MenuScreen {
 		updateAllEntriesToMatchSelected(mRightLayouts, lSelectedLayoutIndex, lSelectedEntryIndex, mRightColumnSelected);
 	}
 
-	private boolean toggleColumns(boolean rightColumn, boolean setFirstEntityFocus) {
-		final var columnLayout = rightColumn ? mRightLayouts : mLayouts;
+	private MenuEntry getSelectedEntry(boolean rightColumn) {
+		final var layouts = rightColumn ? mRightLayouts : mLayouts;
+
+		if (layouts.size() == 0)
+			return null;
+
+		final var selectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
+		final var selectedLayout = layouts.get(selectedLayoutIndex);
+		if (selectedLayout == null || selectedLayout.entries().size() == 0)
+			return null;
+
+		final var selectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
+		final var selectedEntry = selectedLayout.entries().get(selectedEntryIndex);
+		return selectedEntry;
+	}
+
+	protected boolean toggleColumns(boolean gotoRightColumn, boolean setFirstEntityFocus) {
+		final var columnLayout = gotoRightColumn ? mRightLayouts : mLayouts;
 		if (columnLayout == null || columnLayout.size() == 0)
 			return false;
 
@@ -401,7 +465,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 		for (int i = 0; i < numLayouts; i++) {
 			final var layout = columnLayout.get(i);
 
-			if (!layout.canHaveFocus())
+			if (!layout.canHaveFocus() || layout.entries().size() == 0)
 				continue;
 
 			final var numEntries = layout.entries().size();
@@ -411,7 +475,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 				if (entry == null || !entry.enabled() || entry == MenuEntry.menuSeparator())
 					continue;
 
-				if (rightColumn) {
+				if (gotoRightColumn) {
 					mRightColumnSelectedLayoutIndex = i;
 
 					// switching between columns sometimes causes the selected entry index to be out of bounds (if the layout index was changed)
@@ -644,8 +708,12 @@ public abstract class DualMenuScreen extends MenuScreen {
 			return;
 		}
 
-		boolean found = false;
-		while (found == false) {
+		final var maxTries = 4;
+		var currentTry = 0;
+
+		var found = false;
+		while (!found && currentTry < maxTries) {
+			currentTry++;
 			selectedLayoutIndex++;
 
 			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex)) {
@@ -703,8 +771,12 @@ public abstract class DualMenuScreen extends MenuScreen {
 			return;
 		}
 
-		boolean found = false;
-		while (found == false) {
+		final var maxTries = 4;
+		var currentTry = 0;
+
+		var found = false;
+		while (!found && currentTry < maxTries) {
+			currentTry++;
 			selectedLayoutIndex--;
 
 			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex))

@@ -228,36 +228,6 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	@Override
-	public boolean onNavigationLeft(LintfordCore core) {
-
-		if (mChildEntries.size() <= 1)
-			return true;
-
-		final var startIndex = mSelectedEntryUid;
-		mSelectedEntryUid--;
-
-		while (mSelectedEntryUid != startIndex) {
-			if (mSelectedEntryUid < 0) {
-				if (!mWrapInputAround) {
-					mSelectedEntryUid = startIndex;
-					return false;
-				}
-
-				mSelectedEntryUid = mChildEntries.size() - 1;
-			}
-
-			if (mChildEntries.get(mSelectedEntryUid) != MenuEntry.menuSeparator())
-				return true;
-
-			mSelectedEntryUid--;
-
-		}
-
-		return false;
-
-	}
-
-	@Override
 	public boolean leftMostChildSelected() {
 		var isMultipleChildren = getChildCount(true) > 1;
 		if (!isMultipleChildren)
@@ -288,8 +258,42 @@ public class HorizontalEntryGroup extends MenuEntry {
 	}
 
 	@Override
-	public boolean onNavigationRight(LintfordCore core) {
+	public boolean onNavigationGainFocus(LintfordCore core) {
+		return onNavigationRight(core);
+	}
 
+	@Override
+	public boolean onNavigationLeft(LintfordCore core) {
+
+		if (mChildEntries.size() <= 1)
+			return true;
+
+		final var startIndex = mSelectedEntryUid;
+		mSelectedEntryUid--;
+
+		while (mSelectedEntryUid != startIndex) {
+			if (mSelectedEntryUid < 0) {
+				if (!mWrapInputAround) {
+					mSelectedEntryUid = startIndex;
+					return false;
+				}
+
+				mSelectedEntryUid = mChildEntries.size() - 1;
+			}
+
+			if (mChildEntries.get(mSelectedEntryUid) != MenuEntry.menuSeparator())
+				return true;
+
+			mSelectedEntryUid--;
+
+		}
+
+		return false;
+
+	}
+
+	@Override
+	public boolean onNavigationRight(LintfordCore core) {
 		if (mChildEntries.size() <= 1)
 			return true;
 

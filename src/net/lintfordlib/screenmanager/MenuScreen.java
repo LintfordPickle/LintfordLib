@@ -493,6 +493,26 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// Methods
 	// --------------------------------------
 
+	public void activeMenuEntry(int layoutIndex, int entryIndex) {
+
+		if (mLayouts.size() <= layoutIndex) {
+			// The layout index is out of bounds, so we cannot select an entry.
+			return;
+		}
+		final var selectedLayout = mLayouts.get(layoutIndex);
+		if (selectedLayout.entries().size() <= entryIndex) {
+			// The entry index is out of bounds, so we cannot select an entry.
+			return;
+		}
+
+		mSelectedLayoutIndex = layoutIndex;
+		mSelectedEntryIndex = entryIndex;
+		final var selectedEntry = selectedLayout.entries().get(mSelectedEntryIndex);
+
+		setFocusOnEntry(selectedEntry);
+		selectedEntry.onNavigationGainFocus(screenManager.core());
+	}
+
 	/** Given a MenuEntry instance, it will search the current MenuScreen for a match and then set the selectedENtry/selectedLayout variables accordingly. If the entry is not found, then nothing it changed. */
 	public void resolveSelectedEntry(MenuEntry entry) {
 		final var numLayouts = mLayouts.size();

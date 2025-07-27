@@ -542,6 +542,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		if (!mIsActive || !mAffectParentStructure && !mEnableUpdateDraw)
 			return;
 
+		final var lIntersectsUs = intersectsAA(core.HUD().getMouseCameraSpace());
+		if (!lIntersectsUs)
+			mIsMouseOver = false;
+
 		mAnimation.update(core);
 
 		final float lParentScreenAlpha = screen.screenColor.a;
@@ -813,6 +817,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		return !mParentScreen.isExiting() && mParentScreen.screenState() == ScreenState.ACTIVE;
 	}
 
+	public void onActivate(InputManager inputManager) {
+		// ignored in base
+	}
+
 	public void onDeactivation(InputManager inputManager) {
 		// ignored in base
 	}
@@ -863,6 +871,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	/** Returns navigation handled */
 	public boolean onNavigationRight(LintfordCore core) {
+		return false;
+	}
+
+	// Gives entries an opportunity onGainFocus to select a child entry by default (e.g. in horizontal groups).
+	public boolean onNavigationGainFocus(LintfordCore core) {
 		return false;
 	}
 

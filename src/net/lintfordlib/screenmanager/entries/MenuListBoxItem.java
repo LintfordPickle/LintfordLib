@@ -91,32 +91,37 @@ public abstract class MenuListBoxItem extends Rectangle {
 	public void update(LintfordCore core, MenuScreen screen) {
 	}
 
-	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isSelected, boolean isHighlighted);
+	public abstract void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isActiveSelection, boolean isHighlighted);
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	protected void renderHighlight(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, boolean renderFilled, float zDepth) {
+	protected void renderSelectionBar(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float zDepth) {
 		final var lScreenOffset = screen.screenPositionOffset();
 
 		final var spriteFrameLT = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_TOP);
 		final var spriteFrameLC = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_CENTER);
 		final var spriteFrameLB = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_BOTTOM);
 
-		final var spriteFrameRT = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_TOP);
-		final var spriteFrameRC = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_CENTER);
-		final var spriteFrameRB = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_BOTTOM);
-
 		final var centerHeight = mH - 8 - 8;
 		spriteBatch.draw(coreSpritesheet, spriteFrameLT, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 4, 8, zDepth);
 		spriteBatch.draw(coreSpritesheet, spriteFrameLC, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2 + 8, 4, centerHeight, zDepth);
 		spriteBatch.draw(coreSpritesheet, spriteFrameLB, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, 4, 8, zDepth);
 
-		if (renderFilled) {
-			spriteBatch.draw(coreSpritesheet, spriteFrameRT, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2, mW - 4, 8, zDepth);
-			spriteBatch.draw(coreSpritesheet, spriteFrameRC, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + 8, mW - 4, centerHeight, zDepth);
-			spriteBatch.draw(coreSpritesheet, spriteFrameRB, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, mW - 4, 8, zDepth);
-		}
+	}
+
+	protected void renderHighlight(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreSpritesheet, float zDepth) {
+		final var lScreenOffset = screen.screenPositionOffset();
+
+		final var spriteFrameRT = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_TOP);
+		final var spriteFrameRC = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_CENTER);
+		final var spriteFrameRB = coreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_RIGHT_BOTTOM);
+
+		final var centerHeight = mH - 8 - 8;
+		spriteBatch.draw(coreSpritesheet, spriteFrameRT, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2, mW - 4, 8, zDepth);
+		spriteBatch.draw(coreSpritesheet, spriteFrameRC, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + 8, mW - 4, centerHeight, zDepth);
+		spriteBatch.draw(coreSpritesheet, spriteFrameRB, lScreenOffset.x + centerX() - mW / 2 + 4, lScreenOffset.y + centerY() - mH / 2 + centerHeight + 8, mW - 4, 8, zDepth);
+
 	}
 }
