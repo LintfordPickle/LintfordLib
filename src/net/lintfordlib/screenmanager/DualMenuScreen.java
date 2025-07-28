@@ -472,7 +472,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 			for (int j = 0; j < numEntries; j++) {
 				final var entry = layout.entries().get(j);
 
-				if (entry == null || !entry.enabled() || entry == MenuEntry.menuSeparator())
+				if (entry == null || !entry.enabled() || entry == MenuEntry.menuSeparator() || !entry.canHaveFocus())
 					continue;
 
 				if (gotoRightColumn) {
