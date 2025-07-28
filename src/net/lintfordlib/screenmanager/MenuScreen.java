@@ -922,31 +922,21 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		while (true) {
 			selectedLayoutIndex--;
 
-			if (selectedLayoutIndex == mSelectedLayoutIndex)
-				return;
-
-			if (selectedLayoutIndex < 0) {
+			if (selectedLayoutIndex < 0)
 				selectedLayoutIndex = mLayouts.size() - 1;
 
-				final var lLayout = mLayouts.get(selectedLayoutIndex);
-				if (lLayout.entries().isEmpty()) {
-					selectedLayoutIndex--;
-					continue;
-				}
+			if (selectedLayoutIndex == mSelectedLayoutIndex)
+				return; // we circled back around to the starting point
 
-				mSelectedLayoutIndex = selectedLayoutIndex;
-				return;
-			}
-
-			final var lLayout = mLayouts.get(selectedLayoutIndex);
-			if (lLayout.entries().isEmpty()) {
-				selectedLayoutIndex--;
+			final var layout = mLayouts.get(selectedLayoutIndex);
+			if (layout == null || layout.entries().isEmpty())
 				continue;
-			}
+
+			if (!layout.canHaveFocus())
+				continue;
 
 			mSelectedLayoutIndex = selectedLayoutIndex;
 			return;
-
 		}
 	}
 
@@ -1009,28 +999,18 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		while (true) {
 			selectedLayoutIndex++;
 
-			if (selectedLayoutIndex == mSelectedLayoutIndex) {
-				return;
-			}
-
-			if (selectedLayoutIndex >= mLayouts.size()) {
+			if (selectedLayoutIndex >= mLayouts.size())
 				selectedLayoutIndex = 0;
 
-				final var lLayout = mLayouts.get(selectedLayoutIndex);
-				if (lLayout.entries().isEmpty()) {
-					selectedLayoutIndex++;
-					continue;
-				}
-
-				mSelectedLayoutIndex = selectedLayoutIndex;
-				return;
-			}
+			if (selectedLayoutIndex == mSelectedLayoutIndex)
+				return; // We have circled back around to the starting point
 
 			final var lLayout = mLayouts.get(selectedLayoutIndex);
-			if (lLayout.entries().isEmpty()) {
-				selectedLayoutIndex++;
+			if (lLayout == null || lLayout.entries().isEmpty())
 				continue;
-			}
+
+			if (!lLayout.canHaveFocus())
+				continue;
 
 			mSelectedLayoutIndex = selectedLayoutIndex;
 			return;
