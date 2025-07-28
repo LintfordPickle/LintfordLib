@@ -346,7 +346,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 		// first give the entries a chance to react to the nav right
 		if (!mRightColumnSelected) {
-			
+
 			// left
 			final var selectedEntry = getSelectedEntry(false);
 			if (selectedEntry != null) {
@@ -716,32 +716,18 @@ public abstract class DualMenuScreen extends MenuScreen {
 			currentTry++;
 			selectedLayoutIndex++;
 
-			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex)) {
-				return;
-			}
-
-			if (selectedLayoutIndex >= selectedLayout.size()) {
+			if (selectedLayoutIndex >= selectedLayout.size())
 				selectedLayoutIndex = 0;
 
-				final var lLayout = selectedLayout.get(selectedLayoutIndex);
-				if (lLayout.entries().size() == 0) {
-					selectedLayoutIndex++;
-					continue;
-				}
+			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex))
+				return; // we circled back to the original layout
 
-				if (mRightColumnSelected) {
-					mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
-				} else {
-					mSelectedLayoutIndex = selectedLayoutIndex;
-				}
-				return;
-			}
-
-			final var lLayout = selectedLayout.get(selectedLayoutIndex);
-			if (lLayout.entries().size() == 0) {
-				selectedLayoutIndex++;
+			final var layout = selectedLayout.get(selectedLayoutIndex);
+			if (layout == null || layout.entries().size() == 0)
 				continue;
-			}
+
+			if (!layout.canHaveFocus())
+				continue;
 
 			if (mRightColumnSelected) {
 				mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
@@ -779,31 +765,18 @@ public abstract class DualMenuScreen extends MenuScreen {
 			currentTry++;
 			selectedLayoutIndex--;
 
-			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex))
-				return;
-
-			if (selectedLayoutIndex < 0) {
+			if (selectedLayoutIndex < 0)
 				selectedLayoutIndex = selectedLayout.size() - 1;
 
-				final var lLayout = selectedLayout.get(selectedLayoutIndex);
-				if (lLayout.entries().size() == 0) {
-					selectedLayoutIndex--;
-					continue;
-				}
-
-				if (mRightColumnSelected) {
-					mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
-				} else {
-					mSelectedLayoutIndex = selectedLayoutIndex;
-				}
-				return;
-			}
+			if (selectedLayoutIndex == (mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex))
+				return; // we circled back to the original layout
 
 			final var lLayout = selectedLayout.get(selectedLayoutIndex);
-			if (lLayout.entries().size() == 0) {
-				selectedLayoutIndex--;
+			if (lLayout == null || lLayout.entries().size() == 0)
 				continue;
-			}
+
+			if (!lLayout.canHaveFocus())
+				continue;
 
 			if (mRightColumnSelected) {
 				mRightColumnSelectedLayoutIndex = selectedLayoutIndex;
