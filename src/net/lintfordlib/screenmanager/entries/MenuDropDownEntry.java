@@ -463,7 +463,8 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		// Draw the down arrow
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColor(entryColor);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, screenOffset.x + right() - 32, screenOffset.y + top(), 32, 32, mZ);
+		final var tileSize = Math.min(32, mH);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_DOWN, screenOffset.x + right() - 32, screenOffset.y + top(), tileSize, tileSize, mZ);
 		spriteBatch.end();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

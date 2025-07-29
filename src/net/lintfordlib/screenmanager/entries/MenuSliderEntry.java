@@ -20,8 +20,8 @@ public class MenuSliderEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	private Rectangle mDownButton;
-	private Rectangle mUpButton;
+	private Rectangle mLeftButton;
+	private Rectangle mRightButton;
 	private String mLabel;
 	private String mUnit = "%";
 	private int mValue;
@@ -117,8 +117,8 @@ public class MenuSliderEntry extends MenuEntry {
 		super(screenManager, parentScreen, "");
 		mLabel = label;
 
-		mDownButton = new Rectangle(0, 0, 32, 32);
-		mUpButton = new Rectangle(0, 0, 32, 32);
+		mLeftButton = new Rectangle(0, 0, 32, 32);
+		mRightButton = new Rectangle(0, 0, 32, 32);
 
 		mStep = 1;
 	}
@@ -136,9 +136,9 @@ public class MenuSliderEntry extends MenuEntry {
 		if (core.input().mouse().tryAcquireMouseLeftClick(hashCode())) {
 			if (mEnabled) {
 				mStep = 1;
-				if (mDownButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
+				if (mLeftButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					setValue(mValue - mStep);
-				} else if (mUpButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
+				} else if (mRightButton.intersectsAA(core.HUD().getMouseCameraSpace())) {
 					setValue(mValue + mStep);
 				} else {
 					mTrackingClick = true;
@@ -189,10 +189,10 @@ public class MenuSliderEntry extends MenuEntry {
 	public void update(LintfordCore core, MenuScreen screen) {
 		super.update(core, screen);
 
-		mDownButton.setPosition(mX + mW / 2 + 16, mY);
-		mUpButton.setPosition(mX + mW - 32, mY);
+		mLeftButton.setPosition(mX + mW / 2 + 8, mY);
+		mRightButton.setPosition(mX + mW - 32, mY);
 
-		mBarPosX = mX + mW / 2 + mDownButton.width() + 16;
+		mBarPosX = mX + mW / 2 + mLeftButton.width() + 16;
 		mBarWidth = mW / 2 - 48;
 	}
 
@@ -212,14 +212,15 @@ public class MenuSliderEntry extends MenuEntry {
 		if (mHasFocus && mEnabled)
 			renderHighlight(core, screen, true, lSpriteBatch);
 
+		final var tileSize = Math.min(32, mH);
+		mButtonsEnabled = true;
 		if (mButtonsEnabled) {
 			lSpriteBatch.begin(core.HUD());
-			final float lArrowButtonSize = 32;
-			final float lArrowButtonPaddingX = mDownButton.width() - lArrowButtonSize;
+			final float lArrowButtonSize = tileSize;
 
 			lSpriteBatch.setColor(entryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mDownButton.x() + lArrowButtonPaddingX, lScreenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mUpButton.x() + lArrowButtonPaddingX, lScreenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButton.x(), lScreenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButton.x(), lScreenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
 
 			lSpriteBatch.end();
 		}
@@ -229,10 +230,10 @@ public class MenuSliderEntry extends MenuEntry {
 		lSpriteBatch.begin(core.HUD());
 		lSpriteBatch.setColor(entryColor);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_LEFT, lScreenOffset.x + mBarPosX, lScreenOffset.y + mY, 32, 32, mZ);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_MID, lScreenOffset.x + mBarPosX + 32, lScreenOffset.y + mY, mBarWidth - 64 - 32, 32, mZ);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_RIGHT, lScreenOffset.x + mBarPosX + mBarWidth - 64, lScreenOffset.y + mY, 32, 32, mZ);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_NUBBLE, lScreenOffset.x + mBarPosX + lCaretPos, lScreenOffset.y + mY, 32, 32, mZ);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_LEFT, lScreenOffset.x + mBarPosX, lScreenOffset.y + mY, tileSize, tileSize, mZ);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_MID, lScreenOffset.x + mBarPosX + tileSize, lScreenOffset.y + mY, mBarWidth - 64 - tileSize, tileSize, mZ);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_RIGHT, lScreenOffset.x + mBarPosX + mBarWidth - 64, lScreenOffset.y + mY, tileSize, tileSize, mZ);
+		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_NUBBLE, lScreenOffset.x + mBarPosX + lCaretPos, lScreenOffset.y + mY, tileSize, tileSize, mZ);
 		lSpriteBatch.end();
 
 		// draw the label to the left and the value //

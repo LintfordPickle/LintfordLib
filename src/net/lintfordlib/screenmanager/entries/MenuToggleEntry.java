@@ -162,7 +162,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		final var spriteBatch = mParentScreen.spriteBatch();
 
-		final var lTileSize = 32.f;
+		final var lTileSize = Math.min(32, mH);
 
 		final var lScreenOffset = screen.screenPositionOffset();
 		final var lParentScreenAlpha = screen.screenColor.a;
@@ -179,9 +179,9 @@ public class MenuToggleEntry extends MenuEntry {
 		spriteBatch.setColor(entryColor);
 		// Render the check box (either ticked or empty)
 		if (mIsChecked)
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + mX + mW / 2 + 16, lScreenOffset.y + mY, lTileSize, lTileSize, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + centerX() + 8, lScreenOffset.y + mY, lTileSize, lTileSize, mZ);
 		else
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + lTileSize / 2, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + 8, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ);
 
 		spriteBatch.end();
 

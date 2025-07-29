@@ -478,13 +478,14 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void updateStructure() {
-		final var lScreenOffset = mParentScreen != null ? mParentScreen.screenPositionOffset() : Vector2f.Zero;
+		final var screenOffset = mParentScreen != null ? mParentScreen.screenPositionOffset() : Vector2f.Zero;
+		final var tileSize = Math.min(32, mH);
 
 		if (mShowInfoIcon)
-			mInfoIconDstRectangle.set(lScreenOffset.x + mX + paddingLeft(), lScreenOffset.y + mY, 32f, 32f);
+			mInfoIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
 
 		if (mShowWarnIcon)
-			mWarnIconDstRectangle.set(lScreenOffset.x + mX + paddingLeft(), lScreenOffset.y + mY, 32f, 32f);
+			mWarnIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
 
 	};
 

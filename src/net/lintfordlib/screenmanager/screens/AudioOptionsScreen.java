@@ -70,7 +70,7 @@ public class AudioOptionsScreen extends MenuScreen {
 		/* Screen control buttons */
 		final var lHorizontalButtonLayout = new HorizontalEntryGroup(screenManager, this);
 		lHorizontalButtonLayout.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
-		
+
 		final var lBackButton = new MenuEntry(screenManager, this, "Back");
 		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
 		final var lApplyButton = new MenuEntry(screenManager, this, "Apply");
@@ -82,7 +82,7 @@ public class AudioOptionsScreen extends MenuScreen {
 		final var lButtonLayout = new ListLayout(this);
 		lButtonLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 		lButtonLayout.addMenuEntry(lHorizontalButtonLayout);
-		
+
 		addLayout(lAudioListLayout);
 		addLayout(lButtonLayout);
 
@@ -109,9 +109,15 @@ public class AudioOptionsScreen extends MenuScreen {
 	private void createAudioSection(BaseLayout layout) {
 		final var lAudioConfig = screenManager.core().config().audio();
 
+		// As we know the game canvas size
+		final float lDesiredEntryWidth = 56.f;
+		final float lDesiredEntryHeight = 25.f;
+
 		mMasterEnabledEntry = new MenuToggleEntry(screenManager, this);
 		mMasterEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MASTER);
 		mMasterEnabledEntry.label("Audio Enabled");
+		mMasterEnabledEntry.desiredWidth(lDesiredEntryWidth);
+		mMasterEnabledEntry.desiredHeight(lDesiredEntryHeight);
 		mMasterEnabledEntry.isChecked(lAudioConfig.musicEnabled());
 		mMasterEnabledEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
@@ -125,12 +131,16 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMasterVolumeEntry.showValue(true);
 		mMasterVolumeEntry.showValueUnit(true);
 		mMasterVolumeEntry.showValueGuides(false);
+		mMasterVolumeEntry.desiredWidth(lDesiredEntryWidth);
+		mMasterVolumeEntry.desiredHeight(lDesiredEntryHeight);
 		mMasterVolumeEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mMusicEnabledEntry = new MenuToggleEntry(screenManager, this);
 		mMusicEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MUSIC);
 		mMusicEnabledEntry.label("Music Enabled");
 		mMusicEnabledEntry.isChecked(lAudioConfig.musicEnabled());
+		mMusicEnabledEntry.desiredWidth(lDesiredEntryWidth);
+		mMusicEnabledEntry.desiredHeight(lDesiredEntryHeight);
 		mMusicEnabledEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mMusicVolumeEntry = new MenuSliderEntry(screenManager, this);
@@ -143,12 +153,16 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMusicVolumeEntry.showValue(true);
 		mMusicVolumeEntry.showValueUnit(true);
 		mMusicVolumeEntry.showValueGuides(false);
+		mMusicVolumeEntry.desiredWidth(lDesiredEntryWidth);
+		mMusicVolumeEntry.desiredHeight(lDesiredEntryHeight);
 		mMusicVolumeEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mSoundEnabledEntry = new MenuToggleEntry(screenManager, this);
 		mSoundEnabledEntry.label("SoundFX Enabled");
 		mSoundEnabledEntry.registerClickListener(this, BUTTON_ENABLED_SOUNDFX);
 		mSoundEnabledEntry.isChecked(lAudioConfig.soundFxEnabled());
+		mSoundEnabledEntry.desiredWidth(lDesiredEntryWidth);
+		mSoundEnabledEntry.desiredHeight(lDesiredEntryHeight);
 		mSoundEnabledEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mSoundVolumnEntry = new MenuSliderEntry(screenManager, this);
@@ -161,6 +175,8 @@ public class AudioOptionsScreen extends MenuScreen {
 		mSoundVolumnEntry.showValue(true);
 		mSoundVolumnEntry.showValueUnit(true);
 		mSoundVolumnEntry.showValueGuides(false);
+		mSoundVolumnEntry.desiredWidth(lDesiredEntryWidth);
+		mSoundVolumnEntry.desiredHeight(lDesiredEntryHeight);
 		mSoundVolumnEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		layout.addMenuEntry(mMasterEnabledEntry);

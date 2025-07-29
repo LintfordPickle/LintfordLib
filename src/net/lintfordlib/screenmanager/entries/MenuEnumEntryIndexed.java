@@ -212,7 +212,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 		super.update(core, screen);
 
-		mLeftButtonRectangle.x(mX + mW / 2 + 16);
+		mLeftButtonRectangle.x(mX + mW / 2 + 8);
 		mLeftButtonRectangle.y(mY);
 		mLeftButtonRectangle.height(mH);
 

@@ -61,7 +61,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilValue) {
-		preDraw(core, spriteBatch, rectangle, 1, false);
+		preDraw(core, spriteBatch, rectangle, stencilValue, false);
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilRefValue, boolean scrollBarEnabled) {

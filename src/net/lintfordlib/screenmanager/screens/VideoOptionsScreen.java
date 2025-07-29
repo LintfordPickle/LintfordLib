@@ -20,6 +20,7 @@ import net.lintfordlib.screenmanager.dialogs.TimedConfirmationDialog;
 import net.lintfordlib.screenmanager.entries.MenuDropDownEntry;
 import net.lintfordlib.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintfordlib.screenmanager.entries.MenuLabelEntry;
+import net.lintfordlib.screenmanager.entries.MenuSliderEntry;
 import net.lintfordlib.screenmanager.entries.MenuToggleEntry;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
 import net.lintfordlib.screenmanager.layouts.HorizontalLayout;
@@ -137,22 +138,41 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	private void createVideoSection(BaseLayout layout) {
 		final var lVideoOptionsTitle = new MenuLabelEntry(screenManager, this);
 
+		// As we know the game canvas size
+		final float lDesiredEntryWidth = 56.f;
+		final float lDesiredEntryHeight = 25.f;
+		
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		lVideoOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mFullScreenEntry = new MenuEnumEntryIndexed<>(screenManager, this, "Fullscreen");
+		mFullScreenEntry.desiredWidth(lDesiredEntryWidth);
+		mFullScreenEntry.desiredHeight(lDesiredEntryHeight);
 		mFullScreenEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+		
+		final var tSlider = new MenuSliderEntry(screenManager, this);
+		tSlider.desiredWidth(lDesiredEntryWidth);
+		tSlider.desiredHeight(lDesiredEntryHeight);
+		tSlider.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+		tSlider.showInfoButton(true);
+		tSlider.drawButtonBackground(true);
 
 		mResolutionEntry = new MenuDropDownEntry<>(screenManager, this, "Resolution");
+		mResolutionEntry.desiredWidth(lDesiredEntryWidth);
+		mResolutionEntry.desiredHeight(lDesiredEntryHeight);
 		mResolutionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mMonitorEntry = new MenuEnumEntryIndexed<>(screenManager, this, "Monitor");
 		mMonitorEntry.setButtonsEnabled(true);
+		mMonitorEntry.desiredWidth(lDesiredEntryWidth);
+		mMonitorEntry.desiredHeight(lDesiredEntryHeight);
 		mMonitorEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mVSync = new MenuToggleEntry(screenManager, this);
+		mVSync.desiredWidth(lDesiredEntryWidth);
+		mVSync.desiredHeight(lDesiredEntryHeight);
 		mVSync.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		final var lDisplayConfig = screenManager.core().config().display();
@@ -179,6 +199,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		layout.addMenuEntry(lVideoOptionsTitle);
 		layout.addMenuEntry(mFullScreenEntry);
+		layout.addMenuEntry(tSlider);
 		layout.addMenuEntry(mMonitorEntry);
 		layout.addMenuEntry(mResolutionEntry);
 		layout.addMenuEntry(mVSync);
