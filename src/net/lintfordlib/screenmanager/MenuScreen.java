@@ -660,7 +660,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 					mSelectedEntryIndex = j;
 
 				} else {
-
+					// need to give this entry a chance to see if one of its children is focused
 					if (lEntry.setFocusOnChildEntry(entry)) {
 						lEntry.mHasFocus = true;
 						screenManager.contextHintManager().contextHintProvider(lEntry);
