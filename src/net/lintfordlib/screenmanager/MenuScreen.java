@@ -221,7 +221,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mESCBackEnabled) {
 			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
 				if (mScreenState == ScreenState.ACTIVE) {
-					exitScreen();
+					onEscPressed();
 					return;
 				}
 			}
@@ -494,6 +494,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	// --------------------------------------
 
 	public void activeMenuEntry(int layoutIndex, int entryIndex) {
+		activeMenuEntry(layoutIndex, entryIndex, -1);
+	}
+
+	public void activeMenuEntry(int layoutIndex, int entryIndex, int nextEntryIndex) {
 
 		if (mLayouts.size() <= layoutIndex) {
 			// The layout index is out of bounds, so we cannot select an entry.
@@ -508,6 +512,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mSelectedLayoutIndex = layoutIndex;
 		mSelectedEntryIndex = entryIndex;
 		final var selectedEntry = selectedLayout.entries().get(mSelectedEntryIndex);
+		
+		
 
 		setFocusOnEntry(selectedEntry);
 		selectedEntry.onNavigationGainFocus(screenManager.core());
@@ -797,7 +803,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
 	}
 
-	protected void onNavigationLeft(LintfordCore core, InputType inputType) {
+	public void onNavigationLeft(LintfordCore core, InputType inputType) {
 		System.out.println("nav left");
 
 		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
@@ -810,7 +816,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	}
 
-	protected void onNavigationRight(LintfordCore core, InputType inputType) {
+	public void onNavigationRight(LintfordCore core, InputType inputType) {
 		System.out.println("nav right");
 
 		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
