@@ -12,6 +12,7 @@ import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.input.InputType;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
@@ -220,6 +221,16 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 			scrollContentItemIntoView(mSelectedItemIndex);
 			return true;
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
+			mIsInputActive = false;
+			mParentScreen.onNavigationLeft(core, InputType.Keyboard);
+		}
+
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
+			mIsInputActive = false;
+			mParentScreen.onNavigationRight(core, InputType.Keyboard);
 		}
 
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {

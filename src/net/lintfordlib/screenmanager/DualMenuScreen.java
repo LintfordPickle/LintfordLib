@@ -332,7 +332,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationLeft(LintfordCore core, InputType inputType) {
+	public void onNavigationLeft(LintfordCore core, InputType inputType) {
 		if (isEntryActive())
 			return;
 
@@ -387,7 +387,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationRight(LintfordCore core, InputType inputType) {
+	public void onNavigationRight(LintfordCore core, InputType inputType) {
 		if (isEntryActive())
 			return;
 
