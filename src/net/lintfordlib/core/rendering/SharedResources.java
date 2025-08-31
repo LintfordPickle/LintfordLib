@@ -11,6 +11,7 @@ import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.geometry.TexturedQuad_PT;
 import net.lintfordlib.core.graphics.linebatch.LineBatch;
+import net.lintfordlib.core.graphics.pointbatch.PointBatch;
 import net.lintfordlib.core.graphics.polybatch.PolyBatchPCT;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
@@ -38,6 +39,7 @@ public final class SharedResources {
 
 	private ResourceManager mResourceManager;
 
+	private PointBatch mPointBatch;
 	private SpriteBatch mSpriteBatch;
 	private LineBatch mLineBatch;
 	private PolyBatchPCT mPolyBatch;
@@ -114,6 +116,10 @@ public final class SharedResources {
 		return mLineBatch;
 	}
 
+	public PointBatch pointBatch() {
+		return mPointBatch;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -124,6 +130,7 @@ public final class SharedResources {
 		mSpriteBatch = new SpriteBatch();
 		mLineBatch = new LineBatch();
 		mPolyBatch = new PolyBatchPCT();
+		mPointBatch = new PointBatch();
 
 		mTexturedQuad = new TexturedQuad_PT();
 
@@ -164,6 +171,7 @@ public final class SharedResources {
 		mSpriteBatch.loadResources(resourceManager);
 		mLineBatch.loadResources(resourceManager);
 		mPolyBatch.loadResources(resourceManager);
+		mPointBatch.loadResources(resourceManager);
 
 		mBasicShader.loadResources(resourceManager);
 		mTexturedQuad.loadResources(resourceManager);
@@ -180,6 +188,7 @@ public final class SharedResources {
 		mPolyBatch.unloadResources();
 		mBasicShader.unloadResources();
 		mTexturedQuad.unloadResources();
+		mPointBatch.unloadResources();
 
 		mUiTextFont = null;
 		mUiTextBoldFont = null;

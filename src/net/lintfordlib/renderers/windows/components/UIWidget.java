@@ -7,6 +7,7 @@ import net.lintfordlib.core.graphics.Color;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
+import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiWidgetInteractions;
@@ -57,9 +58,19 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
 	protected float mDesiredHeight;
 
+	protected float mTextScale;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float textScale() {
+		return mTextScale;
+	}
+
+	public void textScale(float newValue) {
+		mTextScale = MathHelper.clamp(newValue, .25f, 5.f);
+	}
 
 	public void desiredHeight(float desiredHeight) {
 		mDesiredHeight = desiredHeight;
@@ -192,6 +203,7 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 		mIsEnabled = true;
 
 		mParentWindow = parentWindow;
+		mTextScale = 1.f;
 	}
 
 	// --------------------------------------
@@ -220,6 +232,7 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 		}
 	}
 
+	// TODO: The signature needs work - core and sharedResources are 'the same' - and either sharedResources or textFont and spriteBatch ...
 	public abstract void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth);
 
 	// --------------------------------------

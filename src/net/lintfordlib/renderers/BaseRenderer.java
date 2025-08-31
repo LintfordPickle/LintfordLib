@@ -52,7 +52,7 @@ public abstract class BaseRenderer implements IInputProcessor {
 	/**
 	 * A group ID is assigned to all {@link BaseRenderer} instances. It allows the developer to programmatically unload batches of particular parts of the game when required (i.e. unload the game controllers when returning to the main menu)
 	 */
-	public int entityGroupID() {
+	public int entityGroupUid() {
 		return mEntityGroupUid;
 	}
 

@@ -353,7 +353,7 @@ public abstract class RendererManagerBase implements IInputClickedFocusManager {
 		}
 
 		for (int i = 0; i < lRendererCount; i++) {
-			if (lRendererUpdateList.get(i).entityGroupID() == entityGroupID) {
+			if (lRendererUpdateList.get(i).entityGroupUid() == entityGroupID) {
 				lRendererUpdateList.get(i).unloadResources();
 
 				mRenderers.remove(lRendererUpdateList.get(i));

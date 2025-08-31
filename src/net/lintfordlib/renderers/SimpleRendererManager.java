@@ -151,6 +151,8 @@ public class SimpleRendererManager extends RendererManagerBase {
 
 	public void drawGameRenderers(LintfordCore core) {
 
+		// why the duck do I have 3 lists of renderers ... mGameStage, mHudStage and mRenderers ??
+
 		// SimpleRendererManager renders all BaseRenderers using RenderPass.MAIN
 
 		final var lGameRenderers = mGameStage.renderers();

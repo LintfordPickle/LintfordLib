@@ -23,10 +23,6 @@ public class StructuredRendererManager extends RendererManagerBase {
 	public Object userData; // hack
 
 	// --------------------------------------
-	// Properties
-	// --------------------------------------
-
-	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 

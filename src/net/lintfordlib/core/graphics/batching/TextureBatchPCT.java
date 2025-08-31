@@ -431,12 +431,12 @@ public class TextureBatchPCT {
 		if (mIndexCount == 0)
 			return;
 
-		mBuffer.flip();
-
 		if (!mAreGlContainersInitialized)
 			initializeGlContainers();
 
 		GL30.glBindVertexArray(mVaoId);
+
+		mBuffer.flip();
 
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, mVboId);
 		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, mBuffer);

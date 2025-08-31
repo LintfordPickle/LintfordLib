@@ -201,7 +201,13 @@ public class RTCamera implements ICamera {
 		mViewMatrix.setIdentity();
 		mViewMatrix.createLookAt(0.f, 0.f, 0.f, 0.f, 0.f, -1f, 0.f, 1.f, 0.f);
 		mViewMatrix.scale(mZoomFactor, mZoomFactor, 1f);
-		mViewMatrix.translate((int) (-mInternalPosition.x * getZoomFactor()), (int) (-mInternalPosition.y * getZoomFactor()), 0f);
+
+		// TODO: I'm not sure which is correct. By aligning the view matrix we ensure that pixels a fully visible (i.e. no sub-pixels) but it 'shakes'.
+		boolean intAlign = true;
+		if (intAlign)
+			mViewMatrix.translate((int) (-mInternalPosition.x * getZoomFactor()), (int) (-mInternalPosition.y * getZoomFactor()), 0f);
+		else
+			mViewMatrix.translate((-mInternalPosition.x * getZoomFactor()), (-mInternalPosition.y * getZoomFactor()), 0f);
 	}
 
 	private void createOrtho(float gameViewportWidth, float gameViewportheight) {
