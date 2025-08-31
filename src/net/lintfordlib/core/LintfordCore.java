@@ -215,8 +215,10 @@ public abstract class LintfordCore {
 		}
 
 		private void handleInput() {
+			if (!Debug.debugManager().debugModeEnabled())
+				return;
 
-			// TODO: Remove this or make it nicer
+			// TODO: make this more usable
 
 			if (mInputState.keyboard().isKeyDown(GLFW.GLFW_KEY_F11)) {
 				if (mDebugPaused && isKeyCooldownElapsed()) {
@@ -346,7 +348,7 @@ public abstract class LintfordCore {
 		mGameInfo = gameInfo;
 		mIsHeadlessMode = isHeadlessMode;
 
-		DebugLogLevel lNewLogLevel = gameInfo.debugLogLevel();
+		var lNewLogLevel = gameInfo.debugLogLevel();
 
 		if (args != null) {
 			final int lArgsCount = args.length;
@@ -631,7 +633,7 @@ public abstract class LintfordCore {
 					mGameTime.elapsedTimeMilli = 0.f;
 
 				if (!mGameTime.isTimePaused)
-					mGameTime.totalTimeMilli += mCoreTime.targetElapsedTimeMilli * mGameTime.timeModifier;
+					mGameTime.totalTimeMilli += mCoreTime.accumulatedElapsedTimeMilli * mGameTime.timeModifier;
 
 				mCoreTime.elapsedTimeMilli = mCoreTime.accumulatedElapsedTimeMilli;
 				mCoreTime.totalTimeMilli += mCoreTime.accumulatedElapsedTimeMilli;
