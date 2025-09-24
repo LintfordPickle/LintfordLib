@@ -263,4 +263,17 @@ public class MathHelper {
 		final float yy = p1y - p2y;
 		return (xx * xx + yy * yy) < ConstantsMath.EPSILON * ConstantsMath.EPSILON;
 	}
+
+	/**
+	 * Smoothly moves a value towards a target over time. 
+	 * Example:
+	 * If current = 0.2f, target = 0.8f, maxDelta = 0.1f 
+	 * Result = 0.3f (moved 0.1f closer to target)
+	 */
+	public static float moveTowards(float current, float target, float maxDelta) {
+		if (Math.abs(target - current) <= maxDelta) {
+			return target;
+		}
+		return current + Math.signum(target - current) * maxDelta;
+	}
 }
