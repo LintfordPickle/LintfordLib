@@ -3,7 +3,7 @@ package net.lintfordlib.core.audio;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lintfordlib.core.audio.data.AudioData;
+import net.lintfordlib.core.audio.data.AudioDataBase;
 
 public class AudioFireAndForgetManager {
 
@@ -64,16 +64,16 @@ public class AudioFireAndForgetManager {
 		play(lAudioDataBuffer, positionX, positionY, velocityX, velocityY);
 	}
 
-	/** Plays the given {@link AudioData}. */
-	public void play(AudioData audioDataBuffer, float positionX, float positionY, float velocityX, float velocityY) {
+	/** Plays the given {@link AudioDataBase}. */
+	public void play(AudioDataBase audioDataBuffer, float positionX, float positionY, float velocityX, float velocityY) {
 		if (audioDataBuffer == null || !audioDataBuffer.isLoaded())
 			return;
 
 		play(audioDataBuffer, 100f, 1f, positionX, positionY, velocityX, velocityY);
 	}
 
-	/** Plays the given {@link AudioData} at the specified volume and pitch. */
-	public void play(AudioData audioDataBuffer, float gain, float pitch, float positionX, float positionY, float velocityX, float velocityY) {
+	/** Plays the given {@link AudioDataBase} at the specified volume and pitch. */
+	public void play(AudioDataBase audioDataBuffer, float gain, float pitch, float positionX, float positionY, float velocityX, float velocityY) {
 		if (audioDataBuffer == null || !audioDataBuffer.isLoaded())
 			return;
 

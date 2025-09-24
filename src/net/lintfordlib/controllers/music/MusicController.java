@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.audio.data.AudioData;
+import net.lintfordlib.core.audio.data.AudioDataBase;
 import net.lintfordlib.core.audio.music.MusicManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
@@ -198,7 +198,7 @@ public class MusicController extends BaseController implements IInputProcessor {
 			}
 		}
 
-		AudioData lNextSongAudioData = null;
+		AudioDataBase lNextSongAudioData = null;
 
 		if (groupIndex != MusicManager.NO_GROUP_INDEX) {
 			// resolve the next song from the group indices

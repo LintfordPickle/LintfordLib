@@ -43,7 +43,11 @@ public class AudioSource {
 	}
 
 	public void gain(float newGainValue) {
+		if (mSourceGain == newGainValue)
+			return;
+
 		mSourceGain = newGainValue;
+		updateGain();
 	}
 
 	public float pitch() {
@@ -51,6 +55,9 @@ public class AudioSource {
 	}
 
 	public void pitch(float newPitchValue) {
+		if (mSourcePitch == newPitchValue)
+			return;
+
 		mSourcePitch = newPitchValue;
 	}
 
@@ -64,7 +71,7 @@ public class AudioSource {
 	}
 
 	/** Returns the OpenAL source ID. */
-	public int sourceID() {
+	public int sourceId() {
 		return mSourceID;
 	}
 
@@ -86,10 +93,8 @@ public class AudioSource {
 	public AudioSource() {
 		mSourceID = AL10.alGenSources();
 
-		if (mSourceID == AL10.AL_INVALID) {
+		if (mSourceID == AL10.AL_INVALID)
 			Debug.debugManager().logger().e("AudioSource", "You have reached the limit of OpenAL Audio Sources");
-
-		}
 
 		mSourceGain = 1.f;
 		mSourcePitch = 1.f;
@@ -156,6 +161,11 @@ public class AudioSource {
 		this.play(bufferID, mSourceGain, 1f);
 	}
 
+	public void play(int bufferId, boolean looping) {
+		setLooping(looping);
+		play(bufferId);
+	}
+
 	/** Instructs this {@link AudioSource} to being playing the audio buffer specified by the given buffer ID. Also specifies the volumn and the pitch of the sound. */
 	public void play(int bufferID, float gain, float pitch) {
 		setGain(gain);
@@ -198,6 +208,9 @@ public class AudioSource {
 	}
 
 	public void setMaxGain(float maxGain) {
+		if (mMaxSourceGain == maxGain)
+			return;
+
 		mMaxSourceGain = maxGain;
 		AL10.alSourcef(mSourceID, AL10.AL_MAX_GAIN, mMaxSourceGain);
 	}
@@ -234,6 +247,6 @@ public class AudioSource {
 	}
 
 	public float getCurrentPlaybackTime() {
-		return AL10.alGetSourcef(sourceID(), AL11.AL_SEC_OFFSET);
+		return AL10.alGetSourcef(sourceId(), AL11.AL_SEC_OFFSET);
 	}
 }
