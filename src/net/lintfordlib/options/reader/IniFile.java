@@ -25,8 +25,8 @@ public class IniFile {
 
 	protected String mConfigFilename;
 
-	private Pattern mSection = Pattern.compile("\\s*\\[([^]]*)\\]\\s*");
-	private Pattern mKeyValue = Pattern.compile("\\s*([^=]*)=(.*)");
+	private static final Pattern mSection = Pattern.compile("\\s*\\[([^]]*)\\]\\s*");
+	private static final Pattern mKeyValue = Pattern.compile("\\s*([^=]*)=(.*)");
 
 	private Map<String, Map<String, String>> mEntries = new HashMap<>();
 
@@ -49,85 +49,86 @@ public class IniFile {
 		mEntries.clear();
 	}
 
-	public IniFile(String pConfigFilename) {
-		mConfigFilename = pConfigFilename;
+	public IniFile(String configFilename) {
+		mConfigFilename = configFilename;
 
 	}
 
-	public void createNew(String pFilename) throws IOException {
-		mConfigFilename = pFilename;
-		File lFile = new File(pFilename);
-		lFile.createNewFile();
-	}
+	public void createNew(String filename) throws IOException {
+		mConfigFilename = filename;
+		final var lFile = new File(filename);
 
-	public boolean getBoolean(String sectionName, String key, boolean pDefaultValue) {
-		Map<String, String> kv = mEntries.get(sectionName);
-		if (kv == null) {
-			return pDefaultValue;
+		try {
+			lFile.createNewFile();
+
+		} catch (IOException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to create a new configuration file at '" + filename + "'.");
 		}
+	}
+
+	public boolean getBoolean(String sectionName, String key, boolean defaultValue) {
+		final var kv = mEntries.get(sectionName);
+		if (kv == null)
+			return defaultValue;
 
 		return Boolean.parseBoolean(kv.get(key));
 	}
 
-	public String getString(String sectionName, String key, String pDefaultValue) {
-		Map<String, String> kv = mEntries.get(sectionName);
-		if (kv == null) {
-			return pDefaultValue;
-		}
+	public String getString(String sectionName, String key, String defaultValue) {
+		final var kv = mEntries.get(sectionName);
+		if (kv == null)
+			return defaultValue;
+
 		return kv.get(key);
 	}
 
-	public int getInt(String sectionName, String key, int pDefaultValue) {
+	public int getInt(String sectionName, String key, int defaultValue) {
 		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(sectionName))
-			return pDefaultValue;
+			return defaultValue;
 
 		try {
-			Map<String, String> kv = mEntries.get(sectionName);
-			if (kv == null) {
-				return pDefaultValue;
-
-			}
+			final var kv = mEntries.get(sectionName);
+			if (kv == null)
+				return defaultValue;
 
 			return Integer.parseInt(kv.get(key));
 
 		} catch (NumberFormatException e) {
-			return pDefaultValue;
+			return defaultValue;
 
 		}
 	}
 
-	public long getLong(String sectionName, String key, long pDefaultValue) {
+	public long getLong(String sectionName, String key, long defaultValue) {
 		if (mEntries == null || mEntries.size() == 0 || !mEntries.containsKey(sectionName))
-			return pDefaultValue;
+			return defaultValue;
 
 		try {
-			Map<String, String> kv = mEntries.get(sectionName);
-			if (kv == null) {
-				return pDefaultValue;
-
-			}
+			final var kv = mEntries.get(sectionName);
+			if (kv == null)
+				return defaultValue;
 
 			return Long.parseLong(kv.get(key));
 
 		} catch (NumberFormatException e) {
-			return pDefaultValue;
+			return defaultValue;
 
 		}
 	}
 
-	public float getFloat(String sectionName, String key, float pDefaultValue) {
-		Map<String, String> kv = mEntries.get(sectionName);
-		if (kv == null) {
-			return pDefaultValue;
-		}
+	public float getFloat(String sectionName, String key, float defaultValue) {
+		final var kv = mEntries.get(sectionName);
+		if (kv == null)
+			return defaultValue;
+
 		return Float.parseFloat(kv.get(key));
 	}
 
-	public double getDouble(String sectionName, String key, double pDefaultValue) {
-		Map<String, String> kv = mEntries.get(sectionName);
-		if (kv == null) {
-			return pDefaultValue;
-		}
+	public double getDouble(String sectionName, String key, double defaultValue) {
+		final var kv = mEntries.get(sectionName);
+		if (kv == null)
+			return defaultValue;
+
 		return Double.parseDouble(kv.get(key));
 	}
 
@@ -137,7 +138,7 @@ public class IniFile {
 	}
 
 	public void setValues(String sectionName, Map<String, String> mavalue) {
-		Map<String, String> lSection = mEntries.get(sectionName);
+		var lSection = mEntries.get(sectionName);
 		if (lSection == null) {
 			lSection = new HashMap<>();
 			mEntries.put(sectionName, lSection);
@@ -146,39 +147,39 @@ public class IniFile {
 		lSection.putAll(mavalue);
 	}
 
-	public void setValue(String sectionName, String pName, String value) {
-		Map<String, String> pSection = mEntries.get(sectionName);
+	public void setValue(String sectionName, String name, String value) {
+		var section = mEntries.get(sectionName);
 
-		if (pSection == null) {
-			pSection = new HashMap<>();
-			mEntries.put(sectionName, pSection);
+		if (section == null) {
+			section = new HashMap<>();
+			mEntries.put(sectionName, section);
 		}
 
-		pSection.put(pName, value);
+		section.put(name, value);
 	}
 
-	public void setValue(String sectionName, String pName, int value) {
-		setValue(sectionName, pName, String.valueOf(value));
-
-	}
-
-	public void setValue(String sectionName, String pName, long value) {
-		setValue(sectionName, pName, String.valueOf(value));
+	public void setValue(String sectionName, String name, int value) {
+		setValue(sectionName, name, String.valueOf(value));
 
 	}
 
-	public void setValue(String sectionName, String pName, float value) {
-		setValue(sectionName, pName, String.valueOf(value));
+	public void setValue(String sectionName, String name, long value) {
+		setValue(sectionName, name, String.valueOf(value));
 
 	}
 
-	public void setValue(String sectionName, String pName, double value) {
-		setValue(sectionName, pName, String.valueOf(value));
+	public void setValue(String sectionName, String name, float value) {
+		setValue(sectionName, name, String.valueOf(value));
 
 	}
 
-	public void setValue(String sectionName, String pName, boolean value) {
-		setValue(sectionName, pName, String.valueOf(value));
+	public void setValue(String sectionName, String name, double value) {
+		setValue(sectionName, name, String.valueOf(value));
+
+	}
+
+	public void setValue(String sectionName, String name, boolean value) {
+		setValue(sectionName, name, String.valueOf(value));
 	}
 
 	public void saveConfig() {
@@ -191,21 +192,20 @@ public class IniFile {
 			saveConfig(mConfigFilename);
 
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save the DisplayConfiguration file to " + mConfigFilename);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to save the configuration file to " + mConfigFilename);
 		}
 	}
 
-	public void saveConfig(String pFilename) throws IOException {
-		final var lConfigFile = new File(pFilename);
+	public void saveConfig(String filename) throws IOException {
+		final var lConfigFile = new File(filename);
 		final var lParentDirectory = lConfigFile.getParentFile();
 		if (lParentDirectory != null && lConfigFile.getParentFile().exists() == false) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Creating config directory: " + lParentDirectory.getAbsolutePath());
 			lParentDirectory.mkdir();
 		}
 
-		try (BufferedWriter br = new BufferedWriter(new FileWriter(pFilename))) {
-
-			for (Map.Entry<String, Map<String, String>> sectionEntry : mEntries.entrySet()) {
+		try (final var br = new BufferedWriter(new FileWriter(filename))) {
+			for (final var sectionEntry : mEntries.entrySet()) {
 				String lSectionName = sectionEntry.getKey();
 				br.write("[" + lSectionName + "]" + FileUtils.LINE_SEPERATOR);
 				for (Map.Entry<String, String> lineEntry : sectionEntry.getValue().entrySet()) {
@@ -234,28 +234,29 @@ public class IniFile {
 
 	public void loadConfig(String path) throws IOException {
 
-		File lFile = new File(path);
-		if (!lFile.exists()) {
+		final var file = new File(path);
+		if (!file.exists()) {
 			createNew(path);
 			return;
 		}
 
-		try (BufferedReader br = new BufferedReader(new FileReader(lFile))) {
+		try (final var br = new BufferedReader(new FileReader(file))) {
 			String line;
-			String pSection = null;
+			String section = null;
 			while ((line = br.readLine()) != null) {
 				Matcher m = mSection.matcher(line);
 				if (m.matches()) {
-					pSection = m.group(1).trim();
-				} else if (pSection != null) {
+					section = m.group(1).trim();
+				} else if (section != null) {
 					m = mKeyValue.matcher(line);
 					if (m.matches()) {
-						String key = m.group(1).trim();
-						String value = m.group(2).trim();
-						Map<String, String> kv = mEntries.get(pSection);
-						if (kv == null) {
-							mEntries.put(pSection, kv = new HashMap<>());
-						}
+						final var key = m.group(1).trim();
+						final var value = m.group(2).trim();
+						var kv = mEntries.get(section);
+
+						if (kv == null)
+							mEntries.put(section, kv = new HashMap<>());
+
 						kv.put(key, value);
 					}
 				}
