@@ -8,6 +8,8 @@ public class ConstantsPhysics {
 	// Statics
 	// --------------------------------------
 
+	public static final float GRAVITY_MS = 9.81f;
+	
 	public static final int MIN_ITERATIONS = 1;
 	public static final int MAX_ITERATIONS = 64;
 
