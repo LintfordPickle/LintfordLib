@@ -9,7 +9,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -22,7 +21,7 @@ import org.lwjgl.stb.STBVorbisInfo;
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 
-public class OGGAudioData extends AudioData {
+public class OGGAudioData extends AudioDataBase {
 
 	// --------------------------------------
 	// Core-Methods
@@ -34,11 +33,34 @@ public class OGGAudioData extends AudioData {
 			return false;
 
 		mName = audioName;
-		mBufferID = AL10.alGenBuffers();
+		int tempBufferID = AL10.alGenBuffers();
 
-		try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
+		if (tempBufferID == 0) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to generate OpenAL buffer for: " + audioName);
+			return false;
+		}
+
+		try (final var info = STBVorbisInfo.malloc()) {
 			final var pcm = readVorbis(inputStream, 32 * 1024, info);
+			if (pcm == null) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to decode OGG Vorbis data for: " + audioName);
+
+				AL10.alDeleteBuffers(tempBufferID);
+				return false;
+			}
+
 			alBufferData(mBufferID, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
+
+			// Check for OpenAL errors
+			final var alError = AL10.alGetError();
+			if (alError != AL10.AL_NO_ERROR) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "OpenAL error uploading audio data: " + alError + " for file: " + audioName);
+				AL10.alDeleteBuffers(tempBufferID);
+				return false;
+			}
+
+			// Only assign buffer ID after successful upload
+			mBufferID = tempBufferID;
 
 			mSize = AL10.alGetBufferi(mBufferID, AL10.AL_SIZE);
 			mBitsPerSample = AL10.alGetBufferi(mBufferID, AL10.AL_BITS);
@@ -60,6 +82,13 @@ public class OGGAudioData extends AudioData {
 			}
 
 			return true;
+		} catch (Exception e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Exception loading OGG file: " + audioName + " - " + e.getMessage());
+
+			if (tempBufferID != 0)
+				AL10.alDeleteBuffers(tempBufferID);
+
+			return false;
 		}
 	}
 
@@ -72,26 +101,50 @@ public class OGGAudioData extends AudioData {
 		try {
 			vorbis = ioResourceToByteBuffer(pInputStream, bufferSize);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Failed to read OGG file data: " + e.getMessage());
+			return null;
 		}
 
-		IntBuffer error = BufferUtils.createIntBuffer(1);
-		long decoder = STBVorbis.stb_vorbis_open_memory(vorbis, error, null);
-		if (decoder == NULL)
-			throw new RuntimeException("Failed to open Ogg Vorbis file. Error: " + error.get(0));
+		final var error = BufferUtils.createIntBuffer(1);
+		final var decoder = STBVorbis.stb_vorbis_open_memory(vorbis, error, null);
+		if (decoder == NULL) {
+			Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Failed to open Ogg Vorbis file. STB Error: " + error.get(0));
+			return null;
+		}
 
-		STBVorbis.stb_vorbis_get_info(decoder, info);
+		try {
+			STBVorbis.stb_vorbis_get_info(decoder, info);
 
-		int channels = info.channels();
+			final var channels = info.channels();
+			if (channels < 1 || channels > 2) {
+				Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Unsupported channel count: " + channels + ". Only mono and stereo are supported.");
+				return null;
+			}
 
-		int samples = STBVorbis.stb_vorbis_stream_length_in_samples(decoder);
+			final var samples = STBVorbis.stb_vorbis_stream_length_in_samples(decoder);
+			if (samples <= 0) {
+				Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Invalid sample count: " + samples);
+				return null;
+			}
 
-		ShortBuffer pcm = BufferUtils.createShortBuffer(samples);
+			// Create buffer for all samples across all channels
+			final var pcm = BufferUtils.createShortBuffer(samples * channels);
 
-		pcm.limit(STBVorbis.stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm) * channels);
-		STBVorbis.stb_vorbis_close(decoder);
+			final var samplesRead = STBVorbis.stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm);
+			if (samplesRead <= 0) {
+				Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Failed to decode OGG samples. Samples read: " + samplesRead);
+				return null;
+			}
 
-		return pcm;
+			pcm.limit(samplesRead * channels);
+			pcm.rewind();
+
+			return pcm;
+
+		} finally {
+
+			STBVorbis.stb_vorbis_close(decoder);
+		}
 	}
 
 	/**
@@ -112,8 +165,10 @@ public class OGGAudioData extends AudioData {
 
 			while (true) {
 				int bytes = rbc.read(buffer);
+
 				if (bytes == -1)
 					break;
+
 				if (buffer.remaining() == 0)
 					buffer = resizeBuffer(buffer, buffer.capacity() * 2);
 			}
@@ -124,10 +179,24 @@ public class OGGAudioData extends AudioData {
 	}
 
 	private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
-		ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
-		buffer.flip();
-		newBuffer.put(buffer);
-		return newBuffer;
+
+		final var originalPosition = buffer.position();
+		final var originalLimit = buffer.limit();
+
+		try {
+			final var newBuffer = BufferUtils.createByteBuffer(newCapacity);
+
+			// Prepare buffer for reading without modifying original state permanently
+			buffer.flip();
+			newBuffer.put(buffer);
+
+			return newBuffer;
+
+		} catch (Exception e) {
+			buffer.position(originalPosition);
+			buffer.limit(originalLimit);
+			throw e;
+		}
 	}
 
 }

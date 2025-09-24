@@ -2,6 +2,7 @@ package net.lintfordlib.core.audio.data;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -157,46 +158,101 @@ public class WaveData {
 	 */
 	public static WaveData create(AudioInputStream audioInputStream) {
 		// get format of data
-		AudioFormat audioformat = audioInputStream.getFormat();
+		final var audioformat = audioInputStream.getFormat();
 
-		// get channels
-		int channels = 0;
-		if (audioformat.getChannels() == 1) {
-			if (audioformat.getSampleSizeInBits() == 8) {
-				channels = AL10.AL_FORMAT_MONO8;
-			} else if (audioformat.getSampleSizeInBits() == 16) {
-				channels = AL10.AL_FORMAT_MONO16;
-			} else {
-				assert false : "Illegal sample size";
+		if (audioformat.getEncoding() != AudioFormat.Encoding.PCM_SIGNED && audioformat.getEncoding() != AudioFormat.Encoding.PCM_UNSIGNED) {
+			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Unsupported audio encoding: " + audioformat.getEncoding() + ". Only PCM is supported.");
+			return null;
+		}
+
+		float sampleRate = audioformat.getSampleRate();
+		if (sampleRate != 8000 && sampleRate != 11025 && sampleRate != 22050 && sampleRate != 44100 && sampleRate != 48000 && sampleRate != 96000) {
+			Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "Unusual sample rate: " + sampleRate + "Hz. This may not play correctly on all systems.");
+		}
+
+		int alFormat = 0;
+		int channels = audioformat.getChannels();
+		int sampleSizeInBits = audioformat.getSampleSizeInBits();
+
+		if (channels == 1) {
+			switch (sampleSizeInBits) {
+			case 8:
+				alFormat = AL10.AL_FORMAT_MONO8;
+				break;
+			case 16:
+				alFormat = AL10.AL_FORMAT_MONO16;
+				break;
+			case 24:
+				// 24-bit not directly supported by OpenAL core - convert to 16-bit
+				Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "24-bit audio will be converted to 16-bit (OpenAL core limitation)");
+				alFormat = AL10.AL_FORMAT_MONO16;
+				break;
+			case 32:
+				// Check if float32 extension is available (pseudo-code - implementation depends on your OpenAL wrapper)
+				// if (AL.isExtensionPresent("AL_EXT_float32")) {
+				//     alFormat = AL_EXT_float32.AL_FORMAT_MONO_FLOAT32;
+				// } else {
+				Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "32-bit audio will be converted to 16-bit (AL_EXT_float32 not available)");
+				alFormat = AL10.AL_FORMAT_MONO16;
+				// }
+				break;
+			default:
+				Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Unsupported sample size: " + sampleSizeInBits + " bits");
+				return null;
 			}
 		} else if (audioformat.getChannels() == 2) {
-			if (audioformat.getSampleSizeInBits() == 8) {
-				channels = AL10.AL_FORMAT_STEREO8;
-			} else if (audioformat.getSampleSizeInBits() == 16) {
-				channels = AL10.AL_FORMAT_STEREO16;
-			} else {
-				assert false : "Illegal sample size";
+			switch (sampleSizeInBits) {
+			case 8:
+				alFormat = AL10.AL_FORMAT_STEREO8;
+				break;
+			case 16:
+				alFormat = AL10.AL_FORMAT_STEREO16;
+				break;
+			case 24:
+				Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "24-bit stereo will be converted to 16-bit");
+				alFormat = AL10.AL_FORMAT_STEREO16;
+				break;
+			case 32:
+				Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "32-bit stereo will be converted to 16-bit");
+				alFormat = AL10.AL_FORMAT_STEREO16;
+				break;
+			default:
+				Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Unsupported sample size: " + sampleSizeInBits + " bits");
+				return null;
 			}
+
 			Debug.debugManager().logger().w(AudioManager.class.getSimpleName(), "WAV has stereo sound - this sound will not be played in 3d space");
+		} else if (channels > 2) {
+			// Multi-channel audio (5.1, 7.1, etc.)
+			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Multi-channel audio (" + channels + " channels) is not supported. " + "Use mono for 3D positioned audio or stereo for background music.");
+			return null;
 		} else {
-			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Only mono or stereo sound files are supported.");
+			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Invalid channel count: " + channels);
 			return null;
 		}
 
 		// read data into buffer
 		ByteBuffer buffer = null;
 		try {
-			int available = audioInputStream.available();
-			if (available <= 0) {
-				available = audioInputStream.getFormat().getChannels() * (int) audioInputStream.getFrameLength() * audioInputStream.getFormat().getSampleSizeInBits() / 8;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] tempBuffer = new byte[8192];
+			int bytesRead;
+
+			while ((bytesRead = audioInputStream.read(tempBuffer)) != -1) {
+				baos.write(tempBuffer, 0, bytesRead);
 			}
-			byte[] buf = new byte[audioInputStream.available()];
-			int read = 0, total = 0;
-			while ((read = audioInputStream.read(buf, total, buf.length - total)) != -1 && total < buf.length) {
-				total += read;
+
+			byte[] audioData = baos.toByteArray();
+
+			// Convert audio data, handling bit depth conversion if needed
+			if (sampleSizeInBits == 24 || sampleSizeInBits == 32) {
+				audioData = convertToSixteenBit(audioData, audioformat);
+				sampleSizeInBits = 16; // Update for the conversion result
 			}
-			buffer = convertAudioBytes(buf, audioformat.getSampleSizeInBits() == 16, audioformat.isBigEndian() ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
+
+			buffer = convertAudioBytes(audioData, sampleSizeInBits == 16, audioformat.isBigEndian() ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
 		} catch (IOException ioe) {
+			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Failed to read audio data: " + ioe.getMessage());
 			return null;
 		} finally {
 			try {
@@ -206,13 +262,69 @@ public class WaveData {
 			}
 		}
 
-		return new WaveData(buffer, channels, (int) audioformat.getSampleRate(), channels, audioformat.getSampleSizeInBits());
+		return new WaveData(buffer, alFormat, (int) audioformat.getSampleRate(), alFormat, sampleSizeInBits);
+	}
+
+	/**
+	 * Convert 24-bit or 32-bit audio to 16-bit
+	 */
+	private static byte[] convertToSixteenBit(byte[] audioData, AudioFormat format) {
+		int sampleSizeInBits = format.getSampleSizeInBits();
+		int bytesPerSample = sampleSizeInBits / 8;
+		boolean isBigEndian = format.isBigEndian();
+
+		int samples = audioData.length / bytesPerSample;
+		byte[] converted = new byte[samples * 2]; // 16-bit = 2 bytes per sample
+
+		for (int i = 0; i < samples; i++) {
+			int sampleValue = 0;
+
+			if (sampleSizeInBits == 24) {
+				// Read 24-bit sample
+				if (isBigEndian) {
+					sampleValue = ((audioData[i * 3] & 0xFF) << 16) | ((audioData[i * 3 + 1] & 0xFF) << 8) | (audioData[i * 3 + 2] & 0xFF);
+					if (sampleValue >= 0x800000)
+						sampleValue -= 0x1000000; // Sign extend
+				} else {
+					sampleValue = (audioData[i * 3] & 0xFF) | ((audioData[i * 3 + 1] & 0xFF) << 8) | ((audioData[i * 3 + 2] & 0xFF) << 16);
+					if (sampleValue >= 0x800000)
+						sampleValue -= 0x1000000; // Sign extend
+				}
+				// Convert 24-bit to 16-bit by shifting right 8 bits
+				sampleValue >>= 8;
+			} else if (sampleSizeInBits == 32) {
+				// Read 32-bit sample (assuming PCM integer, not float)
+				if (isBigEndian) {
+					sampleValue = ((audioData[i * 4] & 0xFF) << 24) | ((audioData[i * 4 + 1] & 0xFF) << 16) | ((audioData[i * 4 + 2] & 0xFF) << 8) | (audioData[i * 4 + 3] & 0xFF);
+				} else {
+					sampleValue = (audioData[i * 4] & 0xFF) | ((audioData[i * 4 + 1] & 0xFF) << 8) | ((audioData[i * 4 + 2] & 0xFF) << 16) | ((audioData[i * 4 + 3] & 0xFF) << 24);
+				}
+				// Convert 32-bit to 16-bit by shifting right 16 bits
+				sampleValue >>= 16;
+			}
+
+			// Clamp to 16-bit range
+			sampleValue = Math.max(-32768, Math.min(32767, sampleValue));
+
+			// Write 16-bit sample
+			if (isBigEndian) {
+				converted[i * 2] = (byte) (sampleValue >> 8);
+				converted[i * 2 + 1] = (byte) (sampleValue & 0xFF);
+			} else {
+				converted[i * 2] = (byte) (sampleValue & 0xFF);
+				converted[i * 2 + 1] = (byte) (sampleValue >> 8);
+			}
+		}
+
+		return converted;
 	}
 
 	private static ByteBuffer convertAudioBytes(byte[] bytes, boolean twoBytesData, ByteOrder order) {
-		ByteBuffer dest = ByteBuffer.allocateDirect(bytes.length);
+
+		final var dest = ByteBuffer.allocateDirect(bytes.length);
 		dest.order(ByteOrder.nativeOrder());
-		ByteBuffer src = ByteBuffer.wrap(bytes);
+
+		final var src = ByteBuffer.wrap(bytes);
 		src.order(order);
 		if (twoBytesData) {
 			ShortBuffer dest_short = dest.asShortBuffer();

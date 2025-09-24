@@ -7,27 +7,24 @@ import org.lwjgl.openal.AL10;
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 
-// FIXME: Fix memory allocations (https://github.com/LWJGL/lwjgl3-wiki/wiki/1.3.-Memory-FAQ) - do not use BufferUtils (cannot freely free resources)!
-public class WaveAudioData extends AudioData {
+public class WaveAudioData extends AudioDataBase {
 
 	// --------------------------------------
 	// Core-Methods
 	// --------------------------------------
 
 	@Override
-	public boolean loadAudioFromInputStream(String pName, InputStream pInputStream) {
+	public boolean loadAudioFromInputStream(String name, InputStream inputStream) {
 		if (isLoaded())
 			return false;
 
-		mName = pName;
+		mName = name;
 		mBufferID = AL10.alGenBuffers();
 
-		final var lWaveAudioData = WaveData.create(pInputStream);
+		final var lWaveAudioData = WaveData.create(inputStream);
 
-		if (lWaveAudioData == null) {
+		if (lWaveAudioData == null)
 			return false;
-
-		}
 
 		AL10.alBufferData(mBufferID, lWaveAudioData.format, lWaveAudioData.data, lWaveAudioData.samplerate);
 
@@ -41,7 +38,7 @@ public class WaveAudioData extends AudioData {
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_AUDIO_ENABLED", false)) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), " ------ ");
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioEntity Name: " + pName);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "AudioEntity Name: " + name);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Size: " + mSize);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Frequency: " + mFrequency);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Channels: " + mChannels);
@@ -56,9 +53,5 @@ public class WaveAudioData extends AudioData {
 		return true;
 
 	}
-
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
 
 }
