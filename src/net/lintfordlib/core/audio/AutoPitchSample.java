@@ -91,6 +91,19 @@ public class AutoPitchSample {
 
 	}
 
+	public void unload() {
+		if (audioSource != null) {
+			audioSource.dispose();
+			audioSource.unassign();
+			audioSource = null;
+		}
+
+		if (audioSample != null) {
+			audioSample.unloadAudioData();
+			audioSample = null;
+		}
+	}
+
 	public void update(float param) {
 
 		updateAutoPitch(param);

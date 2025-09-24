@@ -148,6 +148,7 @@ public class AudioSource {
 		}
 
 		if (isValidSource()) {
+			AL10.alSourceStop(mSourceID);
 			AL10.alDeleteSources(mSourceID);
 		}
 	}
