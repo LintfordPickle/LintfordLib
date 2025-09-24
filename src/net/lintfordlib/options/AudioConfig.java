@@ -11,7 +11,7 @@ public class AudioConfig extends IniFile {
 
 	public static final String SECTION_NAME_SETTINGS = "Audio Settings";
 
-	static final AudioSettings createBasicTemplate() {
+	public static final AudioSettings createBasicConfig() {
 		final var standardSettings = new AudioSettings();
 		standardSettings.sfxVolume(1);
 		standardSettings.musicVolume(1);
@@ -57,7 +57,7 @@ public class AudioConfig extends IniFile {
 
 		// if no file previously existed, the underlying config is empty, so we need to set some defaults
 		if (isEmpty()) {
-			settings().copy(createBasicTemplate());
+			settings().copy(createBasicConfig());
 			saveConfig();
 		} else {
 			settings().musicVolume(getFloat(SECTION_NAME_SETTINGS, "MusicVolume", 1));
@@ -83,5 +83,17 @@ public class AudioConfig extends IniFile {
 		setValue(SECTION_NAME_SETTINGS, "SoundFxEnabled", settings().sfxEnabled());
 
 		super.saveConfig();
+	}
+
+	public void applySettings(AudioSettings audioSettings) {
+		if (audioSettings == null)
+			return;
+
+		settings().musicVolume(audioSettings.musicVolume());
+		settings().sfxVolume(audioSettings.sfxVolume());
+
+		settings().musicEnabled(audioSettings.musicEnabled());
+		settings().sfxEnabled(audioSettings.sfxEnabled());
+
 	}
 }

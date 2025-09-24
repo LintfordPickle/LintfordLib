@@ -48,6 +48,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.storage.FileUtils;
 import net.lintfordlib.options.AudioConfig;
+import net.lintfordlib.options.AudioSettings;
 
 public class AudioManager {
 
@@ -642,5 +643,11 @@ public class AudioManager {
 		mAudioFireAndForgetManagers.add(lNewFireAndForgetManagear);
 
 		return lNewFireAndForgetManagear;
+	}
+
+	public void applySettings(AudioSettings audioSettings) {
+		 mAudioConfig.applySettings(audioSettings);
+		 updateSettings();
+		
 	}
 }
