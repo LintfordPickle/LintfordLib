@@ -726,7 +726,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColor(lColor);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_INFO, lScreenOffset.x + destRect.x(), lScreenOffset.y + destRect.y(), destRect.width(), destRect.height(), mZ);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_INFO, lScreenOffset.x + destRect.x(), lScreenOffset.y + destRect.y(), 25, 25, mZ);
 		spriteBatch.end();
 	}
 
@@ -736,7 +736,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColor(lColor);
-		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_WARNING, lScreenOffset.x + destRect.x(), lScreenOffset.y + destRect.y(), destRect.width(), destRect.height(), mZ);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_WARNING, lScreenOffset.x + destRect.x(), lScreenOffset.y + destRect.y(), 25, 25, mZ);
 		spriteBatch.end();
 	}
 
