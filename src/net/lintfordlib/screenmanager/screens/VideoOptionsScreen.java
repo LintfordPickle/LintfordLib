@@ -17,13 +17,12 @@ import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintfordlib.screenmanager.dialogs.ConfirmationDialog;
 import net.lintfordlib.screenmanager.dialogs.ITimedDialog;
 import net.lintfordlib.screenmanager.dialogs.TimedConfirmationDialog;
+import net.lintfordlib.screenmanager.entries.HorizontalEntryGroup;
 import net.lintfordlib.screenmanager.entries.MenuDropDownEntry;
 import net.lintfordlib.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintfordlib.screenmanager.entries.MenuLabelEntry;
-import net.lintfordlib.screenmanager.entries.MenuSliderEntry;
 import net.lintfordlib.screenmanager.entries.MenuToggleEntry;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
-import net.lintfordlib.screenmanager.layouts.HorizontalLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
 // TODO: Monitor and Aspect Ratio are only considered in fullscreen mode
@@ -78,7 +77,6 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		mScreenPaddingTop = 0;
 
-		// Get the config options
 		mDisplayManager = screenManager.core().config().display();
 
 		mVideoList = new ListLayout(this);
@@ -86,8 +84,6 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		mVideoList.cropPaddingBottom(13.f);
 		mVideoList.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		mVideoList.layoutFillType(FILLTYPE.FILL_CONTAINER);
-
-		mConfirmChangesLayout = new ListLayout(this);
 
 		createVideoSection(mVideoList);
 
@@ -104,26 +100,32 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		mChangesPendingWarning.showWarnButton(true);
 		mChangesPendingWarning.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
+		mConfirmChangesLayout = new ListLayout(this);
 		mConfirmChangesLayout.addMenuEntry(mChangesPendingWarning);
 		mConfirmChangesLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 		mConfirmChangesLayout.layoutWidth(LAYOUT_WIDTH.FULL);
 		mConfirmChangesLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 
-		final var lFooterList = new HorizontalLayout(this);
-		lFooterList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
+		/* Screen control buttons */
+		final var horizontalButtonLayout = new HorizontalEntryGroup(screenManager, this);
+		horizontalButtonLayout.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
 
-		final var lBackButton = new MenuEntry(screenManager, this, "Back");
-		lBackButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
+		final var backButton = new MenuEntry(screenManager, this, "Back");
+		backButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
 		mApplyButton = new MenuEntry(screenManager, this, "Apply");
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);
 
-		lFooterList.addMenuEntry(lBackButton);
-		lFooterList.addMenuEntry(mApplyButton);
+		horizontalButtonLayout.addEntry(backButton);
+		horizontalButtonLayout.addEntry(mApplyButton);
+
+		final var footerButtonLayout = new ListLayout(this);
+		footerButtonLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
+		footerButtonLayout.addMenuEntry(horizontalButtonLayout);
 
 		addLayout(mVideoList);
 		addLayout(mConfirmChangesLayout);
-		addLayout(lFooterList);
+		addLayout(footerButtonLayout);
 
 		mSelectedLayoutIndex = 0;
 		mSelectedEntryIndex = 0;
@@ -141,7 +143,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		// As we know the game canvas size
 		final float lDesiredEntryWidth = 56.f;
 		final float lDesiredEntryHeight = 25.f;
-		
+
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
@@ -151,13 +153,6 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		mFullScreenEntry.desiredWidth(lDesiredEntryWidth);
 		mFullScreenEntry.desiredHeight(lDesiredEntryHeight);
 		mFullScreenEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-		
-		final var tSlider = new MenuSliderEntry(screenManager, this);
-		tSlider.desiredWidth(lDesiredEntryWidth);
-		tSlider.desiredHeight(lDesiredEntryHeight);
-		tSlider.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-		tSlider.showInfoButton(true);
-		tSlider.drawButtonBackground(true);
 
 		mResolutionEntry = new MenuDropDownEntry<>(screenManager, this, "Resolution");
 		mResolutionEntry.desiredWidth(lDesiredEntryWidth);
@@ -199,7 +194,6 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		layout.addMenuEntry(lVideoOptionsTitle);
 		layout.addMenuEntry(mFullScreenEntry);
-		layout.addMenuEntry(tSlider);
 		layout.addMenuEntry(mMonitorEntry);
 		layout.addMenuEntry(mResolutionEntry);
 		layout.addMenuEntry(mVSync);
