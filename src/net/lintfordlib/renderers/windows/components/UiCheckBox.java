@@ -9,7 +9,6 @@ import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiCheckBox extends UIWidget {
 
@@ -19,6 +18,8 @@ public class UiCheckBox extends UIWidget {
 
 	private static final long serialVersionUID = 3637330515154931480L;
 
+	private static final String NO_LABEL_TEXT = "unlabled";
+	
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -78,13 +79,11 @@ public class UiCheckBox extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiCheckBox(UiWindow parentWindow) {
-		this(parentWindow, null);
+	public UiCheckBox() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiCheckBox(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiCheckBox(String labelText) {
 		mBoxRectangle = new Rectangle();
 
 		mTextScale = 1.f;

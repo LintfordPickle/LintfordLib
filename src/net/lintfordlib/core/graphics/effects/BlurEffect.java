@@ -105,7 +105,7 @@ public class BlurEffect {
 		mBlurShader.projectionMatrix(core.gameCamera().projection());
 		mBlurShader.viewMatrix(Matrix4f.IDENTITY);
 
-		mFullScreenQuad.zDepth(-1f);
+		mFullScreenQuad.zDepth(1f);
 		mFullScreenQuad.createModelMatrix();
 		mBlurShader.modelMatrix(mFullScreenQuad.modelMatrix());
 

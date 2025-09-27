@@ -10,7 +10,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiEnumSelection extends UIWidget {
 
@@ -21,7 +20,7 @@ public class UiEnumSelection extends UIWidget {
 	private static final long serialVersionUID = 7704116387039308007L;
 
 	public static final int NO_UID = -1;
-	private static final String NO_LABEL_TEXT = "";
+	private static final String NO_LABEL_TEXT = "unlabelled";
 
 	public static final float ARROW_SIZE = 16.f;
 	public static final float ARROW_PADDING = 8.f;
@@ -110,7 +109,7 @@ public class UiEnumSelection extends UIWidget {
 				return;
 			}
 		}
-		
+
 		mSelectedIndex = NO_UID;
 	}
 
@@ -118,13 +117,11 @@ public class UiEnumSelection extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiEnumSelection(UiWindow parentWindow) {
-		this(parentWindow, null);
+	public UiEnumSelection() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiEnumSelection(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiEnumSelection(String labelText) {
 		mButtonLabel = labelText;
 		mW = 200;
 		mH = 25;

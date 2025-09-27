@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
 public class UITextButton extends UIWidget {
@@ -46,7 +45,7 @@ public class UITextButton extends UIWidget {
 		return mEntryUid;
 	}
 
-	public void buttonListenerUid(final int entryUid) {
+	public void buttonListenerUid(int entryUid) {
 		mEntryUid = entryUid;
 	}
 
@@ -54,16 +53,18 @@ public class UITextButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UITextButton(final UiWindow parentWindow) {
-		this(parentWindow, 0);
+	public UITextButton() {
+		this(0);
 	}
 
-	public UITextButton(final UiWindow parentWindow, final int entryUid) {
-		super(parentWindow);
+	public UITextButton(int entryUid) {
+		this(entryUid, NO_LABEL_TEXT);
+	}
 
+	public UITextButton(int entryUid, String label) {
 		mEntryUid = entryUid;
 
-		mButtonLabel = NO_LABEL_TEXT;
+		mButtonLabel = label;
 		mW = 200;
 		mH = 25;
 	}

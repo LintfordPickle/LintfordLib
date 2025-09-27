@@ -51,25 +51,25 @@ public class GridPanel extends UiPanel {
 
 		mShowActiveLayerButton = false;
 
-		mGridWidth = new UiInputInteger(parentWindow);
+		mGridWidth = new UiInputInteger();
 		mGridWidth.label("Grid Width");
 		mGridWidth.setMinMax(500, 10000);
 		mGridWidth.stepSize(50);
 
-		mGridHeight = new UiInputInteger(parentWindow);
+		mGridHeight = new UiInputInteger();
 		mGridHeight.label("Grid Height");
 		mGridHeight.setMinMax(500, 10000);
 		mGridHeight.stepSize(50);
 
-		mGridTilesWide = new UiInputInteger(parentWindow);
+		mGridTilesWide = new UiInputInteger();
 		mGridTilesWide.label("Tiles Wide");
 		mGridTilesWide.setMinMax(5, 20);
 
-		mGridTilesHigh = new UiInputInteger(parentWindow);
+		mGridTilesHigh = new UiInputInteger();
 		mGridTilesHigh.label("Tiles High");
 		mGridTilesHigh.setMinMax(5, 20);
 
-		mApplyButton = new UiButton(parentWindow);
+		mApplyButton = new UiButton();
 		mApplyButton.setUiWidgetListener(this, BUTTON_APPLY);
 		mApplyButton.buttonLabel("Apply");
 

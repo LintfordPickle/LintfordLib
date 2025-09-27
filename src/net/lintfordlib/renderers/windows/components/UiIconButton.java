@@ -8,7 +8,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
 public class UiIconButton extends UIWidget {
@@ -77,12 +76,12 @@ public class UiIconButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiIconButton(final UiWindow parentWindow) {
-		this(parentWindow, 0);
+	public UiIconButton() {
+		this(0);
 	}
 
-	public UiIconButton(final UiWindow parentWindow, final int entryUid) {
-		super(parentWindow);
+	public UiIconButton(final int entryUid) {
+		super();
 
 		mEntryUid = entryUid;
 

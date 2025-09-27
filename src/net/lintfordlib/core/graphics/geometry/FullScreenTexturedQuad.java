@@ -10,6 +10,9 @@ public class FullScreenTexturedQuad extends TexturedQuad_PT implements IResizeLi
 	// Variables
 	// --------------------------------------
 
+	// TODO: I think this is incorrect. It doesn't work if the canvas stretch mode is set to false.
+	// I think this should be the camera.scaledWidth / camera.scaledHeight
+
 	protected DisplayManager mDisplayConfig;
 
 	protected int mWindowWidth;

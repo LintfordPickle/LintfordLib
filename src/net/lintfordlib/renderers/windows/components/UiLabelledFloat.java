@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiLabelledFloat extends UIWidget {
 
@@ -47,13 +46,11 @@ public class UiLabelledFloat extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiLabelledFloat(UiWindow parentWindow) {
-		this(parentWindow, "Label not set");
+	public UiLabelledFloat() {
+		this("Label not set");
 	}
 
-	public UiLabelledFloat(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiLabelledFloat(String labelText) {
 		mLabelText = labelText;
 	}
 

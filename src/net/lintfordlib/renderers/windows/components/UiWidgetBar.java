@@ -7,7 +7,6 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiWidgetBar extends UIWidget {
 
@@ -53,9 +52,7 @@ public class UiWidgetBar extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiWidgetBar(UiWindow parentWindow, String labelString) {
-		super(parentWindow);
-
+	public UiWidgetBar(String labelString) {
 		mLabelString = labelString;
 
 		mMinValue = 0;

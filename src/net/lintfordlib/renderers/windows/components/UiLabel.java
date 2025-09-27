@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiLabel extends UIWidget {
 
@@ -47,13 +46,11 @@ public class UiLabel extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiLabel(UiWindow parentWindow) {
-		this(parentWindow, "Label not set");
+	public UiLabel() {
+		this("Label not set");
 	}
 
-	public UiLabel(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiLabel(String labelText) {
 		mLabelText = labelText;
 		mShowBackgroundOnHover = false;
 	}

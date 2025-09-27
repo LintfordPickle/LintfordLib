@@ -65,32 +65,32 @@ public class FileInfoPanel extends UiPanel {
 		mRenderPanelTitle = true;
 		mPanelTitle = "File Info";
 
-		mSceneNameLabel = new UiLabel(parentWindow, "Scene Name");
-		mDirectoryNameLabel = new UiLabel(parentWindow, "Directory Name");
+		mSceneNameLabel = new UiLabel("Scene Name");
+		mDirectoryNameLabel = new UiLabel("Directory Name");
 
-		mSceneName = new UiInputText(parentWindow);
+		mSceneName = new UiInputText();
 		mSceneName.maxnumInputCharacters(20);
 		mSceneName.setUiWidgetListener(this, ENTRY_SCENE_NAME);
 		mSceneName.emptyString("<scene name>");
 
-		mWorldDirectoryName = new UiInputText(parentWindow);
+		mWorldDirectoryName = new UiInputText();
 		mWorldDirectoryName.maxnumInputCharacters(200);
 		mWorldDirectoryName.emptyString("<directory name>");
 		mWorldDirectoryName.setUiWidgetListener(this, ENTRY_DIRECTORY_NAME);
 
-		mNewSceneButton = new UiButton(parentWindow);
+		mNewSceneButton = new UiButton();
 		mNewSceneButton.buttonLabel("New");
 		mNewSceneButton.setUiWidgetListener(this, BUTTON_NEW);
 
-		mSaveSceneButton = new UiButton(parentWindow);
+		mSaveSceneButton = new UiButton();
 		mSaveSceneButton.buttonLabel("Save");
 		mSaveSceneButton.setUiWidgetListener(this, BUTTON_SAVE);
 
-		mLoadSceneButton = new UiButton(parentWindow);
+		mLoadSceneButton = new UiButton();
 		mLoadSceneButton.buttonLabel("Load");
 		mLoadSceneButton.setUiWidgetListener(this, BUTTON_LOAD);
 
-		mHorizontalGroup = new UiHorizontalEntryGroup(parentWindow);
+		mHorizontalGroup = new UiHorizontalEntryGroup();
 		mHorizontalGroup.widgets().add(mNewSceneButton);
 		mHorizontalGroup.widgets().add(mSaveSceneButton);
 

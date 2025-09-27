@@ -7,7 +7,6 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
 public class UIRadioButton extends UIWidget implements IInputProcessor {
@@ -71,17 +70,15 @@ public class UIRadioButton extends UIWidget implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	public UIRadioButton(UiWindow parentWindow) {
-		this(parentWindow, 0);
+	public UIRadioButton() {
+		this(0);
 	}
 
-	public UIRadioButton(UiWindow parentWindow, int entryUid) {
-		this(parentWindow, NO_LABEL_TEXT, entryUid);
+	public UIRadioButton(int entryUid) {
+		this(NO_LABEL_TEXT, entryUid);
 	}
 
-	public UIRadioButton(UiWindow parentWindow, String label, int entryUid) {
-		super(parentWindow);
-
+	public UIRadioButton(String label, int entryUid) {
 		mClickID = entryUid;
 
 		mButtonLabel = label;

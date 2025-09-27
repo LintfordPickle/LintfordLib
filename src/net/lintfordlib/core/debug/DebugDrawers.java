@@ -423,6 +423,8 @@ public class DebugDrawers {
 		mLineBatch.end();
 	}
 
+	// ----
+
 	public void beginTextRenderer(ICamera camera) {
 		if (mDebugManager.debugManagerEnabled())
 			mSystemFontUnit.begin(camera);
@@ -448,6 +450,19 @@ public class DebugDrawers {
 	public void endTextRenderer() {
 		if (mDebugManager.debugManagerEnabled())
 			mSystemFontUnit.end();
+	}
+
+	public void drawTextImmediate(ICamera camera, String text, float x, float y, float scale) {
+		if (!mDebugManager.debugManagerEnabled())
+			return;
+
+		if (mSystemFontUnit.isDrawing())
+			return; // already drawing something else
+
+		mSystemFontUnit.begin(camera);
+		mSystemFontUnit.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+		mSystemFontUnit.drawText(text, x, y, DEBUG_DRAWERS_Z_DEPTH, scale);
+		mSystemFontUnit.end();
 	}
 
 	public void endPointRenderer() {

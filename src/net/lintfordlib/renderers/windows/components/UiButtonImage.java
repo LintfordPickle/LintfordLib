@@ -7,7 +7,6 @@ import net.lintfordlib.core.graphics.sprites.SpriteFrame;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiButtonImage extends UIWidget {
 
@@ -65,17 +64,11 @@ public class UiButtonImage extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiButtonImage(final UiWindow pParentWindow) {
-		super(pParentWindow);
-
-		mButtonLabel = NO_LABEL_TEXT;
-		mW = 200;
-		mH = 25;
+	public UiButtonImage() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiButtonImage(final UiWindow pParentWindow, String labelText) {
-		this(pParentWindow);
-
+	public UiButtonImage(String labelText) {
 		mButtonLabel = labelText;
 		mW = 200;
 		mH = 25;

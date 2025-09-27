@@ -19,7 +19,6 @@ import net.lintfordlib.core.input.keyboard.IBufferedTextInputCallback;
 import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.ConstantsUi;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback {
 
@@ -242,13 +241,11 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// Constructor
 	// --------------------------------------
 
-	public UiInputFloat(UiWindow parentWindow) {
-		this(parentWindow, null);
+	public UiInputFloat() {
+		this(null);
 	}
 
-	public UiInputFloat(UiWindow parentWindow, String label) {
-		super(parentWindow);
-
+	public UiInputFloat(String label) {
 		mResetOnDefaultClick = true;
 		mMouseClickBreaksInputTextFocus = true;
 		mShowControlArrows = true;

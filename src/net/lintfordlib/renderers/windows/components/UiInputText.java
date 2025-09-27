@@ -13,7 +13,6 @@ import net.lintfordlib.core.input.keyboard.IBufferedTextInputCallback;
 import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.ConstantsUi;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiInputText extends UIWidget implements IBufferedTextInputCallback {
 
@@ -156,13 +155,11 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 	// Constructor
 	// --------------------------------------
 
-	public UiInputText(UiWindow parentWindow) {
-		this(parentWindow, null);
+	public UiInputText() {
+		this(null);
 	}
 
-	public UiInputText(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiInputText(String labelText) {
 		mResetOnDefaultClick = true;
 		mMouseClickBreaksInputTextFocus = true;
 		mInputField = new StringBuilder();

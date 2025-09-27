@@ -8,7 +8,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
 public class UIRadioGroup extends UIWidget implements EntryInteractions {
@@ -26,9 +25,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 	// Constructor
 	// --------------------------------------
 
-	public UIRadioGroup(final UiWindow pUIWindow) {
-		super(pUIWindow);
-
+	public UIRadioGroup() {
 		mButtons = new ArrayList<>();
 	}
 
@@ -57,7 +54,7 @@ public class UIRadioGroup extends UIWidget implements EntryInteractions {
 
 		updateLayout();
 
-		float lYPos = mY + mParentWindow.getTitleBarHeight();
+		float lYPos = mY;
 
 		final int lButtonCount = mButtons.size();
 		for (int i = 0; i < lButtonCount; i++) {

@@ -7,7 +7,6 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiFloatSlider extends UIWidget {
 
@@ -18,6 +17,7 @@ public class UiFloatSlider extends UIWidget {
 	private static final long serialVersionUID = 5982888162840234990L;
 
 	public static final String NO_LABEL_TEXT = "Slider";
+	public static final int NO_WIDGET_UID = -1;
 
 	// --------------------------------------
 	// Variables
@@ -89,17 +89,15 @@ public class UiFloatSlider extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiFloatSlider(UiWindow parentWindow) {
-		this(parentWindow, NO_LABEL_TEXT, -1);
+	public UiFloatSlider() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiFloatSlider(UiWindow parentWindow, String label) {
-		this(parentWindow, label, -1);
+	public UiFloatSlider(String label) {
+		this(label, NO_WIDGET_UID);
 	}
 
-	public UiFloatSlider(UiWindow parentWindow, String label, int entryUid) {
-		super(parentWindow);
-
+	public UiFloatSlider(String label, int entryUid) {
 		mIsDoubleHeight = true;
 		mSliderLabel = label;
 		mW = 200;

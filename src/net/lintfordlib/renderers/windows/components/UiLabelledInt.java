@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiLabelledInt extends UIWidget {
 
@@ -47,13 +46,11 @@ public class UiLabelledInt extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiLabelledInt(UiWindow parentWindow) {
-		this(parentWindow, "Label not set");
+	public UiLabelledInt() {
+		this("Label not set");
 	}
 
-	public UiLabelledInt(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiLabelledInt(String labelText) {
 		mLabelText = labelText;
 	}
 

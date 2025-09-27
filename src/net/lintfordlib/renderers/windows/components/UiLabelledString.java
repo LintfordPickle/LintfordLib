@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiLabelledString extends UIWidget {
 
@@ -15,6 +14,8 @@ public class UiLabelledString extends UIWidget {
 	// --------------------------------------
 
 	private static final long serialVersionUID = 3637330515154931480L;
+
+	private static final String NO_LABEL_TEXT = "unlabelled";
 
 	// --------------------------------------
 	// Variables
@@ -47,13 +48,11 @@ public class UiLabelledString extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiLabelledString(UiWindow parentWindow) {
-		this(parentWindow, "Label not set");
+	public UiLabelledString() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiLabelledString(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiLabelledString(String labelText) {
 		mLabelText = labelText;
 	}
 

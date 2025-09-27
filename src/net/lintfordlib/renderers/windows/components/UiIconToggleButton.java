@@ -8,7 +8,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
 public class UiIconToggleButton extends UIWidget {
@@ -86,13 +85,11 @@ public class UiIconToggleButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiIconToggleButton(final UiWindow parentWindow) {
-		this(parentWindow, 0);
+	public UiIconToggleButton() {
+		this(0);
 	}
 
-	public UiIconToggleButton(final UiWindow parentWindow, final int entryUid) {
-		super(parentWindow);
-
+	public UiIconToggleButton(final int entryUid) {
 		mEntryUid = entryUid;
 
 		mW = 200;

@@ -9,7 +9,6 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiWidgetInteractions;
 
 public abstract class UIWidget extends Rectangle implements IInputProcessor {
@@ -30,7 +29,6 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	// --------------------------------------
 
 	public Color entityColor = new Color(1.f, 1.f, 1.f, 1.f);
-	protected UiWindow mParentWindow;
 
 	protected IUiWidgetInteractions mUiWidgetListenerCallback;
 	protected int mUiWidgetListenerUid;
@@ -188,21 +186,20 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	// Constructor
 	// --------------------------------------
 
-	public UIWidget(final UiWindow parentWindow) {
-		this(parentWindow, 0, 0, 0, 0);
+	public UIWidget() {
+		this(0, 0, 0, 0);
 	}
 
-	public UIWidget(final UiWindow parentWindow, final Rectangle bounds) {
-		this(parentWindow, bounds.x(), bounds.y(), bounds.width(), bounds.height());
+	public UIWidget(final Rectangle bounds) {
+		this(bounds.x(), bounds.y(), bounds.width(), bounds.height());
 	}
 
-	public UIWidget(final UiWindow parentWindow, float x, float y, float w, float h) {
+	public UIWidget(float x, float y, float w, float h) {
 		super(x, y, w, h);
 
 		mIsVisible = true;
 		mIsEnabled = true;
 
-		mParentWindow = parentWindow;
 		mTextScale = 1.f;
 	}
 

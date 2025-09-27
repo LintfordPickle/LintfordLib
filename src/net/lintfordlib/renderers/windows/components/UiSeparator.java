@@ -7,7 +7,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiSeparator extends UIWidget {
 
@@ -53,13 +52,11 @@ public class UiSeparator extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiSeparator(UiWindow parentWindow) {
-		this(parentWindow, 3.f);
+	public UiSeparator() {
+		this(3.f);
 	}
 
-	public UiSeparator(UiWindow parentWindow, float separatorHeight) {
-		super(parentWindow);
-
+	public UiSeparator(float separatorHeight) {
 		separatorHeight(separatorHeight);
 		mSeparatorColor.setFromColor(ColorConstants.TextEntryColor);
 	}

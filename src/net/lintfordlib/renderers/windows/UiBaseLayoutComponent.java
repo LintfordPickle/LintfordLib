@@ -65,6 +65,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	protected boolean mVisible; // ony affects drawing
 
 	protected float mEntryOffsetFromTop;
+	protected UiWindow mParentWindow;
 
 	// --------------------------------------
 	// Properties
@@ -166,8 +167,7 @@ public class UiBaseLayoutComponent extends UIWidget implements IScrollBarArea {
 	// --------------------------------------
 
 	public UiBaseLayoutComponent(UiWindow parentWindow) {
-		super(parentWindow);
-
+		mParentWindow = parentWindow;
 		mUiWidgets = new ArrayList<>();
 
 		mEnabled = true;

@@ -17,7 +17,6 @@ import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.screenmanager.IInputClickedFocusManager;
 
@@ -50,6 +49,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 	private static final String NO_SELECTION_TEXT = "No Selection";
 	private static final String NO_ITEMS_FOUND_TEXT = "No items found";
+
+	public static final String NO_LABEL_TEXT = "unlabelled";
 
 	// --------------------------------------
 	// Variables
@@ -207,18 +208,16 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	// Constructor
 	// --------------------------------------
 
-	public UiDropDownBox(final UiWindow parentWindow) {
-		this(parentWindow, null);
+	public UiDropDownBox() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiDropDownBox(final UiWindow parentWindow, String label) {
-		super(parentWindow);
-
+	public UiDropDownBox(String label) {
 		mOpen = false;
 		mLabel = label;
 
-		mWindowRectangle = new ScrollBarContentRectangle(parentWindow);
-		mContentRectangle = new ScrollBarContentRectangle(parentWindow);
+		mWindowRectangle = new ScrollBarContentRectangle(this);
+		mContentRectangle = new ScrollBarContentRectangle(this);
 		mScrollBar = new ScrollBar(this, mContentRectangle);
 
 		mSelectedIndex = 0;

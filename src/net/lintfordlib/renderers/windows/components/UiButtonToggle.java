@@ -6,7 +6,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiButtonToggle extends UIWidget {
 
@@ -51,13 +50,11 @@ public class UiButtonToggle extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiButtonToggle(UiWindow pParentWindow) {
-		this(pParentWindow, NO_LABEL_TEXT);
+	public UiButtonToggle() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiButtonToggle(UiWindow pParentWindow, String label) {
-		super(pParentWindow);
-
+	public UiButtonToggle(String label) {
 		mButtonLabel = label;
 		mW = 200;
 		mH = 25;

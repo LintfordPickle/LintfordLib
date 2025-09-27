@@ -10,7 +10,6 @@ import net.lintfordlib.core.graphics.batching.TextureBatch9Patch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
 public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
@@ -80,9 +79,7 @@ public class UiHorizontalListBox extends UIWidget implements IScrollBarArea {
 	// Constructor
 	// --------------------------------------
 
-	public UiHorizontalListBox(UiWindow parentWindow, int entityGroupUid) {
-		super(parentWindow);
-
+	public UiHorizontalListBox(int entityGroupUid) {
 		mAssetSize = 64.f;
 		mAssetSeparation = 16.f;
 

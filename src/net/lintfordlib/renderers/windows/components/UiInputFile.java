@@ -9,7 +9,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
@@ -22,7 +21,6 @@ import net.lintfordlib.core.input.keyboard.IBufferedTextInputCallback;
 import net.lintfordlib.core.input.keyboard.IUiInputKeyPressCallback;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.renderers.windows.ConstantsUi;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiInputFile extends UIWidget implements IBufferedTextInputCallback {
 
@@ -219,13 +217,11 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 	// Constructor
 	// --------------------------------------
 
-	public UiInputFile(UiWindow parentWindow) {
-		this(parentWindow, null);
+	public UiInputFile() {
+		this(null);
 	}
 
-	public UiInputFile(UiWindow parentWindow, String labelText) {
-		super(parentWindow);
-
+	public UiInputFile(String labelText) {
 		mResetOnDefaultClick = true;
 		mMouseClickBreaksInputTextFocus = true;
 		mInputField = new StringBuilder();
@@ -438,7 +434,7 @@ public class UiInputFile extends UIWidget implements IBufferedTextInputCallback 
 			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mFileInputAreaRectangle.y() + mFileInputAreaRectangle.height() * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
 		}
 		lSpriteBatch.end();
-		
+
 		StencilHelper.preDraw(core, lSpriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
 
 		textFont.begin(core.HUD());

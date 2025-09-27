@@ -11,7 +11,6 @@ import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 
 public class UiHorizontalEntryGroup extends UIWidget {
 
@@ -51,9 +50,7 @@ public class UiHorizontalEntryGroup extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiHorizontalEntryGroup(final UiWindow parentWindow) {
-		super(parentWindow);
-
+	public UiHorizontalEntryGroup() {
 		mChildWidgets = new ArrayList<>();
 	}
 

@@ -17,7 +17,6 @@ import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiListBoxListener;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiWidgetInteractions;
@@ -158,9 +157,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 	// Constructor
 	// --------------------------------------
 
-	public UiVerticalTextListBox(UiWindow parentWindow, int entityGroupUid) {
-		super(parentWindow);
-
+	public UiVerticalTextListBox(int entityGroupUid) {
 		mMinHeight = Float.MIN_VALUE;
 		mMaxHeight = Float.MAX_VALUE;
 
@@ -168,17 +165,17 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		mVerticalAssetSeparationInPx = 2.f;
 
 		mContentArea = new ScrollBarContentRectangle(this);
-		mWindowRectangle = new ScrollBarContentRectangle(parentWindow);
+		mWindowRectangle = new ScrollBarContentRectangle(this);
 
 		mScrollbar = new ScrollBar(this, mContentArea);
 
-		mUpButton = new UiButtonImage(parentWindow);
+		mUpButton = new UiButtonImage();
 		mUpButton.buttonLabel("");
 		mUpButton.setDimensions(20, 20);
 		mUpButton.setUiWidgetListener(this, ORDER_BUTTON_UP);
 		mUpButton.spriteName("TEXTURE_CONTROL_UP");
 
-		mDownButton = new UiButtonImage(parentWindow);
+		mDownButton = new UiButtonImage();
 		mDownButton.buttonLabel("");
 		mDownButton.setDimensions(20, 20);
 		mDownButton.setUiWidgetListener(this, ORDER_BUTTON_DOWN);

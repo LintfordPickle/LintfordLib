@@ -7,7 +7,6 @@ import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
-import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
 public class UiIntSlider extends UIWidget {
@@ -19,10 +18,13 @@ public class UiIntSlider extends UIWidget {
 	private static final long serialVersionUID = 5982888162840234990L;
 
 	public static final String NO_LABEL_TEXT = "Slider";
+	public static final int NO_WIDGET_UID = -1;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
+
+	// TODO: FInish the implementation (should be the same as UiFloatSlider).
 
 	private EntryInteractions mCallback;
 	private int mEntryUid;
@@ -82,16 +84,17 @@ public class UiIntSlider extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UiIntSlider(final UiWindow parentWindow) {
-		this(parentWindow, 0);
+	public UiIntSlider() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UiIntSlider(final UiWindow parentWindow, final int entryUid) {
-		super(parentWindow);
+	public UiIntSlider(String label) {
+		this(label, NO_WIDGET_UID);
+	}
 
+	public UiIntSlider(String label, int entryUid) {
+		mSliderLabel = label;
 		mEntryUid = entryUid;
-
-		mSliderLabel = NO_LABEL_TEXT;
 		mW = 200;
 		mH = 50;
 	}

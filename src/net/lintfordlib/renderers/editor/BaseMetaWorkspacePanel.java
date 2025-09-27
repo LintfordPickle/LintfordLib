@@ -96,43 +96,43 @@ public abstract class BaseMetaWorkspacePanel extends UiPanel implements IUiListB
 
 		mMetaFileExtension = fileExt;
 
-		mMetaFileSelectionEntry = new UiInputFile(parentWindow, "Meta File");
+		mMetaFileSelectionEntry = new UiInputFile("Meta File");
 		mMetaFileSelectionEntry.setUiWidgetListener(this, META_FILE_SELECTION_ENTRY);
 
-		mListBoxLabel = new UiLabel(parentWindow, "Meta Filenames:");
+		mListBoxLabel = new UiLabel("Meta Filenames:");
 
-		mMetaFileItemsList = new UiVerticalTextListBox(parentWindow, entityGroupUid);
+		mMetaFileItemsList = new UiVerticalTextListBox(entityGroupUid);
 		mMetaFileItemsList.addCallbackListener(this);
 		mMetaFileItemsList.desiredHeight(210);
 		mMetaFileItemsList.showReorderButtons(true);
 
-		mAddItemButton = new UiButton(parentWindow, "Add");
+		mAddItemButton = new UiButton("Add");
 		mAddItemButton.setUiWidgetListener(this, ITEM_ADD_ENTRY);
-		mDupItemButton = new UiButton(parentWindow, "Dup");
+		mDupItemButton = new UiButton("Dup");
 		mDupItemButton.setUiWidgetListener(this, ITEM_DUP_ENTRY);
-		mDelItemButton = new UiButton(parentWindow, "Del");
+		mDelItemButton = new UiButton("Del");
 		mDelItemButton.setUiWidgetListener(this, ITEM_DEL_ENTRY);
 
-		final var lHorizontalGroupEntry0 = new UiHorizontalEntryGroup(parentWindow);
+		final var lHorizontalGroupEntry0 = new UiHorizontalEntryGroup();
 		lHorizontalGroupEntry0.widgets().add(mAddItemButton);
 		lHorizontalGroupEntry0.widgets().add(mDupItemButton);
 		lHorizontalGroupEntry0.widgets().add(mDelItemButton);
 
-		mMetaItemNameEntry = new UiInputFile(parentWindow, "Asset Filename");
+		mMetaItemNameEntry = new UiInputFile("Asset Filename");
 		mMetaItemNameEntry.setUiWidgetListener(this, FILEPATH_SELECTION_ENTRY);
 
-		mSaveMetaFileButton = new UiButton(parentWindow, "Save");
+		mSaveMetaFileButton = new UiButton("Save");
 		mSaveMetaFileButton.setUiWidgetListener(this, METAFILE_SAVE_ENTRY);
-		mRevertMetaFileButton = new UiButton(parentWindow, "Revert");
+		mRevertMetaFileButton = new UiButton("Revert");
 		mRevertMetaFileButton.setUiWidgetListener(this, METAFILE_REVERT_ENTRY);
 
-		final var lHorizontalGroupEntry1 = new UiHorizontalEntryGroup(parentWindow);
+		final var lHorizontalGroupEntry1 = new UiHorizontalEntryGroup();
 		lHorizontalGroupEntry1.widgets().add(mSaveMetaFileButton);
 		lHorizontalGroupEntry1.widgets().add(mRevertMetaFileButton);
 
 		addWidget(mMetaFileSelectionEntry);
 		addWidget(lHorizontalGroupEntry1);
-		addWidget(new UiSeparator(parentWindow));
+		addWidget(new UiSeparator());
 		addWidget(mListBoxLabel);
 		addWidget(mMetaFileItemsList);
 		addWidget(lHorizontalGroupEntry0);

@@ -14,6 +14,7 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.GameInfo;
@@ -483,6 +484,8 @@ public abstract class LintfordCore {
 		GL11.glFrontFace(GL11.GL_CCW);
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glDisable(GL11.GL_CULL_FACE);
+
+		GL11.glDisable(GL13.GL_MULTISAMPLE);
 	}
 
 	/**

@@ -48,11 +48,11 @@ public class CursorPanel extends UiPanel {
 		mRenderPanelTitle = true;
 		mPanelTitle = "Cursor";
 
-		mShowCursorPosition = new UiButtonToggle(parentWindow);
+		mShowCursorPosition = new UiButtonToggle();
 		mShowCursorPosition.setUiWidgetListener(this, BUTTON_TOGGLE_POSITION);
 		mShowCursorPosition.buttonLabel("Show Position");
 
-		mShowGridUid = new UiButtonToggle(parentWindow);
+		mShowGridUid = new UiButtonToggle();
 		mShowGridUid.setUiWidgetListener(this, BUTTON_TOGGLE_GRID_UID);
 		mShowGridUid.buttonLabel("Show Grid Uid");
 

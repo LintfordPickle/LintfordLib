@@ -49,13 +49,13 @@ public class WorkspacePanel extends UiPanel {
 
 		underlineTitle(true);
 
-		mWorkspaceLocation = new UiInputFile(parentWindow);
+		mWorkspaceLocation = new UiInputFile();
 		mWorkspaceLocation.label("Workspace Folder");
 		mWorkspaceLocation.setUiWidgetListener(this, WORKSPACE_DIRECTORY_ENTRY);
 		mWorkspaceLocation.directorySelection(true);
 		mWorkspaceLocation.isReadonly(true);
 
-		mResMapAvailable = new UiCheckBox(parentWindow);
+		mResMapAvailable = new UiCheckBox();
 		mResMapAvailable.label("Res Map Available");
 		mResMapAvailable.isReadonly(true);
 

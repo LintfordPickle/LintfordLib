@@ -47,11 +47,11 @@ public class CameraPanel extends UiPanel {
 		mRenderPanelTitle = true;
 		mPanelTitle = "Camera";
 
-		mResetPositionButton = new UiButton(parentWindow);
+		mResetPositionButton = new UiButton();
 		mResetPositionButton.buttonLabel("Reset");
 		mResetPositionButton.setUiWidgetListener(this, BUTTON_TOGGLE_RESET_POS);
 
-		mEnableBoundsButton = new UiButtonToggle(parentWindow);
+		mEnableBoundsButton = new UiButtonToggle();
 		mEnableBoundsButton.buttonLabel("Limit");
 		mEnableBoundsButton.setUiWidgetListener(this, BUTTON_TOGGLE_LIMIT_BOUNDS);
 
@@ -59,7 +59,7 @@ public class CameraPanel extends UiPanel {
 		addWidget(mEnableBoundsButton);
 
 		isLayerVisible(true);
-		
+
 		mShowShowLayerButton = false;
 		mShowActiveLayerButton = false;
 	}
