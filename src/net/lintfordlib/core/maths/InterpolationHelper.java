@@ -138,4 +138,16 @@ public class InterpolationHelper {
 		return t < 1 ? t : 2 - t;
 	}
 
+	public static float easeIn(float a, float b, float t) {
+		return a + (b - a) * (float) Math.pow(t, 2);
+	}
+
+	public static float easeOut(float a, float b, float t) {
+		return a + (b - a) * (1 - (float) Math.pow(1 - t, 2));
+	}
+
+	public static float easeInOut(float a, float b, float t) {
+		return a + (b - a) * (float) ((-Math.cos(t * Math.PI) / 2) + 0.5f);
+	}
+
 }
