@@ -59,7 +59,7 @@ public class Texture {
 		return mEntityUId;
 	}
 
-	public int[] RGBColorData() {
+	public int[] ARGBColorData() {
 		return mARGBColorData;
 	}
 
