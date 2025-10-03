@@ -9,13 +9,13 @@ public class ColorHelper {
 	/*
 	 You can a 
 	 */
-	
+
 	public static final float COLORWHEEL_OFFSET_RED = 0.f;
 	public static final float COLORWHEEL_OFFSET_YELLOW = 30.f;
-	public static final float COLORWHEEL_OFFSET_GREEN= 60.f;
+	public static final float COLORWHEEL_OFFSET_GREEN = 60.f;
 	public static final float COLORWHEEL_OFFSET_BLUE = 120.f;
 	public static final float COLORWHEEL_OFFSET_PINK = 240.f;
-	
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
@@ -95,4 +95,28 @@ public class ColorHelper {
 		out[1] = g + m;
 		out[2] = b + m;
 	}
+
+	public static int applyTint(int color, int tint) {
+		int r = ((color >> 16) & 0xFF) * ((tint >> 16) & 0xFF) / 255;
+		int g = ((color >> 8) & 0xFF) * ((tint >> 8) & 0xFF) / 255;
+		int b = (color & 0xFF) * (tint & 0xFF) / 255;
+		return (0xFF << 24) | (r << 16) | (g << 8) | b;
+	}
+
+	public static int lerpColor(int c1, int c2, float t) {
+		int r1 = (c1 >> 16) & 0xFF;
+		int g1 = (c1 >> 8) & 0xFF;
+		int b1 = c1 & 0xFF;
+
+		int r2 = (c2 >> 16) & 0xFF;
+		int g2 = (c2 >> 8) & 0xFF;
+		int b2 = c2 & 0xFF;
+
+		int r = (int) (r1 + t * (r2 - r1));
+		int g = (int) (g1 + t * (g2 - g1));
+		int b = (int) (b1 + t * (b2 - b1));
+
+		return (0xFF << 24) | (r << 16) | (g << 8) | b;
+	}
+
 }
