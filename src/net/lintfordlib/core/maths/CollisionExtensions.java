@@ -220,4 +220,12 @@ public class CollisionExtensions {
 		return ((((pointX < x + w) && (x < pointX)) && (pointY < y + h)) && (y < pointY));
 	}
 
+	public static boolean overlap(float x1, float w1, float x2, float w2) {
+		final var min1 = x1 - (w1 * .5f);
+		final var max1 = x1 + (w1 * .5f);
+		final var min2 = x2 - (w2 * .5f);
+		final var max2 = x2 + (w2 * .5f);
+		return !((max1 < min2) || (min1 > max2));
+	}
+
 }
