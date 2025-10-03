@@ -39,6 +39,10 @@ public class SpriteSheetDefinition {
 	@SerializedName(value = "textureName")
 	protected String mTextureName;
 
+	/** The name of the {@link Texture} associated to this {@link SpriteSheetDefinition} */
+	@SerializedName(value = "textureFileName")
+	protected String mTextureFileName;
+
 	/** The {@link Texture} instance associated with this {@link SpriteSheetDefinition} */
 	protected transient Texture mTexture;
 
@@ -179,6 +183,15 @@ public class SpriteSheetDefinition {
 
 		if (mTexture.name().equals(TextureManager.TEXTURE_NOT_FOUND_NAME)) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Spritesheet '%s' cannot locate texture %s in EntityGroupID %d.", mSpriteSheetName, mTextureName, entityGroupUid));
+
+			if (mTextureFileName != null) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Attempting to load texture from '%s'", mTextureFileName));
+				mTexture = lTextureManager.loadTexture(mTextureName, mTextureFileName, mEntityGroupUid);
+			}
+		}
+
+		if (mTexture == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Failed to acquire texture for spritesheet."));
 			return;
 		}
 
