@@ -8,8 +8,6 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.rendering.RenderPass;
-import net.lintfordlib.core.rendering.RenderStage;
-import net.lintfordlib.core.rendering.UiRenderStage;
 import net.lintfordlib.renderers.windows.UiWindow;
 
 public class SimpleRendererManager extends RendererManagerBase {
@@ -33,16 +31,9 @@ public class SimpleRendererManager extends RendererManagerBase {
 
 	private List<UiWindow> mWindowRenderers;
 
-	private final RenderStage mGameStage = new RenderStage("Game", RenderPass.MAIN, 0);
-	private final UiRenderStage mHudStage = new UiRenderStage("HUD", RenderPass.HUD, 0);
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public List<BaseRenderer> renderers() {
-		return mRenderers;
-	}
 
 	public List<UiWindow> windows() {
 		return mWindowRenderers;
@@ -56,14 +47,6 @@ public class SimpleRendererManager extends RendererManagerBase {
 		super(core, entityGroupUid);
 
 		mWindowRenderers = new ArrayList<>();
-	}
-
-	public RenderStage gameStage() {
-		return mGameStage;
-	}
-
-	public UiRenderStage hudStage() {
-		return mHudStage;
 	}
 
 	// --------------------------------------
@@ -151,15 +134,11 @@ public class SimpleRendererManager extends RendererManagerBase {
 
 	public void drawGameRenderers(LintfordCore core) {
 
-		// why the duck do I have 3 lists of renderers ... mGameStage, mHudStage and mRenderers ??
-
 		// SimpleRendererManager renders all BaseRenderers using RenderPass.MAIN
 
-		final var lGameRenderers = mGameStage.renderers();
-
-		final int lNumGameRenderers = lGameRenderers.size();
+		final int lNumGameRenderers = mRenderers.size();
 		for (int j = 0; j < lNumGameRenderers; j++) {
-			final var lRenderer = lGameRenderers.get(j);
+			final var lRenderer = mRenderers.get(j);
 			if (!lRenderer.isActive() || !lRenderer.isManagedDraw())
 				continue;
 
@@ -171,11 +150,9 @@ public class SimpleRendererManager extends RendererManagerBase {
 
 		// SimpleRendererManager renders all BaseRenderers using RenderPass.HUD
 
-		final var lHudRenderers = mHudStage.renderers();
-
-		final int lNumWindowRenderers = lHudRenderers.size();
+		final int lNumWindowRenderers = mWindowRenderers.size();
 		for (int i = 0; i < lNumWindowRenderers; i++) {
-			final var lWindow = lHudRenderers.get(i);
+			final var lWindow = mWindowRenderers.get(i);
 			if (!lWindow.isActive() || !lWindow.isOpen())
 				continue;
 
