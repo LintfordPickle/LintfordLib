@@ -93,15 +93,21 @@ public class CharAtlasRenderer {
 		if (mNumberTextureAtlas == null)
 			throw new RuntimeException(CharAtlasRenderer.class.getSimpleName() + " does not have a valid texture atlas assigned");
 
+		drawNumberAN(textureBatch, String.valueOf(value), worldX, worldY, zDepth, scale);
+
+	}
+
+	public void drawNumberAN(TextureBatchPCT textureBatch, String value, float worldX, float worldY, float zDepth, float scale) {
+		if (mNumberTextureAtlas == null)
+			throw new RuntimeException(CharAtlasRenderer.class.getSimpleName() + " does not have a valid texture atlas assigned");
+
 		final var textureHeight = mNumberTextureAtlas.getTextureHeight();
 
 		float dx = worldX;
 		float dy = worldY;
 
-		textureBatch.setColorRGBA(196f / 255f, 163f / 255f, 0f / 255f, 1.f);
-		final var t = String.valueOf(value);
-		for (int i = 0; i < t.length(); i++) {
-			char c = t.charAt(i);
+		for (int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
 			int charIndex = mCharacterSequence.indexOf(c);
 			if (charIndex == -1)
 				continue;
