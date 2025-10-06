@@ -24,7 +24,7 @@ public class ToastManager {
 	private static final float SCREEN_PADDING_Y = 50.f;
 
 	private static final int MAX_TOASTPOOL_SIZE = 48;
-	private static final int MIN_TIME_BETWEEN_ADD = 250;
+	private static final int MIN_TIME_BETWEEN_ADD = 10;
 
 	/** Specificies the amount of time, in milliseconds, that a message should be displayed in the tasot-message panel by default. */
 	public static final int DEFAULT_TOAST_MESSAGE_DISPLAY_TIME_MS = 1000;
