@@ -218,8 +218,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.handleInput(core);
 
+		final var escPressed = core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this);
 		if (mESCBackEnabled) {
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
+			// TODO: Use actual gamepad button mapping for 'backwards'
+			if (escPressed /* || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this) */) {
 				if (mScreenState == ScreenState.ACTIVE) {
 					onEscPressed();
 					return;
@@ -227,12 +229,16 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 		}
 
+		final var gamepadManager = core.input().gamepads();
+
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
 			screenManager.contextHintManager().setKeyboardHints();
 			onNavigationUp(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+		final var dpadButtonUpPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this);
+		final var leftAxisY = gamepadManager.getGamepadAxisValueTimed(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, this);
+		if (dpadButtonUpPressed || leftAxisY < 0) {
 			screenManager.contextHintManager().setGamePadHints();
 			onNavigationUp(core, InputType.Gamepad);
 		}
@@ -242,7 +248,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			onNavigationDown(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+		final var dpadButtonDownPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this);
+		if (dpadButtonDownPressed || leftAxisY > 0) {
 			screenManager.contextHintManager().setGamePadHints();
 			onNavigationDown(core, InputType.Gamepad);
 		}
@@ -252,7 +259,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			onNavigationLeft(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
+		final var dpadButtonLeftPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this);
+		final var leftAxisX = gamepadManager.getGamepadAxisValueTimed(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, this);
+		if (dpadButtonLeftPressed || leftAxisX < 0) {
 			screenManager.contextHintManager().setGamePadHints();
 			onNavigationLeft(core, InputType.Gamepad);
 		}
@@ -262,7 +271,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			onNavigationRight(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
+		final var dpadButtonRightPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this);
+		if (dpadButtonRightPressed || leftAxisX > 0) {
 			screenManager.contextHintManager().setGamePadHints();
 			onNavigationRight(core, InputType.Gamepad);
 		}
@@ -277,12 +287,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			onNavigationBack(core, InputType.Gamepad);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
+		final var keyboardConfirmation = core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this);
+		final var gamepadConfirmation = core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this);
+		if (keyboardConfirmation || gamepadConfirmation) {
 			onNavigationConfirm(core, InputType.Keyboard);
-		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
-			onNavigationConfirm(core, InputType.Gamepad);
 		}
 	}
 
@@ -512,8 +521,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mSelectedLayoutIndex = layoutIndex;
 		mSelectedEntryIndex = entryIndex;
 		final var selectedEntry = selectedLayout.entries().get(mSelectedEntryIndex);
-		
-		
 
 		setFocusOnEntry(selectedEntry);
 		selectedEntry.onNavigationGainFocus(screenManager.core());
