@@ -259,7 +259,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			onNavigationLeft(core, InputType.Keyboard);
 		}
 
-		final var dpadButtonLeftPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this);
+		final var dpadButtonLeftPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this);
 		final var leftAxisX = gamepadManager.getGamepadAxisValueTimed(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, this);
 		if (dpadButtonLeftPressed || leftAxisX < 0) {
 			screenManager.contextHintManager().setGamePadHints();
@@ -733,6 +733,9 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
 			return;
+
+		if (mESCBackEnabled)
+			exitScreen();
 
 	}
 

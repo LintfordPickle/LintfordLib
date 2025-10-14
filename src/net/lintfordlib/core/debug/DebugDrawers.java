@@ -425,6 +425,10 @@ public class DebugDrawers {
 
 	// ----
 
+	public FontUnit textRenderer() {
+		return mSystemFontUnit;
+	}
+
 	public void beginTextRenderer(ICamera camera) {
 		if (mDebugManager.debugManagerEnabled())
 			mSystemFontUnit.begin(camera);

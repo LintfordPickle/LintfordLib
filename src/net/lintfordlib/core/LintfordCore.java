@@ -35,7 +35,7 @@ import net.lintfordlib.core.debug.DebugMemory;
 import net.lintfordlib.core.debug.GLDebug;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
 import net.lintfordlib.core.input.InputManager;
-import net.lintfordlib.core.input.KeyEventActionManager;
+import net.lintfordlib.core.input.GameInputActionManager;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.core.time.TimeConstants;
@@ -496,7 +496,8 @@ public abstract class LintfordCore {
 
 		mInputState.initialize(this);
 
-		onInitializeInputActions(mInputState.eventActionManager());
+		final var eventActionManager = mInputState.eventActionManager();
+		onInitializeInputActions(eventActionManager);
 
 		onInitializeBitmapFontSources(mResourceManager.fontManager());
 	}
@@ -520,7 +521,7 @@ public abstract class LintfordCore {
 	/**
 	 * Allows the registration of game input actions and the respective key bindings.
 	 */
-	protected void onInitializeInputActions(KeyEventActionManager eventActionManager) {
+	protected void onInitializeInputActions(GameInputActionManager eventActionManager) {
 		eventActionManager.loadConfig();
 	}
 

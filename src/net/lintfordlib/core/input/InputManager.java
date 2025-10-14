@@ -25,7 +25,7 @@ public class InputManager {
 	private MouseManager mMouseManager;
 	private KeyboardManager mKeyboardManager;
 	private GamepadManager mGamepadManager;
-	private KeyEventActionManager mEventActionManager;
+	private GameInputActionManager mEventActionManager;
 
 	private INPUT_TYPES mLastInputActive = INPUT_TYPES.Keyboard;
 
@@ -37,7 +37,7 @@ public class InputManager {
 		return mLastInputActive;
 	}
 
-	public KeyEventActionManager eventActionManager() {
+	public GameInputActionManager eventActionManager() {
 		return mEventActionManager;
 	}
 
@@ -63,7 +63,7 @@ public class InputManager {
 		mGamepadManager = new GamepadManager();
 
 		final String lInputConfigFilename = AppStorage.getGameConfigDirectory() + InputConfigFilename;
-		mEventActionManager = new KeyEventActionManager(this, lInputConfigFilename);
+		mEventActionManager = new GameInputActionManager(lInputConfigFilename);
 	}
 
 	// --------------------------------------

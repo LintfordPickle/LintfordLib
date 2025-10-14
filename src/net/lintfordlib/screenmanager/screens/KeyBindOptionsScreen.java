@@ -1,13 +1,15 @@
 package net.lintfordlib.screenmanager.screens;
 
+import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
+import net.lintfordlib.core.input.InputType;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
-import net.lintfordlib.screenmanager.entries.MenuKeyBindEntry;
+import net.lintfordlib.screenmanager.entries.MenuBindingKeyEntry;
 import net.lintfordlib.screenmanager.entries.MenuLabelEntry;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
 import net.lintfordlib.screenmanager.layouts.HorizontalLayout;
@@ -28,12 +30,14 @@ public class KeyBindOptionsScreen extends MenuScreen {
 	private MenuEntry mBackButton;
 	private ListLayout mKeyBindListLayout;
 
+	private boolean mKeyAreaSelected;
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public KeyBindOptionsScreen(ScreenManager screenManager) {
-		super(screenManager, "KEYBOARD KEYBINDS");
+		super(screenManager, "KEY BINDINGS");
 
 		mScreenPaddingTop = 0;
 
@@ -68,34 +72,44 @@ public class KeyBindOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	private void createKeyBindSection(BaseLayout layout) {
-		final var lKeyBindOptionsTitle = new MenuLabelEntry(screenManager, this);
+		final var keyBindOptionsTitle = new MenuLabelEntry(screenManager, this);
 
-		lKeyBindOptionsTitle.label("KeyBinds");
-		lKeyBindOptionsTitle.drawButtonBackground(true);
-		lKeyBindOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
-		lKeyBindOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-		layout.addMenuEntry(lKeyBindOptionsTitle);
+		keyBindOptionsTitle.label("KeyBinds");
+		keyBindOptionsTitle.drawButtonBackground(true);
+		keyBindOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
+		keyBindOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+
+		final var keyBindOptionsColumns = new MenuLabelEntry(screenManager, this);
+
+		// TODO: Obviously needs work
+		keyBindOptionsColumns.label("Key      Gamepad");
+		keyBindOptionsColumns.drawButtonBackground(true);
+		keyBindOptionsColumns.horizontalAlignment(ALIGNMENT.RIGHT);
+		keyBindOptionsColumns.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+
+		layout.addMenuEntry(keyBindOptionsTitle);
+		layout.addMenuEntry(keyBindOptionsColumns);
 
 		final var inputManager = screenManager.core().input();
-		final var actionEventManager = inputManager.eventActionManager();
+		final var keyEventActionManager = inputManager.eventActionManager();
 
-		final var lGameKeyBinds = actionEventManager.gameKeyActions();
-		if (lGameKeyBinds != null) {
-			final var lGameKeyMap = lGameKeyBinds.gameKeyMap();
-			final var lNumKeysMappedInGame = lGameKeyMap.size();
-			for (int i = 0; i < lNumKeysMappedInGame; i++) {
-				final var lKeyMap = lGameKeyMap.get(i);
+		final var bindableInputActions = keyEventActionManager.bindableInputActions();
+		if (bindableInputActions != null) {
+			final var binableInputActionList = bindableInputActions.bindableEventActions();
+			final var numBindableInputActions = binableInputActionList.size();
+			for (int i = 0; i < numBindableInputActions; i++) {
+				final var bindableInput = binableInputActionList.get(i);
 
-				final var lRegisteredEventAction = actionEventManager.getEventActionByUid(lKeyMap.eventActionUid);
-				if (lRegisteredEventAction == null)
+				final var registeredEventAction = keyEventActionManager.getGameInputActionByUid(bindableInput.eventActionUid);
+				if (registeredEventAction == null)
 					continue;
 
-				final var lNewActionEntry = new MenuKeyBindEntry(screenManager, this, lRegisteredEventAction);
-				lNewActionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-				lNewActionEntry.label(lKeyMap.eventActionName);
-				lNewActionEntry.registerClickListener(this, lKeyMap.eventActionUid);
+				final var newActionEntry = new MenuBindingKeyEntry(screenManager, this, registeredEventAction);
+				newActionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+				newActionEntry.label(bindableInput.eventActionName);
+				newActionEntry.registerClickListener(this, bindableInput.eventActionUid);
 
-				layout.addMenuEntry(lNewActionEntry);
+				layout.addMenuEntry(newActionEntry);
 			}
 		}
 	}
@@ -106,6 +120,8 @@ public class KeyBindOptionsScreen extends MenuScreen {
 
 	@Override
 	public void exitScreen() {
+		// TODO: Maybe cancel and waiting keybaord/gamepad input events?
+
 		screenManager.core().input().eventActionManager().saveConfig();
 
 		super.exitScreen();
@@ -122,6 +138,37 @@ public class KeyBindOptionsScreen extends MenuScreen {
 		case BUTTON_CONFIRM:
 			exitScreen();
 			break;
+		}
+	}
+
+	@Override
+	protected void onNavigationUp(LintfordCore core, InputType inputType) {
+
+		final var selectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
+		if (selectedEntry instanceof MenuBindingKeyEntry entry) {
+			mKeyAreaSelected = entry.keyAreaSelected();
+		}
+
+		super.onNavigationUp(core, inputType);
+
+		final var newSelectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
+		if (newSelectedEntry instanceof MenuBindingKeyEntry entry) {
+			entry.keyAreaSelected(mKeyAreaSelected);
+		}
+	}
+
+	@Override
+	protected void onNavigationDown(LintfordCore core, InputType inputType) {
+		final var selectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
+		if (selectedEntry instanceof MenuBindingKeyEntry entry) {
+			mKeyAreaSelected = entry.keyAreaSelected();
+		}
+
+		super.onNavigationDown(core, inputType);
+
+		final var newSelectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
+		if (newSelectedEntry instanceof MenuBindingKeyEntry entry) {
+			entry.keyAreaSelected(mKeyAreaSelected);
 		}
 	}
 

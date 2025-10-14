@@ -12,6 +12,7 @@ import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
+// TODO: Is this even doing anything ?
 public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	private static final long serialVersionUID = -4902595949146396834L;
