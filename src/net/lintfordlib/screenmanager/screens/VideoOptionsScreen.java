@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.input.gamepad.GamepadInputMap;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.VideoSettings;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -112,6 +113,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		final var backButton = new MenuEntry(screenManager, this, "Back");
 		backButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
+		backButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_B);
 		mApplyButton = new MenuEntry(screenManager, this, "Apply");
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);

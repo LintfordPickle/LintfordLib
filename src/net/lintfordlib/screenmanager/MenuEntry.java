@@ -10,6 +10,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.input.gamepad.GamepadInputMap;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.screenmanager.Screen.ScreenState;
@@ -22,6 +23,40 @@ import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
 // TODO: remove the inheritance to Rectangle (serializable) and use composition (AABB) instead
 public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider, IContextHintProvider, IUiAnimationTarget {
+
+	public class GamepadMenuIcon {
+		public final Rectangle bounds = new Rectangle();
+		private ALIGNMENT mAlignment;
+		private boolean mIsEnabled;
+
+		// TODO: Need to track if custom set (or automatically set because of onFocus => gamepad 'A')
+
+		// GamepadInputMap
+		private int mLintfordInputCode;
+
+		public boolean isEnabled() {
+			return mIsEnabled;
+		}
+
+		public ALIGNMENT alignment() {
+			return mAlignment;
+		}
+
+		public void initialize(ALIGNMENT alignment, int lintfordInputCode) {
+			mIsEnabled = true;
+			mAlignment = alignment;
+			mLintfordInputCode = lintfordInputCode;
+		}
+
+		public void reset() {
+			mIsEnabled = false;
+		}
+	}
+
+	public void setGamepadIcon(ALIGNMENT left, int lintfordInputCode) {
+		mGamepadMenuIcon.initialize(left, lintfordInputCode);
+
+	}
 
 	// --------------------------------------
 	// Constants
@@ -71,7 +106,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public final Color entryColor = new Color();
 	public final Color textColor = new Color();
 	protected SpriteSheetDefinition mCoreSpritesheet;
-
+	public final GamepadMenuIcon mGamepadMenuIcon = new GamepadMenuIcon();
 	public final ContextHintState contextHintState = new ContextHintState();
 	protected float mSeparatorOffsetX;
 
@@ -481,10 +516,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		final var screenOffset = mParentScreen != null ? mParentScreen.screenPositionOffset() : Vector2f.Zero;
 		final var tileSize = Math.min(32, mH);
 
-		if (mShowInfoIcon)
+		mGamepadMenuIcon.bounds.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
+
+		if (mShowInfoIcon) // TODO: This isn't correct - the draw code is already offsetting by the screen transition
 			mInfoIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
 
-		if (mShowWarnIcon)
+		if (mShowWarnIcon) // TODO: This isn't correct - the draw code is already offsetting by the screen transition
 			mWarnIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
 
 	};
@@ -634,6 +671,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
 			final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor() * mScale;
+
 			final var lMenuFont = mParentScreen.font();
 
 			if (lMenuFont != null) {
@@ -653,11 +691,21 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			}
 		}
 
+		if (mGamepadMenuIcon.isEnabled()) {
+			// draw the set icon
+			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
+		} else if (mHasFocus) {
+			mGamepadMenuIcon.mLintfordInputCode = GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_A;
+			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
+		}
+
+		// TODO: if gamepad connected
+
 		if (mShowInfoIcon)
-			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, 1.f);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, 1.f);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
@@ -673,9 +721,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 	public void renderHighlight(LintfordCore core, Screen screen, boolean renderFilled, SpriteBatch spriteBatch, Rectangle rect) {
 		final var lScreenOffset = screen.screenPositionOffset();
+		final var lParentScreenAlpha = screen.screenColor.a;
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColorWhite();
+		spriteBatch.setColorA(lParentScreenAlpha);
 
 		final var spriteFrameLT = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_TOP);
 		final var spriteFrameLC = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_ENTRY_HIGHLIGHT_FULL_LEFT_CENTER);
@@ -718,6 +768,34 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		// to be overriden in container entries. Given a MenuEntry, if it exists within the container, the selectedEntry index should be updated to match it, and the focus is set to that entry.
 
 		return false;
+	}
+
+	public void drawGamepadIcon(LintfordCore core, SpriteBatch spriteBatch, Rectangle destRect, float screenAlpha) {
+		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, screenAlpha);
+
+		int spriteFrameUid = -1;
+		switch (mGamepadMenuIcon.mLintfordInputCode) {
+		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_A:
+			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_A_DARK_COLOR;
+			break;
+		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_B:
+			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_B_DARK_COLOR;
+			break;
+		}
+		if (spriteFrameUid == -1)
+			return;
+
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(lColor);
+
+		final var w = destRect.width() * mScale;
+		final var h = destRect.height() * mScale;
+		final var x = destRect.x();
+		final var y = destRect.y();
+
+		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y, w, h, 0, -destRect.width() / 2, -destRect.height() / 2, 1.f);
+
+		spriteBatch.end();
 	}
 
 	public void drawInfoIcon(LintfordCore core, SpriteBatch spriteBatch, Rectangle destRect, float screenAlpha) {

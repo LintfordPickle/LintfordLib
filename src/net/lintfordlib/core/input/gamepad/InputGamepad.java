@@ -275,6 +275,7 @@ public class InputGamepad {
 	 */
 	public int checkForInputCode() {
 
+		// This needs to be captured after a small pause
 		fillTempCheckLists();
 
 		if (mIsGamepadMappingAvailable) {
@@ -334,7 +335,8 @@ public class InputGamepad {
 
 		if (mIsGamepadMappingAvailable) {
 			for (int i = 0; i < mNumButtonsMapped; i++) {
-				tempCheckButtonList.add(getButtonStateMapped(i, GLFW.GLFW_PRESS));
+				// button states default to false?
+				tempCheckButtonList.add( false /* getButtonStateMapped(i, GLFW.GLFW_PRESS) */);
 			}
 
 			for (int i = 0; i < mNumAxesMapped; i++) {
@@ -343,7 +345,8 @@ public class InputGamepad {
 
 		} else {
 			for (int i = 0; i < mNumButtonsRaw; i++) {
-				tempCheckButtonList.add(getButtonStateRaw(i, GLFW.GLFW_PRESS));
+				// button states default to false?
+				tempCheckButtonList.add( false /* getButtonStateRaw(i, GLFW.GLFW_PRESS) */);
 			}
 
 			for (int i = 0; i < mNumAxisRaw; i++) {

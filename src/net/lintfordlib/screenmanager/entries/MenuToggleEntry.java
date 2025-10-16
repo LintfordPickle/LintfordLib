@@ -177,7 +177,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColor(entryColor);
-		// Render the check box (either ticked or empty)
+
 		if (mIsChecked)
 			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + centerX() + 8, lScreenOffset.y + mY, lTileSize, lTileSize, mZ);
 		else

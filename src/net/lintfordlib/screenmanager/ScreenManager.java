@@ -314,7 +314,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 			final var lTopScreen = getTopScreen();
 			if (lTopScreen != null) {
 				if (lTopScreen.screenState() == ScreenState.ACTIVE && !lNextScreenToAdd.isPopup()) {
-					lTopScreen.onLostFocus();
 					lTopScreen.transitionOff();
 
 					lReadyToAddScreen = true;
@@ -322,6 +321,9 @@ public class ScreenManager implements IInputClickedFocusManager {
 				} else if (lTopScreen.screenState() == ScreenState.HIDDEN || lNextScreenToAdd.showBackgroundScreens()) {
 					lReadyToAddScreen = true;
 				}
+
+				lTopScreen.onLostFocus();
+
 			} else {
 				lReadyToAddScreen = true;
 			}

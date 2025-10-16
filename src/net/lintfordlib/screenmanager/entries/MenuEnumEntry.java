@@ -232,8 +232,8 @@ public class MenuEnumEntry extends MenuEntry {
 
 		if (mButtonsEnabled) {
 			final var lArrowButtonSize = Math.min(mH, 32.f);
-			mLeftButtonRectangle.setPosition(mX + mW / 2 + lArrowButtonSize * .5f, mY);
-			mRightButtonRectangle.setPosition(mX + mW - lArrowButtonSize, mY);
+			mLeftButtonRectangle.setPosition(mX + mW / 2 + 8, mY);
+			mRightButtonRectangle.setPosition(mX + mW - lArrowButtonSize - 8, mY);
 		}
 	}
 

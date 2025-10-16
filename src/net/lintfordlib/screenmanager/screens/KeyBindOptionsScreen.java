@@ -3,6 +3,7 @@ package net.lintfordlib.screenmanager.screens;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.input.InputType;
+import net.lintfordlib.core.input.gamepad.GamepadInputMap;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.ScreenManager;
@@ -57,6 +58,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 
 		mBackButton = new MenuEntry(screenManager, this, "Go back");
 		mBackButton.registerClickListener(this, BUTTON_CONFIRM);
+		mBackButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_B);
 
 		lFooterList.addMenuEntry(mBackButton);
 

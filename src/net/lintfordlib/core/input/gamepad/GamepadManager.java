@@ -65,10 +65,11 @@ public class GamepadManager extends GLFWJoystickCallback {
 
 	public void StartGamepadInputCapture(IGamepadInputCallback gamepadInputCallback) {
 		mGamepadInputCallback = gamepadInputCallback;
+		mGamepadCooldownMs = 300;
 	}
 
 	public boolean isSomeComponentCapturingInput() {
-		return mGamepadInputCallback != null;
+		return mGamepadInputCallback != null || mGamepadCooldownMs > 0;
 	}
 
 	public void stopKeyInputCapture() {
@@ -108,7 +109,8 @@ public class GamepadManager extends GLFWJoystickCallback {
 			lJoystick.update(core);
 		}
 
-		if (mGamepadInputCallback != null) {
+		// only start actually captuing the gamepad input after a short cooldown
+		if (mGamepadInputCallback != null && mGamepadCooldownMs < 0) {
 			WaitForGamepadInput(core);
 		}
 	}
