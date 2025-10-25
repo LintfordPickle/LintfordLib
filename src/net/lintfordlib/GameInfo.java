@@ -43,11 +43,11 @@ public interface GameInfo {
 	}
 
 	public default boolean stretchGameResolution() {
-		return false;
+		return true; // true ensures a static game canvas size
 	}
 
 	public default boolean stretchUiResolution() {
-		return false;
+		return true; // should be true because most of the screenmanager scaling is relative to the size of the window (quarter, half, three-querter etc.). So we need a solid base resolution
 	}
 
 	public default int gameCanvasResolutionWidth() {
