@@ -2,8 +2,8 @@ package net.lintfordlib.core.input.gamepad;
 
 public interface IGamepadListener {
 
-	void onGamepadConnected(InputGamepad gamepad);
+	void onGamepadConnected(Gamepad gamepad);
 
-	void onGamepadDisconnected(InputGamepad gamepad);
+	void onGamepadDisconnected(Gamepad gamepad);
 
 }

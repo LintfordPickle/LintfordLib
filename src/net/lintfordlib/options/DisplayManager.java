@@ -354,6 +354,7 @@ public class DisplayManager extends IniFile {
 			mGraphicsSettings.setUiUserTextScale((float) getInt(SECTION_NAME_UI, "uiTextScale", 100) / 100f);
 			mGraphicsSettings.setUiUserTransparencyScale((float) getInt(SECTION_NAME_UI, "uiTransparencyScale", 80) / 100f);
 
+			// TODO: Check if anything used the default fall-back before saving
 			saveConfig();
 		}
 	}

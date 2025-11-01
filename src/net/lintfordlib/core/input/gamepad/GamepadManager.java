@@ -11,7 +11,8 @@ import org.lwjgl.glfw.GLFWJoystickCallback;
 
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.core.input.IGamepadInputCallback;
+import net.lintfordlib.core.input.IGamepadInputBindingCallback;
+import net.lintfordlib.core.input.IGamepadInputMappingCallback;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 
 public class GamepadManager extends GLFWJoystickCallback {
@@ -26,15 +27,20 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// Variables
 	// --------------------------------------
 
-	public final Map<Integer, InputGamepad> mGamepads = new HashMap<>();
-	private final List<InputGamepad> mUpdateControllerList = new ArrayList<>();
-	private final List<InputGamepad> mActiveControllers = Collections.unmodifiableList(mUpdateControllerList);
+	public final Map<Integer, Gamepad> mGamepads = new HashMap<>();
+	private final List<Gamepad> mUpdateGamepadList = new ArrayList<>();
+	private final List<Gamepad> mActiveGamepads = Collections.unmodifiableList(mUpdateGamepadList);
 
+	/**
+	 * These listeners are called whenever a gamepad is connected or disconnected. They are called after the controller event has been processed by the GamepadManager (added or removed).
+	 */
 	private final List<IGamepadListener> mGamepadListeners = new ArrayList<>();
 
-	// If this is set, then there is something waiting on the gamepad for input - so don't process other gamepad input ?
-	private IGamepadInputCallback mGamepadInputCallback;
-	private float mGamepadCooldownMs;
+	// If either of these are set, then there is something waiting on the gamepad for input - so don't process other gamepad input ?
+	private IGamepadInputMappingCallback mGamepadInputMappingCallback;
+	private IGamepadInputBindingCallback mGamepadInputBindingCallback;
+
+	private float mGamepadCaptureCooldownMs;
 
 	// --------------------------------------
 	// Properties
@@ -52,32 +58,51 @@ public class GamepadManager extends GLFWJoystickCallback {
 
 	}
 
-	public InputGamepad getGamepad(int gamepadId) {
+	public Gamepad getGamepad(int gamepadId) {
 		if (gamepadId < 0 || gamepadId >= MAX_NUM_CONTROLLERS)
 			return null;
 
 		return mGamepads.get(gamepadId);
 	}
 
-	public List<InputGamepad> getActiveGamepads() {
-		return mActiveControllers;
+	public List<Gamepad> getActiveGamepads() {
+		return mActiveGamepads;
 	}
 
-	public void StartGamepadInputCapture(IGamepadInputCallback gamepadInputCallback) {
-		mGamepadInputCallback = gamepadInputCallback;
-		mGamepadCooldownMs = 300;
+	public void startGamepadMappingCapture(IGamepadInputMappingCallback gamepadMappingCallback) {
+		if (mGamepadInputMappingCallback != null || mGamepadInputBindingCallback != null)
+			return; // cannot be capturing two things at a time.
+
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "Starting gamepad mapping capture.");
+
+		mGamepadInputMappingCallback = gamepadMappingCallback;
+		mGamepadCaptureCooldownMs = 300;
 	}
 
+	public void startGamepadBindingCapture(IGamepadInputBindingCallback gamepadBindingCallback) {
+		if (mGamepadInputMappingCallback != null || mGamepadInputBindingCallback != null)
+			return; // cannot be capturing two things at a time.
+
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "Starting gamepad binding capture.");
+
+		mGamepadInputBindingCallback = gamepadBindingCallback;
+		mGamepadCaptureCooldownMs = 300;
+	}
+
+	/**
+	 * @return true if waiting for either a mapping or binding input from a controller.
+	 */
 	public boolean isSomeComponentCapturingInput() {
-		return mGamepadInputCallback != null || mGamepadCooldownMs > 0;
+		return mGamepadInputMappingCallback != null || mGamepadInputBindingCallback != null || mGamepadCaptureCooldownMs > 0;
 	}
 
-	public void stopKeyInputCapture() {
+	public void stopGamepadCapture() {
 
-		Debug.debugManager().logger().v(getClass().getSimpleName(), "stopKeyInputCapture");
+		Debug.debugManager().logger().v(getClass().getSimpleName(), "Stopping gamepad capture");
 
-		mGamepadInputCallback = null;
-		mGamepadCooldownMs = 300;
+		mGamepadInputMappingCallback = null;
+		mGamepadInputBindingCallback = null;
+		mGamepadCaptureCooldownMs = 300;
 	}
 
 	// --------------------------------------
@@ -97,42 +122,74 @@ public class GamepadManager extends GLFWJoystickCallback {
 
 	public void update(LintfordCore core) {
 
-		if (mGamepadCooldownMs > 0)
-			mGamepadCooldownMs -= core.gameTime().elapsedTimeMilli();
+		if (mGamepadCaptureCooldownMs > 0)
+			mGamepadCaptureCooldownMs -= core.gameTime().elapsedTimeMilli();
 
-		final var lNumConnectedJoysticks = mUpdateControllerList.size();
-		for (int i = 0; i < lNumConnectedJoysticks; i++) {
-			final var lJoystick = mUpdateControllerList.get(i);
-			if (lJoystick.isActive() == false)
+		final var numConnectedGamepads = mUpdateGamepadList.size();
+		for (int i = 0; i < numConnectedGamepads; i++) {
+			final var gamepad = mUpdateGamepadList.get(i);
+			if (!gamepad.isActive())
 				continue;
 
-			lJoystick.update(core);
+			gamepad.update(core);
 		}
 
-		// only start actually captuing the gamepad input after a short cooldown
-		if (mGamepadInputCallback != null && mGamepadCooldownMs < 0) {
-			WaitForGamepadInput(core);
-		}
+		if (mGamepadCaptureCooldownMs > 0)
+			return;
+
+		if (mGamepadInputMappingCallback != null)
+			WaitForRawGamepadInput(core);
+		else if (mGamepadInputBindingCallback != null)
+			WaitForMappedGamepadInput(core);
+
 	}
 
-	private void WaitForGamepadInput(LintfordCore core) {
-		// waiting for input
-		int result = -1;
-		final var lNumConnectedJoysticks = mUpdateControllerList.size();
-		for (int i = 0; i < lNumConnectedJoysticks; i++) {
-			final var lJoystick = mUpdateControllerList.get(i);
-			if (lJoystick.isActive() == false)
+	private void WaitForRawGamepadInput(LintfordCore core) { // Mapping logic
+		final var numConnectedGamepads = mUpdateGamepadList.size();
+		for (int i = 0; i < numConnectedGamepads; i++) {
+			final var gamepad = mUpdateGamepadList.get(i);
+			if (gamepad.isActive() == false)
 				continue;
 
-			result = lJoystick.checkForInputCode();
-			if (result != -1) {
-				final var accepted = mGamepadInputCallback.gamepadInput(result);
+			final var buttonResult = gamepad.checkForRawButtonInput();
+			if (buttonResult != -1) {
+				final var accepted = mGamepadInputMappingCallback.gamepadButtonInput(buttonResult);
 				if (!accepted)
 					continue;
 
-				stopKeyInputCapture();
+				stopGamepadCapture();
 				return;
+			}
 
+			final var axisResult = gamepad.checkForAxisInput();
+			if (axisResult != null) {
+				final var accepted = mGamepadInputMappingCallback.gamepadAxisInput(axisResult.rawAxisId, Math.signum(axisResult.value));
+				if (!accepted)
+					continue;
+
+				stopGamepadCapture();
+				return;
+			}
+		}
+	}
+
+	// These get bound to GamepadInputCodes - not to the raw/sdl input
+	private void WaitForMappedGamepadInput(LintfordCore core) { // TODO: binding logic
+		final var numConnectedGamepads = mUpdateGamepadList.size();
+		for (int i = 0; i < numConnectedGamepads; i++) {
+			final var gamepad = mUpdateGamepadList.get(i);
+			if (gamepad.isActive() == false)
+				continue;
+
+			final var buttonResult = gamepad.checkForBoundButtonInput();
+			if (buttonResult != -1) {
+
+				final var accepted = mGamepadInputBindingCallback.gamepadButtonBindingInput(buttonResult);
+				if (!accepted)
+					continue;
+
+				stopGamepadCapture();
+				return;
 			}
 		}
 	}
@@ -147,135 +204,49 @@ public class GamepadManager extends GLFWJoystickCallback {
 		}
 	}
 
-	private InputGamepad getInputGamepad(int controllerIndex) {
+	private Gamepad getInputGamepad(int controllerIndex) {
 		if (mGamepads.containsKey(controllerIndex)) {
 			return mGamepads.get(controllerIndex);
 		}
 
-		return createNewInputGamepad(controllerIndex);
+		return null;
 	}
 
-	private InputGamepad createNewInputGamepad(int controllerIndex) {
-		var controllerGuid = GLFW.glfwGetJoystickGUID(controllerIndex);
-		final var newController = new InputGamepad(controllerGuid, controllerIndex);
+	private Gamepad createNewInputGamepad(int controllerIndex, String guid, String name) {
+		final var newController = new Gamepad(name, guid, controllerIndex);
 
 		mGamepads.put(controllerIndex, newController);
-		mUpdateControllerList.add(newController);
+		mUpdateGamepadList.add(newController);
 
 		return newController;
 	}
 
+	private void removeInputGampad(int controllerIndex) {
+		final var gamepad = mGamepads.remove(controllerIndex);
+		if (gamepad != null)
+			mUpdateGamepadList.remove(gamepad);
+
+	}
+
+	// Input Methods
 	// --------------------------------------
 
-	/** Checks if the requested button is pressed on any of the currently connected gamepads. */
-	public boolean isGamepadButtonDown(int glfwGamepadButtonIndex) {
-		if (isSomeComponentCapturingInput())
-			return false;
+	// --- Buttons
 
-		final var lNumConnectGamepads = mActiveControllers.size();
-		for (int i = 0; i < lNumConnectGamepads; i++) {
-			if (mActiveControllers.get(i).getIsButtonDown(glfwGamepadButtonIndex)) {
-				return true;
-			}
-		}
-
-		return false;
+	public boolean isGamepadButtonDown(int gamepadInputCode) {
+		return isGamepadButtonDown(gamepadInputCode, null);
 	}
 
-	/** Checks if the requested button is pressed on the connected gamepad with the given id. */
-	public boolean isGamepadButtonDown(int gamepadIndex, int glfwGamepadButtonIndex) {
+	public boolean isGamepadButtonDown(int gamepadInputCode, IInputProcessor processor) {
 		if (isSomeComponentCapturingInput())
 			return false;
 
-		if (gamepadIndex < 0 || gamepadIndex >= mActiveControllers.size())
+		if (mGamepadCaptureCooldownMs > 0)
 			return false;
 
-		if (mActiveControllers.get(gamepadIndex).getIsButtonDown(glfwGamepadButtonIndex)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/** Checks if the requested button is pressed on the connected gamepad with the given id. The state will be checked by the passed IInputProcessor. */
-	public boolean isGamepadButtonDown(int gamepadIndex, int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
-		if (isSomeComponentCapturingInput())
-			return false;
-
-		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
-			return false;
-
-		if (gamepadIndex < 0 || gamepadIndex >= mActiveControllers.size())
-			return false;
-
-		if (mActiveControllers.get(gamepadIndex).getIsButtonDown(glfwGamepadButtonIndex)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/** Checks if the requested button is pressed on any of the currently connected gamepads. The state will be checked by the passed IInputProcessor. */
-	public boolean isGamepadButtonDown(int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
-		if (isSomeComponentCapturingInput())
-			return false;
-
-		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
-			return false;
-
-		final var lNumConnectGamepads = mActiveControllers.size();
-		for (int i = 0; i < lNumConnectGamepads; i++) {
-			if (mActiveControllers.get(i).getIsButtonDown(glfwGamepadButtonIndex)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/** Checks if the requested button is pressed on the connected gamepad with the given id. The state will be checked by the passed IInputProcessor, and will be constrained by a cooldown timer. */
-	public boolean isGamepadButtonDownTimed(int gamepadIndex, int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
-		if (isSomeComponentCapturingInput())
-			return false;
-
-		if (mGamepadCooldownMs > 0)
-			return false;
-
-		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
-			return false;
-
-		if (inputProcessor.isCoolDownElapsed() == false)
-			return false;
-
-		if (gamepadIndex < 0 || gamepadIndex >= mActiveControllers.size())
-			return false;
-
-		if (mActiveControllers.get(gamepadIndex).getIsButtonDown(glfwGamepadButtonIndex)) {
-			inputProcessor.resetCoolDownTimer();
-			return true;
-		}
-
-		return false;
-	}
-
-	/** Checks if the requested button is pressed on any of the currently connected gamepads. The state will be checked by the passed IInputProcessor, and will be constrained by a cooldown timer. */
-	public boolean isGamepadButtonDownTimed(int glfwGamepadButtonIndex, IInputProcessor inputProcessor) {
-		if (isSomeComponentCapturingInput())
-			return false;
-
-		if (mGamepadCooldownMs > 0)
-			return false;
-
-		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
-			return false;
-
-		if (inputProcessor.isCoolDownElapsed() == false)
-			return false;
-
-		final var numConnectGamepads = mActiveControllers.size();
+		final var numConnectGamepads = mActiveGamepads.size();
 		for (int i = 0; i < numConnectGamepads; i++) {
-			if (mActiveControllers.get(i).getIsButtonDown(glfwGamepadButtonIndex)) {
-				inputProcessor.resetCoolDownTimer();
+			if (isGamepadButtonDown(i, gamepadInputCode, processor)) {
 				return true;
 			}
 		}
@@ -283,51 +254,200 @@ public class GamepadManager extends GLFWJoystickCallback {
 		return false;
 	}
 
-	/**
-	 * Returns the axis value of the first controller found where the absolute axis value is larger than threashold. The returned value retains the sign.
-	 */
-	public float getGamepadAxisValue(int glfwGamepadAxisIndex) {
+	public boolean isGamepadButtonDown(int controllerIndex, int gamepadInputCode, IInputProcessor processor) {
+		if (isSomeComponentCapturingInput())
+			return false;
+
+		if (mGamepadCaptureCooldownMs > 0)
+			return false;
+
+		if (controllerIndex < 0 || controllerIndex >= mActiveGamepads.size())
+			return false;
+
+		if (processor != null) {
+			if (!processor.allowGamepadInput())
+				return false;
+
+			if (!processor.isCoolDownElapsed())
+				return false;
+		}
+
+		final var controller = mActiveGamepads.get(controllerIndex);
+		final var buttonState = controller.state.getGamepadInputByCode(gamepadInputCode);
+		if (buttonState.isDown()) {
+			if (processor != null) {
+				processor.resetCoolDownTimer();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// --- Timed
+
+	public boolean isGamepadButtonDownTimed(int gamepadInputCode) {
+		return isGamepadButtonDownTimed(gamepadInputCode, null);
+	}
+
+	public boolean isGamepadButtonDownTimed(int gamepadInputCode, IInputProcessor processor) {
+		if (isSomeComponentCapturingInput())
+			return false;
+
+		if (processor != null && !processor.allowGamepadInput())
+			return false;
+
+		if (mGamepadCaptureCooldownMs > 0)
+			return false;
+
+		final var numConnectGamepads = mActiveGamepads.size();
+		for (int i = 0; i < numConnectGamepads; i++) {
+			if (isGamepadButtonDown(i, gamepadInputCode, processor)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isGamepadButtonDownTimed(int controllerIndex, int gamepadInputCode, IInputProcessor processor) {
+		if (isSomeComponentCapturingInput())
+			return false;
+
+		if (mGamepadCaptureCooldownMs > 0)
+			return false;
+
+		if (controllerIndex < 0 || controllerIndex >= mActiveGamepads.size())
+			return false;
+
+		if (processor != null) {
+			if (!processor.allowGamepadInput())
+				return false;
+
+			if (!processor.isCoolDownElapsed())
+				return false;
+		}
+
+		final var gamepad = mActiveGamepads.get(controllerIndex);
+		final var buttonState = gamepad.state.getGamepadInputByCode(gamepadInputCode);
+		if (buttonState.isDown()) {
+			if (processor != null) {
+				processor.resetCoolDownTimer();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// --- Axis
+
+	public float getGamepadAxis(int gamepadInputCode) {
+		return getGamepadAxis(gamepadInputCode, null);
+	}
+
+	public float getGamepadAxis(int gamepadInputCode, IInputProcessor processor) {
 		if (isSomeComponentCapturingInput())
 			return 0;
 
-		final var numConnectGamepads = mActiveControllers.size();
+		if (mGamepadCaptureCooldownMs > 0)
+			return 0;
+
+		final var numConnectGamepads = mActiveGamepads.size();
 		for (int i = 0; i < numConnectGamepads; i++) {
-			final var value = mActiveControllers.get(i).getAxisValue(glfwGamepadAxisIndex);
-			if (Math.abs(value) > 0.01f) {
-				return value;
+			final var controllerAxisValue = getGamepadAxis(i, gamepadInputCode, processor);
+
+			if (Math.abs(controllerAxisValue) > 0.02f) {
+				return controllerAxisValue;
 			}
 		}
 
 		return 0;
 	}
 
-	/**
-	 * Returns the axis value of the first controller found where the absolute axis value is larger than threashold. The returned value retains the sign.
-	 */
-	public float getGamepadAxisValueTimed(int glfwGamepadAxisIndex, IInputProcessor inputProcessor) {
+	public float getGamepadAxis(int controllerIndex, int gamepadInputCode, IInputProcessor processor) {
+		if (isSomeComponentCapturingInput())
+			return 0.f;
+
+		if (mGamepadCaptureCooldownMs > 0)
+			return 0.f;
+
+		if (controllerIndex < 0 || controllerIndex >= mActiveGamepads.size())
+			return 0.f;
+
+		if (processor != null) {
+			if (!processor.allowGamepadInput())
+				return 0.f;
+
+			if (!processor.isCoolDownElapsed())
+				return 0.f;
+		}
+
+		final var gamepad = mActiveGamepads.get(controllerIndex);
+		final var axisValue = gamepad.state.getGamepadInputByCode(gamepadInputCode);
+
+		// TODO: Axis interpretation needs fixing
+		if (axisValue.isValueSet() && processor != null) {
+			processor.resetCoolDownTimer();
+		}
+
+		return axisValue.valueAdjusted();
+	}
+
+	// --- Timed
+
+	public float getGamepadAxisTimed(int gamepadInputCode) {
+		return getGamepadAxisTimed(gamepadInputCode, null);
+	}
+
+	public float getGamepadAxisTimed(int gamepadInputCode, IInputProcessor processor) {
 		if (isSomeComponentCapturingInput())
 			return 0;
 
-		if (mGamepadCooldownMs > 0)
+		if (mGamepadCaptureCooldownMs > 0)
 			return 0;
 
-		if (inputProcessor != null && inputProcessor.allowGamepadInput() == false)
-			return 0;
-
-		if (inputProcessor.isCoolDownElapsed() == false)
-			return 0;
-
-		final var numConnectGamepads = mActiveControllers.size();
+		final var numConnectGamepads = mActiveGamepads.size();
 		for (int i = 0; i < numConnectGamepads; i++) {
-			final var value = mActiveControllers.get(i).getAxisValue(glfwGamepadAxisIndex);
-			if (Math.abs(value) > 0.01f) {
-				inputProcessor.resetCoolDownTimer();
+			final var gamepadAxisValue = getGamepadAxisTimed(i, gamepadInputCode, processor);
 
-				return value;
+			if (gamepadAxisValue > 0.f) {
+				return gamepadAxisValue;
 			}
 		}
 
 		return 0;
+	}
+
+	public float getGamepadAxisTimed(int controllerIndex, int gamepadInputCode, IInputProcessor processor) {
+		if (isSomeComponentCapturingInput())
+			return 0.f;
+
+		if (mGamepadCaptureCooldownMs > 0)
+			return 0.f;
+
+		if (controllerIndex < 0 || controllerIndex >= mActiveGamepads.size())
+			return 0.f;
+
+		if (processor != null) {
+			if (!processor.allowGamepadInput())
+				return 0.f;
+
+			if (!processor.isCoolDownElapsed())
+				return 0.f;
+		}
+
+		final var gamepad = mActiveGamepads.get(controllerIndex);
+		final var axisValue = gamepad.state.getGamepadInputByCode(gamepadInputCode);
+
+		// TODO: Axis interpretation needs fixing
+		if (axisValue.isValueSet() && processor != null) {
+			processor.resetCoolDownTimer();
+		}
+
+		return axisValue.value();
 	}
 
 	// --------------------------------------
@@ -346,19 +466,35 @@ public class GamepadManager extends GLFWJoystickCallback {
 	private void connectController(int controllerIndex) {
 		var gamepadPresent = GLFW.glfwJoystickPresent(controllerIndex);
 
+		// Some controllers are invoked twice. If the same guid has already been added, then don't re-add this controller
+
 		if (gamepadPresent) {
-			final var gamepad = getInputGamepad(controllerIndex);
+			var controllerGuid = GLFW.glfwGetJoystickGUID(controllerIndex);
+
+			var gamepad = getInputGamepad(controllerIndex);
+
+			if (gamepad == null) {
+				var controllerName = GLFW.glfwGetJoystickName(controllerIndex);
+				var numGamepadGuids = gamepadGuidPresent(controllerGuid);
+				if (numGamepadGuids > 0) {
+					Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller with guid already added " + controllerGuid + "!");
+					controllerName += " (" + numGamepadGuids + ")";
+				}
+
+				gamepad = createNewInputGamepad(controllerIndex, controllerGuid, controllerName);
+			}
+
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " is present (" + gamepad.name() + ")");
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller guid:" + controllerGuid);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Buttons: " + gamepad.numButtons());
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Axis: " + gamepad.numAxis());
+
 			gamepad.initialize();
 
 			final var lNumListeners = mGamepadListeners.size();
 			for (var i = 0; i < lNumListeners; i++) {
 				mGamepadListeners.get(i).onGamepadConnected(gamepad);
 			}
-
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " is present (" + gamepad.name() + ")");
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Buttons: " + gamepad.numButtonsRaw());
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Axis: " + gamepad.numAxisRaw());
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Hats: " + gamepad.numHatsRaw());
 
 			if (gamepad.isGamepadMappingAvailable())
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " has gamepad mappings available");
@@ -368,10 +504,30 @@ public class GamepadManager extends GLFWJoystickCallback {
 		}
 	}
 
+	private int gamepadGuidPresent(String guid) {
+		int counter = 0;
+		final var numConnectGamepads = mActiveGamepads.size();
+		for (int i = 0; i < numConnectGamepads; i++) {
+			final var gamepad = mActiveGamepads.get(i);
+			if (gamepad == null)
+				continue;
+
+			if (gamepad.GUID == null || gamepad.GUID.length() == 0)
+				continue;
+
+			if (gamepad.GUID.equals(guid))
+				counter++;
+		}
+
+		return counter;
+	}
+
 	private void disconnectController(int controllerIndex) {
 		final var disconnectedGamepad = getInputGamepad(controllerIndex);
 		if (disconnectedGamepad == null || disconnectedGamepad.isActive() == false)
 			return;
+
+		removeInputGampad(controllerIndex);
 
 		final var numListeners = mGamepadListeners.size();
 		for (var i = 0; i < numListeners; i++) {

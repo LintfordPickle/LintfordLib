@@ -1,49 +1,70 @@
 package net.lintfordlib.screenmanager.screens;
 
 import net.lintfordlib.core.graphics.ColorConstants;
+import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.input.gamepad.Gamepad;
+import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.core.input.gamepad.GamepadManager;
 import net.lintfordlib.core.input.gamepad.IGamepadListener;
-import net.lintfordlib.core.input.gamepad.InputGamepad;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.ScreenManager;
-import net.lintfordlib.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
-import net.lintfordlib.screenmanager.entries.MenuEnumEntry;
-import net.lintfordlib.screenmanager.entries.MenuLabelEntry;
+import net.lintfordlib.screenmanager.entries.HorizontalEntryGroup;
+import net.lintfordlib.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintfordlib.screenmanager.entries.MenuToggleEntry;
+import net.lintfordlib.screenmanager.entries.input.MenuControllerImageEntry;
+import net.lintfordlib.screenmanager.entries.input.MenuGamepadInputMapEntry;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
+import net.lintfordlib.screenmanager.layouts.FloatingLayout;
 import net.lintfordlib.screenmanager.layouts.HorizontalLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
-// TODO: This whole screen needs a rework - it is NOT about the key binds to a controller for ingame actions - rather the gamepad mapping of physical buttons/axis to the Lintford Codes.
-// TODO: Needs to listen to controller connections/disconnections
-
-
+// Handles mapping of physical gamepad input to the Lintford gamepad Codes.
 public class ControllerOptionsScreen extends MenuScreen implements IGamepadListener {
-
-	public class ControllerContainer {
-		public String mControllerName;
-		public int mControllerUid;
-	}
 
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
 
-	public static final int BUTTON_CONFIRM = 10;
+	public static final int BUTTON_BACK = 10;
+	public static final int BUTTON_SAVE = 11;
+
+	public static final int BUTTON_AVAILABLE_CONTROLLERS = 20;
 
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
 	private MenuEntry mBackButton;
-	private ListLayout mKeyBindListLayout;
+	private MenuEntry mSaveButton;
+	private FloatingLayout mmInputMapFloatingLayout;
 
 	private GamepadManager mGamepadManager;
-	private MenuEnumEntry mAvailableControllers;
-	private MenuToggleEntry mCustomBindings;
+	private MenuEnumEntryIndexed<Gamepad> mAvailableControllers;
+	private MenuToggleEntry mSdlMappingAvailable;
+	private MenuToggleEntry mUseCustomBindings;
+
+	/** Tracks the gamepad we are currently mapping (using the enum entry). */
+	private Gamepad mActiveGamepad;
+
+	// temp for debugging
+	private MenuGamepadInputMapEntry buttonWestEntry;
+	private MenuGamepadInputMapEntry buttonNorthEntry;
+	private MenuGamepadInputMapEntry buttonSouthEntry;
+	private MenuGamepadInputMapEntry buttonEastEntry;
+
+	private MenuGamepadInputMapEntry duButtonEntry;
+	private MenuGamepadInputMapEntry ddButtonEntry;
+	private MenuGamepadInputMapEntry dlButtonEntry;
+	private MenuGamepadInputMapEntry drButtonEntry;
+
+	private MenuGamepadInputMapEntry selectButtonEntry;
+	private MenuGamepadInputMapEntry startButtonEntry;
+
+	private MenuGamepadInputMapEntry ltriggerButtonEntry;
+	private MenuGamepadInputMapEntry rtriggerButtonEntry;
 
 	// --------------------------------------
 	// Constructor
@@ -60,101 +81,206 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 
 		final var controllerSelectionLayout = new ListLayout(this);
 		controllerSelectionLayout.cropPaddingTop(9.f);
-		// controllerSelectionLayout.cropPaddingBottom(13.f);
 		controllerSelectionLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		controllerSelectionLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 		controllerSelectionLayout.layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
 		controllerSelectionLayout.marginBottom(10);
 
-		mAvailableControllers = new MenuEnumEntry(screenManager, this, "Controller");
+		mAvailableControllers = new MenuEnumEntryIndexed<Gamepad>(screenManager, this, "Controller");
 		mAvailableControllers.setButtonsEnabled(true);
+		mAvailableControllers.registerClickListener(this, BUTTON_AVAILABLE_CONTROLLERS);
+		mAvailableControllers.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mCustomBindings = new MenuToggleEntry(screenManager, this, "Custom Bindings");
+		mSdlMappingAvailable = new MenuToggleEntry(screenManager, this, "SDL Mapping Available");
+		mSdlMappingAvailable.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+		mSdlMappingAvailable.readOnly(true);
+
+		mUseCustomBindings = new MenuToggleEntry(screenManager, this, "Custom Bindings");
+		mUseCustomBindings.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		controllerSelectionLayout.addMenuEntry(mAvailableControllers);
-		controllerSelectionLayout.addMenuEntry(mCustomBindings);
+		controllerSelectionLayout.addMenuEntry(mSdlMappingAvailable);
+		controllerSelectionLayout.addMenuEntry(mUseCustomBindings);
 
-		// Binding Section
+		// Mapping Section
 
-		mKeyBindListLayout = new ListLayout(this);
-		mKeyBindListLayout.cropPaddingTop(9.f);
-		mKeyBindListLayout.cropPaddingBottom(13.f);
-		mKeyBindListLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
-		mKeyBindListLayout.layoutFillType(FILLTYPE.FILL_CONTAINER);
-		mKeyBindListLayout.layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
-		mKeyBindListLayout.marginLeft(100);
-		mKeyBindListLayout.marginRight(100);
+		mmInputMapFloatingLayout = new FloatingLayout(this);
+		mmInputMapFloatingLayout.cropPaddingTop(9.f);
+		mmInputMapFloatingLayout.cropPaddingBottom(13.f);
+		mmInputMapFloatingLayout.setDrawBackground(true, ColorConstants.RED());
+		mmInputMapFloatingLayout.layoutFillType(FILLTYPE.FILL_CONTAINER);
+		mmInputMapFloatingLayout.layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
+		mmInputMapFloatingLayout.marginLeft(100);
+		mmInputMapFloatingLayout.marginRight(100);
 
-		createKeyBindSection(mKeyBindListLayout);
+		createControllerSection(mmInputMapFloatingLayout);
 
 		final var lFooterList = new HorizontalLayout(this);
 		lFooterList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
-		mBackButton = new MenuEntry(screenManager, this, "Go back");
-		mBackButton.registerClickListener(this, BUTTON_CONFIRM);
+		mBackButton = new MenuEntry(screenManager, this, "Back");
+		mBackButton.registerClickListener(this, BUTTON_BACK);
 
-		lFooterList.addMenuEntry(mBackButton);
+		mSaveButton = new MenuEntry(screenManager, this, "Save");
+		mSaveButton.registerClickListener(this, BUTTON_SAVE);
+
+		final var footerBar = new HorizontalEntryGroup(screenManager, this);
+		footerBar.addEntry(mBackButton);
+		footerBar.addEntry(mSaveButton);
+
+		lFooterList.addMenuEntry(footerBar);
 
 		addLayout(controllerSelectionLayout);
-		addLayout(mKeyBindListLayout);
+		addLayout(mmInputMapFloatingLayout);
 		addLayout(lFooterList);
 
 		mSelectedLayoutIndex = 0;
 		mSelectedEntryIndex = 0;
 	}
 
-	// --------------------------------------
-	// Helper-Methods
-	// --------------------------------------
+	private void createControllerSection(BaseLayout layout) {
 
-	private void createKeyBindSection(BaseLayout layout) {
-		final var keyBindOptionsTitle = new MenuLabelEntry(screenManager, this);
+		final var desiredButtonWidth = 100;
 
-		keyBindOptionsTitle.label("KeyBinds");
-		keyBindOptionsTitle.drawButtonBackground(true);
-		keyBindOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
-		keyBindOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-		layout.addMenuEntry(keyBindOptionsTitle);
+		final var buttonOffsetX = 7;
+		final var buttonOffsetY = 31;
 
-		final var inputManager = screenManager.core().input();
-		final var keyEventActionManager = inputManager.eventActionManager();
+		final var entryOffsetX = 0;
+		final var entryOffsetY = 45;
 
-		// TODO: Eventually this needs to read the current mapping from a file - so that it can be on a per-controller basis!
+		// Select / Start
 
-//		final var lGameKeyBinds = keyEventActionManager.gameKeyActions();
-//		if (lGameKeyBinds != null) {
-//			final var gameControllermap = lGameKeyBinds.gameControllerMap();
-//			final var numKeysMappedInGame = gameControllermap.size();
-//			for (int i = 0; i < numKeysMappedInGame; i++) {
-//				final var keyMap = gameControllermap.get(i);
-//
-//				final var registeredEventAction = keyEventActionManager.getGamepadEventActionByUid(keyMap.eventActionUid);
-//				if (registeredEventAction == null)
-//					continue;
-//
-//				final var newActionEntry = new MenuBindingGamepadEntry(screenManager, this, registeredEventAction);
-//				newActionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-//				newActionEntry.label(keyMap.eventActionName);
-//				newActionEntry.registerClickListener(this, keyMap.eventActionUid);
-//
-//				layout.addMenuEntry(newActionEntry);
-//			}
-//		}
-	}
+		selectButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_BACK);
+		selectButtonEntry.desiredWidth(desiredButtonWidth);
+		selectButtonEntry.setSpriteEnabled(true);
+		selectButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_SELECT, -1);
+		selectButtonEntry.setPosition(entryOffsetX + -100, entryOffsetY + 100);
+		selectButtonEntry.setSpritePosition(-20, 19, 16, 16);
+		selectButtonEntry.contextHintState.buttonAHint = "bind";
 
-	// --------------------------------------
-	// Core-Methods
-	// --------------------------------------
+		startButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_GUIDE);
+		startButtonEntry.desiredWidth(desiredButtonWidth);
+		startButtonEntry.setSpriteEnabled(true);
+		startButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_START, -1);
+		startButtonEntry.setPosition(entryOffsetX + 20, entryOffsetY + 100);
+		startButtonEntry.setSpritePosition(16, 19, 16, 16);
+		startButtonEntry.contextHintState.buttonAHint = "bind";
 
-	@Override
-	public void exitScreen() {
+		// Buttons
 
-		if (mGamepadManager != null)
-			mGamepadManager.removeGamepadListener(this);
+		buttonNorthEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_NORTH);
+		buttonNorthEntry.desiredWidth(desiredButtonWidth);
+		buttonNorthEntry.setSpriteEnabled(true);
+		buttonNorthEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_YELLOW, -1);
+		buttonNorthEntry.setPosition(entryOffsetX + 210, entryOffsetY + -40);
+		buttonNorthEntry.setSpritePosition(buttonOffsetX + 67, buttonOffsetY + -26, 16, 16);
+		buttonNorthEntry.contextHintState.buttonAHint = "bind";
+		
+		buttonEastEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
+		buttonEastEntry.desiredWidth(desiredButtonWidth);
+		buttonEastEntry.setSpriteEnabled(true);
+		buttonEastEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_RED, -1);
+		buttonEastEntry.setPosition(entryOffsetX + 210, entryOffsetY + 0);
+		buttonEastEntry.setSpritePosition(buttonOffsetX + 82, buttonOffsetY + -10, 16, 16);
+		buttonEastEntry.contextHintState.buttonAHint = "bind";
+		
+		buttonSouthEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH);
+		buttonSouthEntry.desiredWidth(desiredButtonWidth);
+		buttonSouthEntry.setSpriteEnabled(true);
+		buttonSouthEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_GREEN, -1);
+		buttonSouthEntry.setPosition(entryOffsetX + 210, entryOffsetY + 40);
+		buttonSouthEntry.setSpritePosition(buttonOffsetX + 67, buttonOffsetY + 8, 16, 16);
+		buttonSouthEntry.contextHintState.buttonAHint = "bind";
+		
+		buttonWestEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_WEST);
+		buttonWestEntry.desiredWidth(desiredButtonWidth);
+		buttonWestEntry.setSpriteEnabled(true);
+		buttonWestEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_BLUE, -1);
+		buttonWestEntry.setPosition(entryOffsetX + 210, entryOffsetY + 80);
+		buttonWestEntry.setSpritePosition(buttonOffsetX + 50, buttonOffsetY + -10, 16, 16);
+		buttonWestEntry.contextHintState.buttonAHint = "bind";
+		
+		// Direction Buttons (DPAD)
 
-		screenManager.core().input().eventActionManager().saveConfig();
+		ddButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN);
+		ddButtonEntry.desiredWidth(desiredButtonWidth);
+		ddButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_DPAD_DOWN, -1);
+		ddButtonEntry.setSpriteEnabled(true);
+		ddButtonEntry.setPosition(entryOffsetX + -310, entryOffsetY + 40);
+		ddButtonEntry.setSpritePosition(buttonOffsetX + -83, buttonOffsetY + 8, 16, 16);
+		ddButtonEntry.contextHintState.buttonAHint = "bind";
+		
+		dlButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT);
+		dlButtonEntry.desiredWidth(desiredButtonWidth);
+		dlButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_DPAD_LEFT, -1);
+		dlButtonEntry.setSpriteEnabled(true);
+		dlButtonEntry.setPosition(entryOffsetX + -310, entryOffsetY + 0);
+		dlButtonEntry.setSpritePosition(buttonOffsetX + -98, buttonOffsetY + -8, 16, 16);
+		dlButtonEntry.contextHintState.buttonAHint = "bind";
+		
+		duButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_UP);
+		duButtonEntry.desiredWidth(desiredButtonWidth);
+		duButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_DPAD_UP, -1);
+		duButtonEntry.setSpriteEnabled(true);
+		duButtonEntry.setPosition(entryOffsetX + -310, entryOffsetY + -40);
+		duButtonEntry.setSpritePosition(buttonOffsetX + -83, buttonOffsetY + -25, 16, 16);
+		duButtonEntry.contextHintState.buttonAHint = "bind";
+		
+		drButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT);
+		drButtonEntry.desiredWidth(desiredButtonWidth);
+		drButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_DPAD_RIGHT, -1);
+		drButtonEntry.setSpriteEnabled(true);
+		drButtonEntry.setPosition(entryOffsetX + -310, entryOffsetY + 80);
+		drButtonEntry.setSpritePosition(buttonOffsetX + -70, buttonOffsetY + -8, 16, 16);
+		drButtonEntry.contextHintState.buttonAHint = "bind";
+		
+		// Shoulder buttons
 
-		super.exitScreen();
+		final var triggerOffsetX = 74;
+		final var triggerOffsetY = 60;
+
+		ltriggerButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT_SHOULDER);
+		ltriggerButtonEntry.desiredWidth(desiredButtonWidth);
+		ltriggerButtonEntry.setPosition(entryOffsetX + -290, entryOffsetY + -85);
+		ltriggerButtonEntry.setSpriteEnabled(true);
+		ltriggerButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_LEFT_TRIGGER_ON, CoreTextureNames.TEXTURE_GAMEPAD_LEFT_TRIGGER_OFF);
+		ltriggerButtonEntry.setSpritePosition(-triggerOffsetX - 24, -triggerOffsetY + 16, 64, 32);
+		ltriggerButtonEntry.contextHintState.buttonAHint = "bind";
+		
+		rtriggerButtonEntry = new MenuGamepadInputMapEntry(screenManager, this, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT_SHOULDER);
+		rtriggerButtonEntry.desiredWidth(desiredButtonWidth);
+		rtriggerButtonEntry.setPosition(entryOffsetX + 170, entryOffsetY + -85);
+		rtriggerButtonEntry.setSpriteEnabled(true);
+		rtriggerButtonEntry.setSpriteFrameIds(CoreTextureNames.TEXTURE_GAMEPAD_RIGHT_TRIGGER_ON, CoreTextureNames.TEXTURE_GAMEPAD_RIGHT_TRIGGER_OFF);
+		rtriggerButtonEntry.setSpritePosition(triggerOffsetX - 24, -triggerOffsetY + 16, 64, 32);
+		rtriggerButtonEntry.contextHintState.buttonAHint = "bind";
+		
+		
+		
+		
+
+		// The order the buttons are added, if the tab-order for the layout
+
+		layout.addMenuEntry(ltriggerButtonEntry);
+		layout.addMenuEntry(rtriggerButtonEntry);
+
+		layout.addMenuEntry(duButtonEntry);
+		layout.addMenuEntry(dlButtonEntry);
+		layout.addMenuEntry(ddButtonEntry);
+		layout.addMenuEntry(drButtonEntry);
+
+		layout.addMenuEntry(buttonNorthEntry);
+		layout.addMenuEntry(buttonEastEntry);
+		layout.addMenuEntry(buttonSouthEntry);
+		layout.addMenuEntry(buttonWestEntry);
+
+		layout.addMenuEntry(selectButtonEntry);
+		layout.addMenuEntry(startButtonEntry);
+
+		// buttons are rendered from last to first, so add the base last.
+		layout.addMenuEntry(new MenuControllerImageEntry(screenManager, this));
+
+		populateActiveGamepads();
 	}
 
 	// --------------------------------------
@@ -165,8 +291,43 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 
-		case BUTTON_CONFIRM:
+		case BUTTON_BACK:
 			exitScreen();
+			break;
+
+		case BUTTON_SAVE:
+			if (mActiveGamepad != null) {
+				mActiveGamepad.state.saveConfig();
+			}
+			break;
+		}
+	}
+
+	@Override
+	public void onMenuEntryChanged(MenuEntry menuEntry) {
+		super.onMenuEntryChanged(menuEntry);
+
+		switch (menuEntry.entryID()) {
+		case BUTTON_AVAILABLE_CONTROLLERS:
+
+			// TODO: Check for changes in the current active gamepad mapping and ask to save before moving on ...
+
+			final var selectedIndex = mAvailableControllers.selectedEntry();
+
+			if (mAvailableControllers.items().size() == 0) {
+				setActiveGamepad(null);
+
+				return;
+			}
+
+			if (selectedIndex == -1) {
+				setActiveGamepad(null);
+				return;
+			}
+
+			final var selectedItem = mAvailableControllers.selectedItem();
+			setActiveGamepad(selectedItem.value);
+
 			break;
 		}
 	}
@@ -178,19 +339,99 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		final var numConnectedGamepads = connectedGamepads.size();
 
 		if (numConnectedGamepads == 0) {
+			mAvailableControllers.addItem(mAvailableControllers.new MenuEnumEntryItem("No Controllers Detected", null));
+			setActiveGamepad(null);
 
 		} else {
 			for (int i = 0; i < numConnectedGamepads; i++) {
 				final var gamepad = connectedGamepads.get(i);
-
 				final var gamepadName = gamepad.name();
-				mAvailableControllers.addItem(gamepadName);
+
+				mAvailableControllers.addItem(mAvailableControllers.new MenuEnumEntryItem(gamepadName, gamepad));
+
+				if (mActiveGamepad == null) // set active if not already
+					setActiveGamepad(gamepad);
 
 			}
 		}
 
+		// TODO: Iterate through the list and make sure the currently selected mActiveGamepad is still available.
+
 		mAvailableControllers.setButtonsEnabled(numConnectedGamepads > 1);
 
+	}
+
+	@Override
+	public void exitScreen() {
+
+		// TODO: Need to detect changes in any of the gamepad mappings and offer to save.
+
+		if (mGamepadManager != null) {
+			mGamepadManager.stopGamepadCapture();
+			mGamepadManager.removeGamepadListener(this);
+		}
+
+		if (mActiveGamepad != null) {
+			mActiveGamepad.state.saveConfig();
+		}
+
+		super.exitScreen();
+	}
+
+	private void setActiveGamepad(Gamepad activeGamepad) {
+		mActiveGamepad = activeGamepad;
+
+		if (mActiveGamepad == null) {
+			buttonWestEntry.activeControllerMap(null);
+			buttonNorthEntry.activeControllerMap(null);
+			buttonSouthEntry.activeControllerMap(null);
+			buttonEastEntry.activeControllerMap(null);
+
+			duButtonEntry.activeControllerMap(null);
+			ddButtonEntry.activeControllerMap(null);
+			dlButtonEntry.activeControllerMap(null);
+			drButtonEntry.activeControllerMap(null);
+
+			ltriggerButtonEntry.activeControllerMap(null);
+			rtriggerButtonEntry.activeControllerMap(null);
+
+			selectButtonEntry.activeControllerMap(null);
+			startButtonEntry.activeControllerMap(null);
+
+			mSdlMappingAvailable.isChecked(false);
+
+			return;
+		}
+
+		final var isSdlMappingAvailable = activeGamepad.isGamepadMappingAvailable();
+		if (isSdlMappingAvailable) {
+			mSdlMappingAvailable.isChecked(isSdlMappingAvailable);
+			mUseCustomBindings.readOnly(false);
+		} else {
+			mUseCustomBindings.isChecked(true);
+			mUseCustomBindings.readOnly(true);
+		}
+
+		buttonWestEntry.activeControllerMap(mActiveGamepad.state);
+		buttonNorthEntry.activeControllerMap(mActiveGamepad.state);
+		buttonSouthEntry.activeControllerMap(mActiveGamepad.state);
+		buttonEastEntry.activeControllerMap(mActiveGamepad.state);
+
+		duButtonEntry.activeControllerMap(mActiveGamepad.state);
+		ddButtonEntry.activeControllerMap(mActiveGamepad.state);
+		dlButtonEntry.activeControllerMap(mActiveGamepad.state);
+		drButtonEntry.activeControllerMap(mActiveGamepad.state);
+
+		selectButtonEntry.activeControllerMap(mActiveGamepad.state);
+		startButtonEntry.activeControllerMap(mActiveGamepad.state);
+
+		ltriggerButtonEntry.activeControllerMap(mActiveGamepad.state);
+		rtriggerButtonEntry.activeControllerMap(mActiveGamepad.state);
+	}
+
+	@Override
+	public boolean allowGamepadInput() {
+		return false; // disable menu navigation with the gamepad in this screen
 	}
 
 	// --------------------------------------
@@ -198,13 +439,13 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 	// --------------------------------------
 
 	@Override
-	public void onGamepadConnected(InputGamepad gamepad) {
+	public void onGamepadConnected(Gamepad gamepad) {
 		populateActiveGamepads();
 
 	}
 
 	@Override
-	public void onGamepadDisconnected(InputGamepad gamepad) {
+	public void onGamepadDisconnected(Gamepad gamepad) {
 		populateActiveGamepads();
 
 	}

@@ -108,7 +108,11 @@ public class IniFile {
 			if (kv == null)
 				return defaultValue;
 
-			return Long.parseLong(kv.get(key));
+			final var v = kv.get(key);
+			if (v == null)
+				return defaultValue;
+
+			return Long.parseLong(v);
 
 		} catch (NumberFormatException e) {
 			return defaultValue;
@@ -121,7 +125,11 @@ public class IniFile {
 		if (kv == null)
 			return defaultValue;
 
-		return Float.parseFloat(kv.get(key));
+		final var v = kv.get(key);
+		if (v == null)
+			return defaultValue;
+
+		return Float.parseFloat(v);
 	}
 
 	public double getDouble(String sectionName, String key, double defaultValue) {

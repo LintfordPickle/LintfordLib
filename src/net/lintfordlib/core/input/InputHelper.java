@@ -2,7 +2,7 @@ package net.lintfordlib.core.input;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.lintfordlib.core.input.gamepad.GamepadInputMap;
+import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 
 //@formatter:off
 public class InputHelper {
@@ -185,35 +185,21 @@ public class InputHelper {
 	/** Maps code from GamepadInputMap into printable text */
 	public static String getLintfordPrintableKeyForGamepadInputIndex(int lintfordGamepadInputIndex) {
 		switch (lintfordGamepadInputIndex) {
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_A: return "Button 0";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_B: return "Button 1";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_X: return "Button 2";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_Y: return "Button 3";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH: return "Button 0";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST: return "Button 1";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_WEST: return "Button 2";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_NORTH: return "Button 3";
 		
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_LEFT_BUMPER: return "Button 4";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_RIGHT_BUMPER: return "Button 5";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_BACK: return "Button 6";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_START: return "Button 7";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_GUIDE: return "Button 8";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_LEFT_THUMB: return "Button 9";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_RIGHT_THUMB: return "Button 10";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_UP: return "Button 11";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_RIGHT: return "Button 12";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_DOWN: return "Button 13";
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_LEFT: return "Button 14";
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_X_LEFT: return "Axis 0 NEG";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_X_RIGHT: return "Axis 0 POS";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_Y_UP: return "Axis 1 POS";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_Y_DOWN: return "Axis 1 NEG";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_RIGHT_X_LEFT: return "Axis 2 NEG";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_RIGHT_X_RIGHT: return "Axis 2 POS";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_RIGHT_Y_UP: return "Axis 3 POS";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_RIGHT_Y_DOWN: return "Axis 3 NEG";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_UP: return "Axis 4 NEG";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_DOWN: return "Axis 4 POS";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_UP: return "Axis 5 NEG";
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_DOWN: return "Axis 5 POS";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT_SHOULDER: return "Button 4";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT_SHOULDER: return "Button 5";
+		
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_BACK: return "Button 6";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_START: return "Button 7";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_GUIDE: return "Button 8";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT: return "Button 9";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT: return "Button 10";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN: return "Button 11";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_UP: return "Button 12";
 
 		default:
 			return "unknown";

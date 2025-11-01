@@ -2,14 +2,13 @@ package net.lintfordlib.core.input;
 
 import java.io.Serializable;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.input.gamepad.GamepadInputMap;
 
 // This actually contains the new bindings!!
 public class GameInputAction implements Serializable {
 
+	// TODO: This class needs to be further split down into keyboard/gamepad/mouse inputs.
+	
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -30,8 +29,9 @@ public class GameInputAction implements Serializable {
 	private int mBoundKeyCode;
 
 	// Gamepad binding
+	// TODO: Maybe extend this for analog / float values from axes
 	private int mDefaultGamepadCode; // to reset back to
-	private int mBoundGamepadCode;
+	private int mBoundLintfordInputCode;
 
 	// Mouse binding
 	private int mDefaultMouseCode; // to reset back to
@@ -64,11 +64,14 @@ public class GameInputAction implements Serializable {
 	}
 
 	public void boundGamepadCode(int newGamepadCode) {
-		mBoundGamepadCode = newGamepadCode;
+		mBoundLintfordInputCode = newGamepadCode;
 	}
 
+	/**
+	 * Returns the bound LintfordInputCode.
+	 */
 	public int getBoundGamepadCode() {
-		return mBoundGamepadCode > UNASSIGNED_KEY_CODE ? mBoundGamepadCode : mDefaultGamepadCode;
+		return mBoundLintfordInputCode > UNASSIGNED_KEY_CODE ? mBoundLintfordInputCode : mDefaultGamepadCode;
 	}
 
 	public void boundMouseCode(int newMouseCode) {
@@ -102,7 +105,7 @@ public class GameInputAction implements Serializable {
 		mDefaultKeyCode = UNASSIGNED_KEY_CODE;
 		mBoundKeyCode = UNASSIGNED_KEY_CODE;
 		mDefaultGamepadCode = UNASSIGNED_KEY_CODE;
-		mBoundGamepadCode = UNASSIGNED_KEY_CODE;
+		mBoundLintfordInputCode = UNASSIGNED_KEY_CODE;
 	}
 
 	// --------------------------------------
@@ -114,6 +117,8 @@ public class GameInputAction implements Serializable {
 		mIsDownTimed = false;
 		mValue = 0;
 	}
+
+	// TODO: Update the logic to determine, if a InputAction is current on/off (based on the various input devices).
 
 	public void update(LintfordCore core) {
 
@@ -132,99 +137,36 @@ public class GameInputAction implements Serializable {
 			return; //
 
 		final var activeGamepads = gamepadManager.getActiveGamepads();
-		if (activeGamepads.size() == 0)
-			return;
+		if (activeGamepads.size() > 0) {
 
-		// TODO: move the mapping to its own class
-		// TODO: Use the GamepadInputMap class to reduce the size of this switch.
-		switch (getBoundGamepadCode()) {
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_A: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_A);
-			mIsDown |= result;
-			break;
+			// This should not know about the type of the input mapped (whether button or axis) - we
+			// just want to know, for each action code defined, whether the bound inputcode is 'down' or 'active'.
 
+			// TODO: This is missing quite a bit here, like timed inputs ...
+
+			final var boundGamepadInputCode = getBoundGamepadCode();
+			mIsDown |= gamepadManager.isGamepadButtonDown(boundGamepadInputCode);
+
+			if(mIsDown)
+				System.out.println("break");
+			
+			// any non-zero value (in the correct axis direction) will count as a down | downTimed
+			mIsDown |= Math.abs(gamepadManager.getGamepadAxis(boundGamepadInputCode)) > 0.05f;
+
+			if(mIsDown)
+				System.out.println("break");
+			
+			// TODO: Need to check this - the gamepad is also using an 'adjusted' value
+			final var result = gamepadManager.getGamepadAxis(boundGamepadInputCode);
+			mIsDown |= Math.abs(result) > 0.02f;
+
+			if(mIsDown)
+				System.out.println("break");
+			
 		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_B: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_B);
-			mIsDown |= result;
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_X: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_X);
-			mIsDown |= result;
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_Y: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_Y);
-			mIsDown |= result;
-			break;
-		}
-
-		// --
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_UP: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP);
-			mIsDown |= result;
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_DOWN: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN);
-			mIsDown |= result;
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_LEFT: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT);
-			mIsDown |= result;
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_DPAD_RIGHT: {
-			final var result = gamepadManager.isGamepadButtonDown(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT);
-			mIsDown |= result;
-			break;
-		}
-
-		// TODO: For the following axis binds, take prev value if higher and multibound
-		// also need to adjust for inverted axes.
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_X_LEFT: {
-			final var result = gamepadManager.getGamepadAxisValue(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);
-			mValue = result <= -0.01f ? result : 0; // only sets mValue to a non-zerop value if the axis matches
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_X_RIGHT: {
-			final var result = gamepadManager.getGamepadAxisValue(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X);
-			mValue = result >= 0.01f ? result : 0; // only sets mValue to a non-zerop value if the axis matches
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_Y_UP: {
-			final var result = gamepadManager.getGamepadAxisValue(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
-			mValue = result <= -0.01f ? result : 0; // only sets mValue to a non-zerop value if the axis matches
-			break;
-		}
-
-		case GamepadInputMap.LINTFORD_GAMEPAD_AXIS_LEFT_Y_DOWN: {
-			final var result = gamepadManager.getGamepadAxisValue(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y);
-			mValue = result >= 0.01f ? result : 0; // only sets mValue to a non-zerop value if the axis matches
-			break;
-		}
-
-		}
-
-		// any non-zero value (in the correct axis direction) will count as a down | downTimed
-		mIsDown |= Math.abs(mValue) >= 0.01f;
 
 		// When we've figured out if this event is active, then do the shit with the timed...
-		if (mIsDown)
-
-		{
+		if (mIsDown) {
 			if (mDownTimerMs <= 0) {
 				mIsDownTimed = true;
 				mDownTimerMs = DOWN_TIMER_DELAY_MS;
@@ -242,7 +184,7 @@ public class GameInputAction implements Serializable {
 	}
 
 	public void addGamepadBinding(int newGamepadBinding) {
-		mBoundGamepadCode = newGamepadBinding;
+		mBoundLintfordInputCode = newGamepadBinding;
 	}
 
 }

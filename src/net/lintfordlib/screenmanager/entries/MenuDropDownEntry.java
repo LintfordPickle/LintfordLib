@@ -11,6 +11,7 @@ import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
@@ -314,7 +315,7 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 			return false;
 
 		if (mIsInputActive) {
-			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+			if (core.input().gamepads().isGamepadButtonDown(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT, this)) {
 				mSelectedIndex--;
 
 				if (mSelectedIndex < 0)

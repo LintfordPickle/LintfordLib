@@ -1,7 +1,7 @@
 package net.lintfordlib.core.input;
 
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.input.gamepad.InputGamepad;
+import net.lintfordlib.core.input.gamepad.Gamepad;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 
 public class InputTypeMapper implements IInputProcessor {
@@ -21,7 +21,7 @@ public class InputTypeMapper implements IInputProcessor {
 	public int assignedToPlayerIndex;
 	private float mCooldownTimer;
 
-	private InputGamepad gamepad;
+	private Gamepad gamepad;
 	private boolean mIsLockedToPlayer;
 
 	// --------------------------------------
@@ -36,11 +36,11 @@ public class InputTypeMapper implements IInputProcessor {
 		mIsLockedToPlayer = newvalue;
 	}
 
-	public InputGamepad gamepad() {
+	public Gamepad gamepad() {
 		return gamepad;
 	}
 
-	public void gamepad(InputGamepad gamepad) {
+	public void gamepad(Gamepad gamepad) {
 		this.gamepad = gamepad;
 	}
 

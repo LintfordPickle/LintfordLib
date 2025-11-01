@@ -411,16 +411,17 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	public void update(LintfordCore core) {
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
-			mMenuEntries.get(i).update(core, parentScreen);
+			final var menuEntry = mMenuEntries.get(i);
+			menuEntry.update(core, parentScreen);
 		}
 
 		final var lScreenOffset = parentScreen.screenPositionOffset();
 		mContentArea.set(lScreenOffset.x + mX, lScreenOffset.y + mY, mW, getEntryHeight());
 
-		final float lTitleHeight = TITLE_BAR_HEIGHT;
-		final float lCropFooterHeight = mCropPaddingBottom;
-		final float lCropHeaderHeight = mShowTitle ? mCropPaddingTop + lTitleHeight : mCropPaddingTop;
-		contentDisplayRectange.set(mX, mY + lCropHeaderHeight, mW, mH - lCropHeaderHeight - lCropFooterHeight);
+		final float titleHeight = TITLE_BAR_HEIGHT;
+		final float cropFooterHeight = mCropPaddingBottom;
+		final float cropHeaderHeight = mShowTitle ? mCropPaddingTop + titleHeight : mCropPaddingTop;
+		contentDisplayRectange.set(mX, mY + cropHeaderHeight, mW, mH - cropHeaderHeight - cropFooterHeight);
 
 		mScrollBar.update(core);
 	}
@@ -429,34 +430,34 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		if (!mEnabled || !mVisible)
 			return;
 
-		final var lSpriteBatch = parentScreen.spriteBatch();
-		final var lSpriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
+		final var spriteBatch = parentScreen.spriteBatch();
+		final var spriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
 
-		final var lScreenOffset = parentScreen.screenPositionOffset();
+		final var screenOffset = parentScreen.screenPositionOffset();
 
 		if (mDrawBackground) {
 			final int ts = 32;
 
-			final var lColor = ColorConstants.getColorWithAlpha(layoutColor, layoutColor.a * parentScreen.screenColor.a);
+			final var color = ColorConstants.getColorWithAlpha(layoutColor, layoutColor.a * parentScreen.screenColor.a);
 
-			final int x = (int) (lScreenOffset.x + mX);
-			final int y = (int) (lScreenOffset.y + mY);
+			final int x = (int) (screenOffset.x + mX);
+			final int y = (int) (screenOffset.y + mY);
 			final int w = (int) mW;
 			final int h = (int) mH;
 
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(lColor);
-			TextureBatch9Patch.drawBackground(lSpriteBatch, lSpriteSheetCore, ts, x, y, w, h, mShowTitle, componentDepth);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(color);
+			TextureBatch9Patch.drawBackground(spriteBatch, spriteSheetCore, ts, x, y, w, h, mShowTitle, componentDepth);
+			spriteBatch.end();
 		}
 
 		if (mShowTitle) {
-			final var lTitleFont = parentScreen.rendererManager().sharedResources().uiHeaderFont();
+			final var titleFont = parentScreen.rendererManager().sharedResources().uiHeaderFont();
 
-			lTitleFont.begin(core.HUD());
-			lTitleFont.setTextColorRGBA(1.f, 1.f, 1.f, parentScreen.screenColor.a);
-			lTitleFont.drawText(mLayoutTitle, lScreenOffset.x + mX + 20.f, mY + 20.f - (lTitleFont.fontHeight() / 2.f), componentDepth, 1.0f);
-			lTitleFont.end();
+			titleFont.begin(core.HUD());
+			titleFont.setTextColorRGBA(1.f, 1.f, 1.f, parentScreen.screenColor.a);
+			titleFont.drawText(mLayoutTitle, screenOffset.x + mX + 20.f, mY + 20.f - (titleFont.fontHeight() / 2.f), componentDepth, 1.0f);
+			titleFont.end();
 		}
 
 		final var layoutStencilRef = 0x02;
@@ -468,7 +469,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		mContentArea.stencilClear(0x0);
 		if (mScrollBar.scrollBarEnabled()) {
-			mContentArea.preDraw(core, lSpriteBatch, contentDisplayRectange, layoutStencilRef, false);
+			mContentArea.preDraw(core, spriteBatch, contentDisplayRectange, layoutStencilRef, false);
 		}
 
 		final int lMenuEntryCount = mMenuEntries.size();
@@ -482,13 +483,13 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		if (mScrollBar.scrollBarEnabled()) {
 			mContentArea.postDraw(core);
-			lSpriteBatch.begin(core.HUD());
-			mScrollBar.positionOffset.x = lScreenOffset.x;
-			mScrollBar.positionOffset.y = lScreenOffset.y;
+			spriteBatch.begin(core.HUD());
+			mScrollBar.positionOffset.x = screenOffset.x;
+			mScrollBar.positionOffset.y = screenOffset.y;
 
 			mScrollBar.scrollBarAlpha(parentScreen.screenColor.a);
-			mScrollBar.draw(core, lSpriteBatch, lSpriteSheetCore, componentDepth + .1f);
-			lSpriteBatch.end();
+			mScrollBar.draw(core, spriteBatch, spriteSheetCore, componentDepth + .1f);
+			spriteBatch.end();
 		}
 
 		// Because some entries 'overlap' outside of the layout (like a dropdown list near the bottom of a layout), we have a post stencil draw section.
@@ -499,17 +500,17 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		// TODO: Delete when finished testing stencil
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, contentDisplayArea(), ZLayers.LAYER_DEBUG);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(spriteSheetCore, CoreTextureNames.TEXTURE_WHITE, contentDisplayArea(), ZLayers.LAYER_DEBUG);
+			spriteBatch.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			lSpriteBatch.draw(lSpriteSheetCore, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(spriteSheetCore, CoreTextureNames.TEXTURE_WHITE, screenOffset.x + mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
+			spriteBatch.end();
 		}
 	}
 

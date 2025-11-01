@@ -251,7 +251,7 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 			lTextureBatch.end();
 		}
 
-		final var lTextBoldFont = mParentScreen.fontBold();
+		final var lTextBoldFont = mParentScreen.font();
 
 		final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
 		float lAdjustedLabelScaleW = lUiTextScale;

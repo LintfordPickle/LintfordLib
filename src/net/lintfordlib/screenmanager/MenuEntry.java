@@ -10,7 +10,7 @@ import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
-import net.lintfordlib.core.input.gamepad.GamepadInputMap;
+import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.core.input.mouse.IInputProcessor;
 import net.lintfordlib.core.maths.Vector2f;
 import net.lintfordlib.screenmanager.Screen.ScreenState;
@@ -33,6 +33,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		// GamepadInputMap
 		private int mLintfordInputCode;
+
+		public void lintfordInputCode(int inputCode) {
+			mLintfordInputCode = inputCode;
+		}
 
 		public boolean isEnabled() {
 			return mIsEnabled;
@@ -516,7 +520,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		final var screenOffset = mParentScreen != null ? mParentScreen.screenPositionOffset() : Vector2f.Zero;
 		final var tileSize = Math.min(32, mH);
 
-		mGamepadMenuIcon.bounds.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
+		mGamepadMenuIcon.bounds.set(screenOffset.x + mX + mW, screenOffset.y + mY, 16, 16);
 
 		if (mShowInfoIcon) // TODO: This isn't correct - the draw code is already offsetting by the screen transition
 			mInfoIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
@@ -692,10 +696,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		}
 
 		if (mGamepadMenuIcon.isEnabled()) {
-			// draw the set icon
+			// icon set statically ('back')
 			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
 		} else if (mHasFocus) {
-			mGamepadMenuIcon.mLintfordInputCode = GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_A;
+			mGamepadMenuIcon.mLintfordInputCode = GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH;
 			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
 		}
 
@@ -771,29 +775,36 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void drawGamepadIcon(LintfordCore core, SpriteBatch spriteBatch, Rectangle destRect, float screenAlpha) {
-		final var lColor = ColorConstants.getColor(1.f, 1.f, 1.f, screenAlpha);
 
 		int spriteFrameUid = -1;
 		switch (mGamepadMenuIcon.mLintfordInputCode) {
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_A:
-			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_A_DARK_COLOR;
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH:
+			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_GREEN;
 			break;
-		case GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_B:
-			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_B_DARK_COLOR;
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST:
+			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_RED;
 			break;
+
+		// TODO: These should be taken from the current event action mapping ...
+		// TODO: Need to finish up the mapping I guess ..
+
 		}
+
 		if (spriteFrameUid == -1)
 			return;
 
 		spriteBatch.begin(core.HUD());
-		spriteBatch.setColor(lColor);
 
 		final var w = destRect.width() * mScale;
 		final var h = destRect.height() * mScale;
-		final var x = destRect.x();
-		final var y = destRect.y();
+		final var x = destRect.x() - w - 2;
+		final var y = destRect.y() + mH - h - 2;
 
-		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y, w, h, 0, -destRect.width() / 2, -destRect.height() / 2, 1.f);
+		spriteBatch.setColorRGBA(.1f, .1f, .1f, screenAlpha * 0.7f);
+		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y, w, h, 0, -w, -h, 1.f);
+
+		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, screenAlpha);
+		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y - 2, w, h, 0, -w, -h, 1.f);
 
 		spriteBatch.end();
 	}

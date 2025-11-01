@@ -1,156 +1,190 @@
 package net.lintfordlib.core.input.gamepad;
 
-import org.lwjgl.glfw.GLFW;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
-// @formatter:off
-// GamepadEventInputMap
+import org.lwjgl.glfw.GLFWGamepadState;
+
 public class GamepadInputMap {
 
-	public static final int LINTFORD_GAMEPAD_NO_MAPPING_UID = -1;
-	
-	private GamepadInputMap() {
+	// --------------------------------------
+	// Constants
+	// --------------------------------------
+
+	public static final int NO_MAPPING = -1;
+
+	public static final GamepadInputMap empty = new GamepadInputMap();
+
+	public enum GameInputType {
+		None, button, axis,
 	}
 
-	// I think  I need to differentiate between GLFW_GAMEPAD_BUTTONS and GLFW_GAMEPAD_AXIS
-	// for the input mapping, because they share the same ins in the GLFW class.
-	
-	public static final int
-		LINTFORD_GAMEPAD_BUTTON_A            = 100,
-		LINTFORD_GAMEPAD_BUTTON_B            = 101,
-		LINTFORD_GAMEPAD_BUTTON_X            = 102,
-		LINTFORD_GAMEPAD_BUTTON_Y            = 103,
-		LINTFORD_GAMEPAD_BUTTON_LEFT_BUMPER  = 104,
-		LINTFORD_GAMEPAD_BUTTON_RIGHT_BUMPER = 105,
-		LINTFORD_GAMEPAD_BUTTON_BACK         = 106,
-		LINTFORD_GAMEPAD_BUTTON_START        = 107,
-		LINTFORD_GAMEPAD_BUTTON_GUIDE        = 108,
-		LINTFORD_GAMEPAD_BUTTON_LEFT_THUMB   = 109,
-		LINTFORD_GAMEPAD_BUTTON_RIGHT_THUMB  = 110,
-		LINTFORD_GAMEPAD_BUTTON_DPAD_UP      = 111,
-		LINTFORD_GAMEPAD_BUTTON_DPAD_RIGHT   = 112,
-		LINTFORD_GAMEPAD_BUTTON_DPAD_DOWN    = 113,
-		LINTFORD_GAMEPAD_BUTTON_DPAD_LEFT    = 114,
-		LINTFORD_GAMEPAD_BUTTON_LAST         = LINTFORD_GAMEPAD_BUTTON_DPAD_LEFT,
-		LINTFORD_GAMEPAD_BUTTON_CROSS        = LINTFORD_GAMEPAD_BUTTON_A,
-		LINTFORD_GAMEPAD_BUTTON_CIRCLE       = LINTFORD_GAMEPAD_BUTTON_B,
-		LINTFORD_GAMEPAD_BUTTON_SQUARE       = LINTFORD_GAMEPAD_BUTTON_X,
-		LINTFORD_GAMEPAD_BUTTON_TRIANGLE     = LINTFORD_GAMEPAD_BUTTON_Y;
+	// --------------------------------------
+	// Variables
+	// --------------------------------------
 
-	public static final int
-		LINTFORD_GAMEPAD_AXIS_LEFT_X_LEFT         = 150,
-		LINTFORD_GAMEPAD_AXIS_LEFT_X_RIGHT        = 151,
-		LINTFORD_GAMEPAD_AXIS_LEFT_Y_UP           = 152,
-		LINTFORD_GAMEPAD_AXIS_LEFT_Y_DOWN         = 153,
-		LINTFORD_GAMEPAD_AXIS_RIGHT_X_LEFT        = 154,
-		LINTFORD_GAMEPAD_AXIS_RIGHT_X_RIGHT       = 155,
-		LINTFORD_GAMEPAD_AXIS_RIGHT_Y_UP          = 156,
-		LINTFORD_GAMEPAD_AXIS_RIGHT_Y_DOWN        = 157,
-		LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_UP     = 158,
-		LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_DOWN   = 159,
-		LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_UP    = 160,
-		LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_DOWN  = 161,
-		LINTFORD_GAMEPAD_AXIS_LAST           	  = LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_DOWN;
-	
-	// TODO: Add LINTFORD_GAMEPAD_ to GLFW mappings
-	
-	public static int mapGLFWButtonToLintfordButton(int glfwCode) {
-		switch(glfwCode) {
-		case GLFW.GLFW_GAMEPAD_BUTTON_A: return LINTFORD_GAMEPAD_BUTTON_A;
-		case GLFW.GLFW_GAMEPAD_BUTTON_B: return LINTFORD_GAMEPAD_BUTTON_B;
-		case GLFW.GLFW_GAMEPAD_BUTTON_X: return LINTFORD_GAMEPAD_BUTTON_X;
-		case GLFW.GLFW_GAMEPAD_BUTTON_Y: return LINTFORD_GAMEPAD_BUTTON_Y;
-		case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER: return LINTFORD_GAMEPAD_BUTTON_LEFT_BUMPER;
-		case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER: return LINTFORD_GAMEPAD_BUTTON_RIGHT_BUMPER;
-		case GLFW.GLFW_GAMEPAD_BUTTON_BACK: return LINTFORD_GAMEPAD_BUTTON_BACK;
-		case GLFW.GLFW_GAMEPAD_BUTTON_START: return LINTFORD_GAMEPAD_BUTTON_START;
-		case GLFW.GLFW_GAMEPAD_BUTTON_GUIDE: return LINTFORD_GAMEPAD_BUTTON_GUIDE;
-		case GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB: return LINTFORD_GAMEPAD_BUTTON_LEFT_THUMB;
-		case GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB: return LINTFORD_GAMEPAD_BUTTON_RIGHT_THUMB;
-		case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT: return LINTFORD_GAMEPAD_BUTTON_DPAD_LEFT;
-		case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT: return LINTFORD_GAMEPAD_BUTTON_DPAD_RIGHT;
-		case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN: return LINTFORD_GAMEPAD_BUTTON_DPAD_DOWN;
-		case GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP: return LINTFORD_GAMEPAD_BUTTON_DPAD_UP;
-		
-		default: return -1;
-		}
+	private GameInputType mMappedToType;
+	private int mMappedTo;
+	private float mMappedToSignum; // -/0/+
+
+	private boolean mIsInitialized;
+	private float mMinValue;
+	private float mMaxValue;
+	private float mValue;
+	private float mDefaultValue;
+	private boolean mIsInverted;
+
+	// --------------------------------------
+	// Properties
+	// --------------------------------------
+
+	public GameInputType mappedToType() {
+		return mMappedToType;
 	}
-	
-	public static int mapLintfordButtonToGLFWButton(int glfwCode) {
-		switch(glfwCode) {
-		case LINTFORD_GAMEPAD_BUTTON_A: return GLFW.GLFW_GAMEPAD_BUTTON_A;
-		case LINTFORD_GAMEPAD_BUTTON_B: return GLFW.GLFW_GAMEPAD_BUTTON_B;
-		case LINTFORD_GAMEPAD_BUTTON_X: return GLFW.GLFW_GAMEPAD_BUTTON_X;
-		case LINTFORD_GAMEPAD_BUTTON_Y: return GLFW.GLFW_GAMEPAD_BUTTON_Y;
-		case LINTFORD_GAMEPAD_BUTTON_LEFT_BUMPER: return  GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
-		case LINTFORD_GAMEPAD_BUTTON_RIGHT_BUMPER: return  GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
-		case LINTFORD_GAMEPAD_BUTTON_BACK: return  GLFW.GLFW_GAMEPAD_BUTTON_BACK;
-		case LINTFORD_GAMEPAD_BUTTON_START: return  GLFW.GLFW_GAMEPAD_BUTTON_START;
-		case LINTFORD_GAMEPAD_BUTTON_GUIDE: return  GLFW.GLFW_GAMEPAD_BUTTON_GUIDE;
-		case LINTFORD_GAMEPAD_BUTTON_LEFT_THUMB: return  GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
-		case LINTFORD_GAMEPAD_BUTTON_RIGHT_THUMB: return  GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
-		case LINTFORD_GAMEPAD_BUTTON_DPAD_UP: return  GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
-		case LINTFORD_GAMEPAD_BUTTON_DPAD_RIGHT: return  GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT;
-		case LINTFORD_GAMEPAD_BUTTON_DPAD_DOWN: return  GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN;
-		case LINTFORD_GAMEPAD_BUTTON_DPAD_LEFT: return GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP;
-		
-		default: return -1;
-		}
+
+	public int mappedTo() {
+		return mMappedTo;
 	}
-	
-	// TODO: All these need to be invertable on their axes.
-	public static int mapGLFWAxisToLintfordAxis(int glfwAxisId, float value) {
-		if(value == 0)
-			return -1;
 
-		switch(glfwAxisId) {
-		case GLFW.GLFW_GAMEPAD_AXIS_LEFT_X:
-			return value < 0 ? LINTFORD_GAMEPAD_AXIS_LEFT_X_LEFT : LINTFORD_GAMEPAD_AXIS_LEFT_X_RIGHT;
-			
-		case GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y:
-			return value < 0 ? LINTFORD_GAMEPAD_AXIS_LEFT_Y_UP : LINTFORD_GAMEPAD_AXIS_LEFT_Y_DOWN;
-
-		case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X:
-			return value < 0 ? LINTFORD_GAMEPAD_AXIS_RIGHT_X_LEFT : LINTFORD_GAMEPAD_AXIS_RIGHT_X_RIGHT;
-			
-		case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y:
-			return value < 0 ? LINTFORD_GAMEPAD_AXIS_RIGHT_Y_UP : LINTFORD_GAMEPAD_AXIS_RIGHT_Y_DOWN;
-			
-		case GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER:
-			return value < 0 ? LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_UP : LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_DOWN;
-			
-		case GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER:
-			return value < 0 ? LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_UP : LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_DOWN;
-			
-		}
-		
-
-		
-		return LINTFORD_GAMEPAD_NO_MAPPING_UID;
+	public float mappedToSignum() {
+		return mMappedToSignum;
 	}
-	
-	public static int mapLintfordAxisToGLFWAxis(int glfwAxisId) {
-		switch(glfwAxisId) {
-		case LINTFORD_GAMEPAD_AXIS_LEFT_X_LEFT | LINTFORD_GAMEPAD_AXIS_LEFT_X_RIGHT:
-			return GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
-		
-		case LINTFORD_GAMEPAD_AXIS_LEFT_Y_UP | LINTFORD_GAMEPAD_AXIS_LEFT_Y_DOWN:
-			return GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
-			
-		case LINTFORD_GAMEPAD_AXIS_RIGHT_X_LEFT | LINTFORD_GAMEPAD_AXIS_RIGHT_X_RIGHT:
-			return GLFW.GLFW_GAMEPAD_AXIS_RIGHT_X;
-			
-		case LINTFORD_GAMEPAD_AXIS_RIGHT_Y_UP | LINTFORD_GAMEPAD_AXIS_RIGHT_Y_DOWN:
-			return GLFW.GLFW_GAMEPAD_AXIS_RIGHT_Y;
-			
-		case LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_DOWN | LINTFORD_GAMEPAD_AXIS_LEFT_TRIGGER_UP:
-			return GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
-			
-		case LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_DOWN | LINTFORD_GAMEPAD_AXIS_RIGHT_TRIGGER_UP:
-			return GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-		
+
+	public void mapToButton(int buttonIndex) {
+		mMappedToType = GameInputType.button;
+		mMappedTo = buttonIndex;
+
+	}
+
+	public void mapToAxis(int axisIndex, float signum) {
+		mMappedToType = GameInputType.axis;
+		mMappedTo = axisIndex;
+		mMappedToSignum = Math.signum(signum);
+	}
+
+	public boolean isInvert() {
+		return mIsInverted;
+	}
+
+	public void isInvert(boolean isInverted) {
+		mIsInverted = isInverted;
+	}
+
+	public float min() {
+		return mMinValue;
+	}
+
+	public float max() {
+		return mMaxValue;
+	}
+
+	public float defaultValue() {
+		return mDefaultValue;
+	}
+
+	public float value() {
+		return mValue;
+	}
+
+	public boolean isDown() {
+		return mMappedToSignum < 0 ? (mValue < -0.5f) : (mValue > 0.5f);
+	}
+
+	public float valueAdjusted() {
+		// TODO: Adjust for inversion
+
+		if (mMappedToSignum == 0)
+			return 0; // TODO: Float equality with zero
+		if (mMappedToSignum < 0) {
+			if (mValue > 0)
+				return 0.f;
+			return mValue;
+		} else {
+			if (mValue < 0.f)
+				return 0.f;
+			return mValue;
 		}
 
-		return LINTFORD_GAMEPAD_NO_MAPPING_UID;
 	}
-	
+
+	public boolean isValueSet() {
+		return Math.abs(mValue - mDefaultValue) > 0.005f;
+	}
+
+	public boolean isInitialized() {
+		return mIsInitialized;
+	}
+
+	// --------------------------------------
+	// Constructor
+	// --------------------------------------
+
+	GamepadInputMap() {
+		mMappedToType = GameInputType.None;
+		mIsInitialized = false;
+	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	public void initialize(float min, float max, float defaultValue) {
+		mIsInitialized = true;
+		mMinValue = min;
+		mMaxValue = max;
+		mDefaultValue = defaultValue;
+	}
+
+	public void reset() {
+
+	}
+
+	public void updateSdl(GLFWGamepadState gamepadState) {
+
+		// TODO: update input state (sdl)
+
+	}
+
+	public void updateRaw(ByteBuffer buttons, FloatBuffer axisBuffer) {
+		// TODO: update input state (raw)
+		switch (mMappedToType) {
+		default:
+		case None:
+			mValue = mDefaultValue;
+
+			break;
+
+		case button:
+			final var mappedToButtonIndex = mappedTo();
+			if (mappedToButtonIndex == NO_MAPPING)
+				return;
+
+			if (mappedToButtonIndex < 0 || mappedToButtonIndex >= buttons.limit())
+				return; // maybe set the mappedToButtonIndex back to NO_MAPPING?
+
+			mValue = buttons.get(mappedToButtonIndex);
+
+			break;
+
+		case axis:
+			final var mappedToAxisIndex = mappedTo();
+			if (mappedToAxisIndex == NO_MAPPING)
+				return;
+
+			if (mappedToAxisIndex < 0 || mappedToAxisIndex >= axisBuffer.limit())
+				return; // maybe set the mappedToButtonIndex back to NO_MAPPING?
+
+			final var axisValue = axisBuffer.get(mappedToAxisIndex);
+
+			if (Math.abs(axisValue) < 0.02f) {
+				mValue = 0.f;
+				return;
+			}
+
+			mValue = Math.signum(axisValue);
+			break;
+		}
+
+	}
+
 }

@@ -6,7 +6,7 @@ import net.lintfordlib.core.audio.AudioManager;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
-import net.lintfordlib.core.input.gamepad.GamepadInputMap;
+import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.options.AudioConfig;
 import net.lintfordlib.options.AudioSettings;
@@ -106,7 +106,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		final var lBackButton = new MenuEntry(screenManager, this, "Back");
 		lBackButton.registerClickListener(this, BUTTON_BACK_BUTTON);
-		lBackButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputMap.LINTFORD_GAMEPAD_BUTTON_B);
+		lBackButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
 		mApplyButton = new MenuEntry(screenManager, this, "Apply");
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);

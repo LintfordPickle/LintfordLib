@@ -5,9 +5,8 @@ import org.lwjgl.glfw.GLFW;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.input.InputHelper;
-import net.lintfordlib.core.input.InputManager;
+import net.lintfordlib.core.input.gamepad.Gamepad;
 import net.lintfordlib.core.input.gamepad.IGamepadListener;
-import net.lintfordlib.core.input.gamepad.InputGamepad;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
 import net.lintfordlib.renderers.RendererManagerBase;
@@ -24,7 +23,8 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 	// Variables
 	// --------------------------------------
 
-	private InputGamepad mActiveGamepad;
+	private int mActiveGamepadIndex;
+	private Gamepad mActiveGamepad;
 
 	// --------------------------------------
 	// Properties
@@ -50,18 +50,49 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 
 	@Override
 	public void initialize(LintfordCore core) {
-
-		mActiveGamepad = GetActiveController(core.input());
-
 		core.input().gamepads().addGamepadListener(this);
+	}
 
+	@Override
+	public boolean handleInput(LintfordCore core) {
+
+		// Allow toggling between active controllers.
+		final var gamepadManager = core.input().gamepads();
+		final var gamepads = gamepadManager.getActiveGamepads();
+		final var numGamepads = gamepads.size();
+
+		if (numGamepads == 0) {
+			mActiveGamepadIndex = -1;
+			mActiveGamepad = null;
+		} else if (numGamepads == 0) {
+			mActiveGamepadIndex = 0;
+			mActiveGamepad = gamepads.get(mActiveGamepadIndex);
+		} else {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_COMMA, this)) {
+				mActiveGamepadIndex--;
+			}
+
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_PERIOD, this)) {
+				mActiveGamepadIndex++;
+
+			}
+
+			if (mActiveGamepadIndex < 0)
+				mActiveGamepadIndex = numGamepads - 1;
+			if (mActiveGamepadIndex >= numGamepads)
+				mActiveGamepadIndex = 0;
+
+			mActiveGamepad = gamepads.get(mActiveGamepadIndex);
+		}
+
+		return super.handleInput(core);
 	}
 
 	@Override
 	public void draw(LintfordCore core, RenderPass renderPass) {
-
 		final var hudBounds = core.HUD().boundingRectangle();
 		final var fontUnit = Debug.debugManager().drawers().textRenderer();
+		fontUnit.setTextColorWhite();
 
 		if (mActiveGamepad == null) {
 			final var text = "No controller connected";
@@ -74,7 +105,7 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 			return;
 		}
 
-		float yPos = 100;
+		float yPos = 10;
 		final float lineHeight = 20;
 
 		final var text = mActiveGamepad.name();
@@ -83,7 +114,9 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 		fontUnit.begin(core.HUD());
 
 		fontUnit.drawText(text, hudBounds.right() - 10 - textWidth, hudBounds.top() + 10 + yPos, 1f, 1f);
-		yPos += lineHeight*2;
+		yPos += lineHeight;
+		fontUnit.drawText("Controller ID: " + mActiveGamepadIndex, hudBounds.right() - 10 - textWidth, hudBounds.top() + 10 + yPos, 1f, 1f);
+		yPos += lineHeight * 2;
 
 		final var mappedValuesAvailable = mActiveGamepad.isGamepadMappingAvailable();
 		final var showMappedValues = mappedValuesAvailable && true;
@@ -93,10 +126,9 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 			final var typeTextWidth = fontUnit.getStringWidth(typeText);
 
 			fontUnit.drawText(typeText, hudBounds.right() - 10 - typeTextWidth, hudBounds.top() + 10 + yPos, 1f, 1f);
-			final var numButtons = mActiveGamepad.numMappedButtons();
+			final var numButtons = mActiveGamepad.numButtons();
 			for (int i = 0; i < numButtons; i++) {
-
-				final var buttonState = mActiveGamepad.getButtonStateMapped(i, GLFW.GLFW_PRESS);
+				final var buttonState = mActiveGamepad.getSdlButtonState(i, GLFW.GLFW_PRESS);
 
 				final var buttonName = InputHelper.getGlfwPrintableKeyForGamepadButtons(i);
 				final var buttonText = buttonName + " : " + buttonState;
@@ -105,10 +137,9 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 				fontUnit.drawText(buttonText, hudBounds.right() - 10 - buttonNameWidth, hudBounds.top() + 10 + (yPos += lineHeight), 1f, 1f);
 			}
 
-			final var numAxis = mActiveGamepad.numAxisMapped();
+			final var numAxis = mActiveGamepad.numAxis();
 			for (int i = 0; i < numAxis; i++) {
-
-				final var axisState = mActiveGamepad.getAxisValueMapped(i);
+				final var axisState = mActiveGamepad.getSdlAxisValue(i);
 
 				final var buttonName = InputHelper.getGlfwPrintableKeyForGamepadAxis(i);
 				final var buttonText = String.format("%s : %.2f", buttonName, axisState);
@@ -116,36 +147,34 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 
 				fontUnit.drawText(buttonText, hudBounds.right() - 10 - buttonNameWidth, hudBounds.top() + 10 + (yPos += lineHeight), 1f, 1f);
 			}
+
 		} else {
 			final var typeText = "Raw Values";
 			final var typeTextWidth = fontUnit.getStringWidth(typeText);
 
 			fontUnit.drawText(typeText, hudBounds.right() - 10 - typeTextWidth, hudBounds.top() + 10 + yPos, 1f, 1f);
 
-			final var numButtons = mActiveGamepad.numButtonsRaw();
+			final var numButtons = mActiveGamepad.numButtons();
 			for (int i = 0; i < numButtons; i++) {
+				final var buttonState = mActiveGamepad.getPhysicalButtonState(i, GLFW.GLFW_PRESS);
 
-				final var buttonState = mActiveGamepad.getButtonStateRaw(i, GLFW.GLFW_PRESS);
-
-				final var buttonName = InputHelper.getGlfwPrintableKeyForGamepadButtons(i);
+				final var buttonName = "button: " + i;
 				final var buttonText = buttonName + " : " + buttonState;
 				final var buttonNameWidth = fontUnit.getStringWidth(buttonText);
 
 				fontUnit.drawText(buttonText, hudBounds.right() - 10 - buttonNameWidth, hudBounds.top() + 10 + (yPos += lineHeight), 1f, 1f);
 			}
 
-			final var numAxis = mActiveGamepad.numAxisRaw();
+			final var numAxis = mActiveGamepad.numAxis();
 			for (int i = 0; i < numAxis; i++) {
+				final var axisState = mActiveGamepad.getPhysicalAxisValue(i);
 
-				final var axisState = mActiveGamepad.getAxisValueRaw(i);
-
-				final var buttonName = InputHelper.getGlfwPrintableKeyForGamepadAxis(i);
+				final var buttonName = "axis: " + i;
 				final var buttonText = String.format("%s : %.2f ", buttonName, axisState);
 				final var buttonNameWidth = fontUnit.getStringWidth(buttonText);
 
 				fontUnit.drawText(buttonText, hudBounds.right() - 10 - buttonNameWidth, hudBounds.top() + 10 + (yPos += lineHeight), 1f, 1f);
 			}
-
 		}
 
 		fontUnit.end();
@@ -156,14 +185,9 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 	// Methods
 	// --------------------------------------
 
-	private InputGamepad GetActiveController(InputManager inputManager) {
-		final var gamepadManager = inputManager.gamepads();
-
-		final var activeGamepads = gamepadManager.getActiveGamepads();
-		if (activeGamepads != null && activeGamepads.size() > 0)
-			return activeGamepads.get(0);
-
-		return null;
+	@Override
+	public boolean allowKeyboardInput() {
+		return true;
 	}
 
 	// --------------------------------------
@@ -171,7 +195,7 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 	// --------------------------------------
 
 	@Override
-	public void onGamepadConnected(InputGamepad gamepad) {
+	public void onGamepadConnected(Gamepad gamepad) {
 		if (mActiveGamepad == null) {
 			mActiveGamepad = gamepad;
 		}
@@ -179,7 +203,7 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 	}
 
 	@Override
-	public void onGamepadDisconnected(InputGamepad gamepad) {
+	public void onGamepadDisconnected(Gamepad gamepad) {
 		if (mActiveGamepad == gamepad) {
 			mActiveGamepad = null;
 		}

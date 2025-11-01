@@ -8,16 +8,16 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
-import net.lintfordlib.core.input.IGamepadInputCallback;
-import net.lintfordlib.core.input.InputHelper;
 import net.lintfordlib.core.input.GameInputAction;
+import net.lintfordlib.core.input.IGamepadInputBindingCallback;
+import net.lintfordlib.core.input.InputHelper;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 
-public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputCallback {
+public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputBindingCallback {
 
 	// --------------------------------------
 	// Constants
@@ -118,7 +118,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputC
 					Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mKeyEventAction.eventActionUid());
 
 					// TODO: Display a message on the screen about
-					core.input().gamepads().StartGamepadInputCapture(this);
+					core.input().gamepads().startGamepadBindingCapture(this);
 
 					mBindingKey = true;
 					mHasFocus = true;
@@ -173,7 +173,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputC
 				} else {
 					Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mKeyEventAction.eventActionUid());
 
-					core.input().gamepads().StartGamepadInputCapture(this);
+					core.input().gamepads().startGamepadBindingCapture(this);
 
 					mBindingKey = true;
 					mHasFocus = true;
@@ -296,12 +296,24 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputC
 	// --------------------------------------
 
 	@Override
-	public boolean gamepadInput(int lintfordGamepadKeyIndex) {
+	public boolean gamepadButtonBindingInput(int lintfordGamepadButtonId) {
 		if (mBindingKey && isCoolDownElapsed()) {
 
-			// Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind invoke " + mKeyEventAction.eventActionUid() + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(key), scanCode));
+			mKeyEventAction.boundKeyCode(lintfordGamepadButtonId);
+			mBindingKey = false;
+			mIsDirty = true;
 
-			mKeyEventAction.boundKeyCode(lintfordGamepadKeyIndex);
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean gamepadAxisBindingInput(int lintfordGamepadButtonId) {
+		if (mBindingKey && isCoolDownElapsed()) {
+
+			mKeyEventAction.boundKeyCode(lintfordGamepadButtonId);
 			mBindingKey = false;
 			mIsDirty = true;
 

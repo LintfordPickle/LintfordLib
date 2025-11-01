@@ -121,7 +121,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 	@Override
 	public void handleInput(LintfordCore core) {
-		if (mAnimationTimer > 0 || mClickAction.isConsumed())
+		if (mAnimationTimer > 0)
 			return; // don't handle input if 'animation' is playing
 
 		if (mESCBackEnabled) {

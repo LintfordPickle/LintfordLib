@@ -4,13 +4,14 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.MenuInputActionsMap;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.GameInputAction;
-import net.lintfordlib.core.input.IGamepadInputCallback;
+import net.lintfordlib.core.input.IGamepadInputBindingCallback;
 import net.lintfordlib.core.input.IKeyInputCallback;
 import net.lintfordlib.core.input.InputHelper;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -21,7 +22,7 @@ import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 
 //       | LABEL      | Keyboard         | Gamepad    |
 
-public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback, IGamepadInputCallback {
+public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback, IGamepadInputBindingCallback {
 
 	// --------------------------------------
 	// Constants
@@ -39,18 +40,15 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	private String mBoundGamePadText;
 
 	private float mPadding = 15f;
-	private final GameInputAction mInputAction;
-	private boolean mShow;
+	private final GameInputAction mInputAction; // TODO: Rename to EventAction
 
 	private boolean mIsBindingInput;
-
 	private float mCaretFlashTimer;
 
 	private final Rectangle mKeyArea = new Rectangle();
 	private final Rectangle mGamepadArea = new Rectangle();
 
 	private boolean mIsKeyAreaSelected;
-
 	private boolean mIsStateValid;
 
 	// --------------------------------------
@@ -87,14 +85,6 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		mPadding = newValue;
 	}
 
-	public boolean show() {
-		return mShow;
-	}
-
-	public void show(boolean newValue) {
-		mShow = newValue;
-	}
-
 	public void label(String newLabel) {
 		mText = newLabel;
 	}
@@ -112,8 +102,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 
 		mInputAction = eventAction;
 		mDrawBackground = false;
-		mText = "Add your message";
-		mShow = true;
+		mText = "Missing Label";
 
 		mCanHaveFocus = true;
 		mIsStateValid = true;
@@ -164,7 +153,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			return false;
 
 		if (mIsKeyAreaSelected) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mInputAction.eventActionUid());
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key binding for " + mInputAction.eventActionUid());
 			core.input().keyboard().StartKeyInputCapture(this);
 
 			mIsBindingInput = true;
@@ -173,8 +162,8 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
 		} else {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing gamepad bind for " + mInputAction.eventActionUid());
-			core.input().gamepads().StartGamepadInputCapture(this);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing gamepad binding for " + mInputAction.eventActionUid());
+			core.input().gamepads().startGamepadBindingCapture(this);
 
 			mIsBindingInput = true;
 			mHasFocus = true;
@@ -192,20 +181,22 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			return false;
 
 		if (mHasFocus) {
-			final var gamepadManager = core.input().gamepads();
 
-			final var dpadButtonLeftPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this);
-			final var dpadButtonRightPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this);
-			final var leftAxisX = gamepadManager.getGamepadAxisValueTimed(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, this);
-			if (!mIsBindingInput && (dpadButtonLeftPressed || leftAxisX < 0)) {
+			final var eventActionManager = core.input().eventActionManager();
+
+			final var navLeft = eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT);
+			final var navRight = eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT);
+			final var navConfirm = eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM);
+
+			if (!mIsBindingInput && navLeft.isDown()) {
 				mIsKeyAreaSelected = !mIsKeyAreaSelected;
 			}
 
-			if (!mIsBindingInput && (dpadButtonRightPressed || leftAxisX > 0)) {
+			if (!mIsBindingInput && navRight.isDown()) {
 				mIsKeyAreaSelected = !mIsKeyAreaSelected;
 			}
 
-			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this) && handleCaptureNewBinding(core)) {
+			if (!mIsBindingInput && navConfirm.isDown() && handleCaptureNewBinding(core)) {
 				return true;
 			}
 
@@ -310,9 +301,6 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			lSpriteBatch.end();
 		}
 
-		// half way
-		float lX = mX + mW / 2;
-
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
 
 		lTextBoldFont.begin(core.HUD());
@@ -377,7 +365,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		if (mShowWarnIcon)
 			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
 
-		// TODO: This would be useful for all MenuInput types -
+		// TODO: Move this into the base MenuEntry type (so all MenuEntries can be valid/invalid and highlighted).
 		if (!mIsStateValid) {
 			final var lLineBatch = mParentScreen.lineBatch();
 			lLineBatch.begin(core.HUD());
@@ -387,10 +375,10 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			lLineBatch.end();
 		}
 
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", true)) {
+		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-//			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ);
 
 			if (mHasFocus) {
 				if (mIsKeyAreaSelected) {
@@ -427,9 +415,25 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	}
 
 	@Override
-	public boolean gamepadInput(int lintfordGamepadButtonId) {
+	public boolean gamepadButtonBindingInput(int lintfordGamepadButtonId) {
+
 		if (mIsBindingInput && isCoolDownElapsed()) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind invoke " + mInputAction.eventActionUid() + " called to " + lintfordGamepadButtonId);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind button " + mInputAction.eventActionUid() + " called to " + lintfordGamepadButtonId);
+
+			mInputAction.boundGamepadCode(lintfordGamepadButtonId);
+			mIsBindingInput = false;
+			mIsDirty = true;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean gamepadAxisBindingInput(int lintfordGamepadButtonId) {
+		if (mIsBindingInput && isCoolDownElapsed()) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind axis " + mInputAction.eventActionUid() + " called to " + lintfordGamepadButtonId);
 
 			mInputAction.boundGamepadCode(lintfordGamepadButtonId);
 			mIsBindingInput = false;

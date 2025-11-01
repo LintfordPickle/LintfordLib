@@ -91,10 +91,6 @@ public class MenuEnumEntry extends MenuEntry {
 		mEnableScaleTextToWidth = newValue;
 	}
 
-	public void setListener(EntryInteractions listener) {
-		mClickListener = listener;
-	}
-
 	public void setButtonsEnabled(boolean newValue) {
 		mButtonsEnabled = newValue;
 	}
@@ -105,6 +101,10 @@ public class MenuEnumEntry extends MenuEntry {
 
 	public int selectedEntry() {
 		return mSelectedIndex;
+	}
+
+	public List<EnumEntryItem> items() {
+		return mItems;
 	}
 
 	public String selectedEntryName() {
@@ -166,6 +166,9 @@ public class MenuEnumEntry extends MenuEntry {
 		mDrawBackground = false;
 
 		mEnableScaleTextToWidth = true;
+
+		contextHintState.buttonAHint = "toggle";
+		contextHintState.keyReturnHint = "toggle";
 	}
 
 	// --------------------------------------
@@ -275,7 +278,7 @@ public class MenuEnumEntry extends MenuEntry {
 		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - 10 - lStringWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextBoldFont.getStringHeight(mLabel, lAdjustedScaleW) * 0.5f, parentZDepth, lAdjustedScaleW, -1);
 		lTextBoldFont.drawText(SEPARATOR, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, parentZDepth, lUiTextScale, -1);
 
-		if (!mItems.isEmpty()) {
+		if (!mItems.isEmpty() && mSelectedIndex > -1) {
 			final var lCurItem = mItems.get(mSelectedIndex).name();
 			final var EntryWidth = lTextBoldFont.getStringWidth(lCurItem, lUiTextScale);
 

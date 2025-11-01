@@ -199,6 +199,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 		lTextBoldFont.end();
 
+		if(mHasFocus)
+			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
+		
 		if (mShowInfoIcon)
 			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
 

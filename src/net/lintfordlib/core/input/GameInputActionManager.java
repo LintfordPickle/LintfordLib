@@ -16,9 +16,8 @@ public class GameInputActionManager extends IniFile {
 	// Variables
 	// --------------------------------------
 
-	private BindableInputActionMap mBindableInputActions;
-
-	private IInputProcessor mInputProcessor;
+	private BindableInputActionMap mBindableMenuInputActions;
+	private BindableInputActionMap mBindableGameInputActions;
 
 	// TODO: Need to recheck this - don't think I need separate update list anymore.
 	private final Map<Integer, GameInputAction> mGameInputActions = new HashMap<>();
@@ -28,14 +27,6 @@ public class GameInputActionManager extends IniFile {
 	// Properties
 	// --------------------------------------
 
-	public void setInputProcessor(IInputProcessor inputProcessor) {
-		mInputProcessor = inputProcessor;
-	}
-
-	public void clearInputProcessor() {
-		mInputProcessor = null;
-	}
-
 	public GameInputAction getGameInputActionByUid(int inputActionUid) {
 		return mGameInputActions.get(inputActionUid);
 	}
@@ -43,8 +34,12 @@ public class GameInputActionManager extends IniFile {
 	/**
 	 * Returns the GameKeyActions instance which was created at the start of the game.
 	 */
-	public BindableInputActionMap bindableInputActions() {
-		return mBindableInputActions;
+	public BindableInputActionMap bindableGameInputActions() {
+		return mBindableGameInputActions;
+	}
+
+	public BindableInputActionMap bindableMenuInputActions() {
+		return mBindableMenuInputActions;
 	}
 
 	// --------------------------------------
@@ -61,10 +56,13 @@ public class GameInputActionManager extends IniFile {
 	// --------------------------------------
 
 	public void addGameKeyActions(BindableInputActionMap gameKeyActions) {
-		mBindableInputActions = gameKeyActions;
+		mBindableGameInputActions = gameKeyActions;
+		mBindableGameInputActions.registerEventActions(this);
+	}
 
-		// Gets the 'registered' KeyMap from the game specific 'GameKeyActions' subtype
-		mBindableInputActions.registerEventActions(this);
+	public void addMenuKeyActions(BindableInputActionMap menuKeyActions) {
+		mBindableMenuInputActions = menuKeyActions;
+		mBindableMenuInputActions.registerEventActions(this);
 	}
 
 	public void update(LintfordCore core) {
@@ -76,11 +74,11 @@ public class GameInputActionManager extends IniFile {
 		// we poll the keyboard once for each of the registered key action events,
 		// this way the individual action players don't separately poll the keyboard and consume the key timers.
 		// we pass the optional input process, which controls if the event manager should be listening to (keyboard) events.
-		final int lNumEventActions = mUpdateActionList.size();
-		for (int i = 0; i < lNumEventActions; i++) {
-			final var lAction = mUpdateActionList.get(i);
-			lAction.reset();
-			lAction.update(core);
+		final int numEventActions = mUpdateActionList.size();
+		for (int i = 0; i < numEventActions; i++) {
+			final var gameEventAction = mUpdateActionList.get(i);
+			gameEventAction.reset();
+			gameEventAction.update(core);
 
 		}
 	}
@@ -91,7 +89,7 @@ public class GameInputActionManager extends IniFile {
 
 	public GameInputAction getOrCreateGameEventAction(int eventActionUid) {
 
-		// NOTE: each eventaction can have several bound input types (i.e. `Jump` = 'KEYBOARD:Space' 'KEYBOARD:X', 'GAMEPAD:Y' and 'GAMEPAD:X')
+		// NOTE: each EventAction can have several bound input types (i.e. `Jump` = 'KEYBOARD:Space' 'KEYBOARD:X', 'GAMEPAD:Y' and 'GAMEPAD:X')
 		final var existingInputAction = mGameInputActions.get(eventActionUid);
 		if (existingInputAction != null)
 			return existingInputAction;
@@ -108,45 +106,50 @@ public class GameInputActionManager extends IniFile {
 	// --------------------------------------
 	// TODO: These polling methods are simply not finished
 
-	public boolean getCurrentControlActionState(int eventActionUid) {
+	// n.b. The 'get' method is not responsible for polling the input devices
+	public boolean getCurrentControlActionState(int eventActionUid, IInputProcessor inputProcessor) {
 		var actionState = false;
-		if (mInputProcessor != null) {
-			final var gameIntputAction = mGameInputActions.get(eventActionUid);
-			if (gameIntputAction != null) {
+		final var gameIntputAction = mGameInputActions.get(eventActionUid);
+		if (gameIntputAction != null) {
 
-				// keyboard mapping
-				if (mInputProcessor.allowKeyboardInput()) {
-
-				}
-
-				if (mInputProcessor.allowGamepadInput()) {
-
-				}
-
-				// these can be any input device
-				actionState |= gameIntputAction.isDown();
-				actionState |= gameIntputAction.value() > 0;
+			if (inputProcessor.allowKeyboardInput()) {
+				// TODO: Need to differentiate between input methods, and mask them out if disallowed.
 			}
+
+			if (inputProcessor.allowGamepadInput()) {
+				// TODO: Need to differentiate between input methods, and mask them out if disallowed.
+			}
+
+			// The mapping from input device to LintfordInputCode is done inside the GameInputAction class.
+			// Here we just record if the event is 'hit'.
+			actionState |= gameIntputAction.isDown();
+			actionState |= gameIntputAction.value() > 0;
 		}
 
 		return actionState;
 	}
 
-	public boolean getCurrentControlActionStateTimed(int eventActionUid) {
+	// n.b. The 'get' method is not responsible for polling the input devices.
+	public boolean getCurrentControlActionStateTimed(int eventActionUid, IInputProcessor inputProcessor) {
+
+		if (!inputProcessor.isCoolDownElapsed())
+			return false;
 
 		var actionStateReturnValue = false;
 		final var gameIntputAction = mGameInputActions.get(eventActionUid);
 		if (gameIntputAction != null) {
 
 			// keyboard mapping
-			if (mInputProcessor.allowKeyboardInput()) {
-
+			if (inputProcessor.allowKeyboardInput()) {
+				// TODO: Need to differentiate between input methods, and mask them out if disallowed.
 			}
 
-			if (mInputProcessor.allowGamepadInput()) {
-
+			if (inputProcessor.allowGamepadInput()) {
+				// TODO: Need to differentiate between input methods, and mask them out if disallowed.
 			}
 
+			// The mapping from input device to LintfordInputCode is done inside the GameInputAction class.
+			// Here we just record if the event is 'hit'.
 			actionStateReturnValue |= gameIntputAction.isDownTimed();
 
 		}

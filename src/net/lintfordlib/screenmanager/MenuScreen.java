@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintfordlib.MenuInputActionsMap;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -213,7 +214,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	@Override
 	public void handleInput(LintfordCore core) {
-		if (mAnimationTimer > 0 || mClickAction.isConsumed())
+		if (mAnimationTimer > 0)
 			return; // don't handle input if 'animation' is playing
 
 		super.handleInput(core);
@@ -229,69 +230,46 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			}
 		}
 
-		final var gamepadManager = core.input().gamepads();
+		// TODO : This is where I am now stuck - need to somehow map both the axis and the DPad to the same event.
+		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_UP, this)) {
+			// screenManager.contextHintManager().setKeyboardHints();
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
-			screenManager.contextHintManager().setKeyboardHints();
 			onNavigationUp(core, InputType.Keyboard);
 		}
 
-		final var dpadButtonUpPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this);
-		final var leftAxisY = gamepadManager.getGamepadAxisValueTimed(GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y, this);
-		if (dpadButtonUpPressed || leftAxisY < 0) {
-			screenManager.contextHintManager().setGamePadHints();
-			onNavigationUp(core, InputType.Gamepad);
-		}
+		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_DOWN, this)) {
+			// screenManager.contextHintManager().setKeyboardHints();
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
-			screenManager.contextHintManager().setKeyboardHints();
 			onNavigationDown(core, InputType.Keyboard);
+
 		}
 
-		final var dpadButtonDownPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this);
-		if (dpadButtonDownPressed || leftAxisY > 0) {
-			screenManager.contextHintManager().setGamePadHints();
-			onNavigationDown(core, InputType.Gamepad);
-		}
-
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
-			screenManager.contextHintManager().setKeyboardHints();
-			onNavigationLeft(core, InputType.Keyboard);
-		}
-
-		final var dpadButtonLeftPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this);
-		final var leftAxisX = gamepadManager.getGamepadAxisValueTimed(GLFW.GLFW_GAMEPAD_AXIS_LEFT_X, this);
-		if (dpadButtonLeftPressed || leftAxisX < 0) {
-			screenManager.contextHintManager().setGamePadHints();
+		final var eventLeft = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT, this);
+		if (eventLeft) {
 			onNavigationLeft(core, InputType.Gamepad);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
-			screenManager.contextHintManager().setKeyboardHints();
-			onNavigationRight(core, InputType.Keyboard);
+		final var eventRight = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT, this);
+		if (eventRight) {
+			onNavigationRight(core, InputType.Gamepad);
 		}
 
-		final var dpadButtonRightPressed = gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this);
-		if (dpadButtonRightPressed || leftAxisX > 0) {
-			screenManager.contextHintManager().setGamePadHints();
-			onNavigationRight(core, InputType.Gamepad);
+		final var eventBack = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_BACK, this);
+		if (eventBack) {
+			onNavigationBack(core, InputType.Gamepad);
+
+		}
+
+		final var eventConfirmation = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM, this);
+		if (eventConfirmation) {
+			onNavigationConfirm(core, InputType.Keyboard);
+
 		}
 
 		final var lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
 			final var lLayout = mLayouts.get(i);
 			lLayout.handleInput(core);
-		}
-
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
-			onNavigationBack(core, InputType.Gamepad);
-		}
-
-		final var keyboardConfirmation = core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this);
-		final var gamepadConfirmation = core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this);
-		if (keyboardConfirmation || gamepadConfirmation) {
-			onNavigationConfirm(core, InputType.Keyboard);
-
 		}
 	}
 
@@ -488,13 +466,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.draw(core);
 
-		final float lMenuScreenZDepth = ZLayers.LAYER_SCREENMANAGER;
-
 		drawMenuTitle(core);
 
+		final float lMenuScreenZDepth = ZLayers.LAYER_SCREENMANAGER;
 		final int lCount = mLayouts.size();
 		for (int i = 0; i < lCount; i++) {
-			mLayouts.get(i).draw(core, lMenuScreenZDepth + (i * 0.001f));
+			final var layout = mLayouts.get(i);
+			layout.draw(core, lMenuScreenZDepth + (i * 0.001f));
 		}
 	}
 
@@ -604,7 +582,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	/** This is called when an entry is clicked.This is called regardless (and including) if an entry was registered as a click listener. */
 	public void menuEntryOnClick(InputManager inputState, MenuEntry entry) {
-
+		mClickAction.setNewClick(entry.entryID());
 	}
 
 	/** This is called when a previously registered entry (with an entryUid) is clicked. */
@@ -752,6 +730,12 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
+
+		if (lEntry.readOnly())
+			return;
+
+		if (!lEntry.enabled())
+			return;
 
 		if (lEntry != null)
 			lEntry.onClick(core.input());
