@@ -3,6 +3,7 @@ package net.lintfordlib.screenmanager.entries.input;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.MenuInputActionsMap;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -30,7 +31,14 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 	// TODO: This is the target LintfordInputCode we are trying to map to with a physical button or axis
 	private final int inputCodeUid;
 	private LintfordGamepadState mInputGamepadCustomMap;
+	private IBindingCallback mBindingCallback;
+
+	public void setBindingCallback(IBindingCallback listener) {
+		mBindingCallback = listener;
+	}
+
 	private boolean mIsBindingInput;
+	private float mCaretFlashTimer;
 
 	private boolean mIsInputOn;
 
@@ -114,10 +122,10 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 			return false;
 
 		if (mHasFocus) {
-			final var gamepadManager = core.input().gamepads();
+			final var eventManager = core.input().eventActionManager();
 
-			// TOOD: Do t
-			if (gamepadManager.isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this) && handleCaptureNewMapping(core)) {
+			final var confirmAction = eventManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM);
+			if (confirmAction.isDownTimed() && handleCaptureNewMapping(core)) {
 				return true;
 			}
 
@@ -142,30 +150,13 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		core.input().gamepads().startGamepadMappingCapture(this);
 
 		mIsBindingInput = true;
-		mHasFocus = true;
+		hasFocus(true);
+
+		mBindingCallback.setIsBinding(this);
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
 
 		return true;
-	}
-
-	@Override
-	public void update(LintfordCore core, MenuScreen screen) {
-		super.update(core, screen);
-
-		mIsInputOn = false;
-		if (mInputGamepadCustomMap != null) {
-			final var gamepadInputMap = mInputGamepadCustomMap.getInputMapping(inputCodeUid);
-			final var mappedToType = gamepadInputMap.mappedToType();
-			final var mappedToSignum = gamepadInputMap.mappedToSignum();
-			final var mappedToIndex = gamepadInputMap.mappedTo();
-
-			if (gamepadInputMap != null) {
-				mIsInputOn = gamepadInputMap.isDown();
-			}
-
-		}
-
 	}
 
 	@Override
@@ -180,6 +171,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		final var buttonHeight = spritePositionH;
 
 		textureBatch.begin(core.HUD());
+
 		// 2 cases - off sprite not present vs. present
 		if (spriteFrameUidOff == -1) {
 
@@ -237,10 +229,23 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		fontUnit.begin(core.HUD());
 
 		final var targetInputCodetext = GamepadInputCodes.getLintfordCodeName(inputCodeUid);
-		fontUnit.drawText(targetInputCodetext, parentScreenOffset.x + left(), parentScreenOffset.y + top(), .9f, .9f);
+		fontUnit.drawText(targetInputCodetext, parentScreenOffset.x + left(), parentScreenOffset.y + top(), .9f, .9f * mScale);
+
+		if (mHasFocus && mEnabled)
+			renderHighlight(core, screen, true, textureBatch);
+
+		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
 
 		// TODO: Need to get whatever is currently mapped on the active gamepad to our inputCodeUid
-		if (mInputGamepadCustomMap != null) {
+
+		if (mIsBindingInput) {
+			if (mCaretFlashTimer % 1.f > .5f) {
+				final var boundKeyText = "<PRESS BUTTON>";
+				fontUnit.drawText(boundKeyText, parentScreenOffset.x + left() + 5.f, parentScreenOffset.y + top() + 20, 1f, .8f * mScale);
+
+			}
+
+		} else if (mInputGamepadCustomMap != null) {
 			final var gamepadInputMap = mInputGamepadCustomMap.getInputMapping(inputCodeUid);
 			final var mappedToType = gamepadInputMap.mappedToType();
 			final var mappedToSignum = gamepadInputMap.mappedToSignum();
@@ -258,13 +263,13 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 				break;
 			}
 
-			fontUnit.drawText(mappedToName, parentScreenOffset.x + left() + 5.f, parentScreenOffset.y + top() + 20, 1f, .8f);
+			fontUnit.drawText(mappedToName, parentScreenOffset.x + left() + 5.f, parentScreenOffset.y + top() + 20, 1f, .8f * mScale);
 		}
 
 		textureBatch.end();
 		fontUnit.end();
 
-		if (mHasFocus) {
+		if (mHasFocus & !mIsBindingInput) {
 			// Set which hint icon to render
 			mGamepadMenuIcon.lintfordInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH);
 			drawGamepadIcon(core, textureBatch, mGamepadMenuIcon.bounds, parentScreenAlpha);
@@ -280,7 +285,28 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 	}
 
 	// --------------------------------------
-	// Inherited-Method
+	// Method
+	// --------------------------------------
+
+	public void endBinding() {
+		if (!mIsBindingInput)
+			return;
+
+		mIsBindingInput = false;
+		mBindingCallback.finishedBinding();
+
+		mScreenManager.core().input().gamepads().stopGamepadCapture();
+	}
+
+	// called from parent screen
+	public void cancelBinding() {
+		if (mIsBindingInput) {
+			endBinding();
+		}
+	}
+
+	// --------------------------------------
+	// Inherited-Methods
 	// --------------------------------------
 
 	@Override
@@ -290,7 +316,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind " + inputName + " mapped to " + rawButtonUid);
 
 			mInputGamepadCustomMap.setButtonMapping(rawButtonUid, inputCodeUid);
-			mIsBindingInput = false;
+			endBinding();
 
 			return true;
 		}
@@ -310,7 +336,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 			// I want to set <inputCodeUid> to use <rawAxisUid, signum>
 
 			mInputGamepadCustomMap.setAxisMapping(rawAxisUid, signum, inputCodeUid);
-			mIsBindingInput = false;
+			endBinding();
 
 			return true;
 		}

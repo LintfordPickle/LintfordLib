@@ -8,7 +8,7 @@ import net.lintfordlib.core.LintfordCore;
 public class GameInputAction implements Serializable {
 
 	// TODO: This class needs to be further split down into keyboard/gamepad/mouse inputs.
-	
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -134,7 +134,7 @@ public class GameInputAction implements Serializable {
 		// 2) Check if a gamepad has activated this input action
 		final var gamepadManager = inputManager.gamepads();
 		if (gamepadManager.isSomeComponentCapturingInput())
-			return; //
+			return;
 
 		final var activeGamepads = gamepadManager.getActiveGamepads();
 		if (activeGamepads.size() > 0) {
@@ -142,27 +142,17 @@ public class GameInputAction implements Serializable {
 			// This should not know about the type of the input mapped (whether button or axis) - we
 			// just want to know, for each action code defined, whether the bound inputcode is 'down' or 'active'.
 
-			// TODO: This is missing quite a bit here, like timed inputs ...
+			// TODO: Seems to be working, but need to re-check this logic.
 
 			final var boundGamepadInputCode = getBoundGamepadCode();
 			mIsDown |= gamepadManager.isGamepadButtonDown(boundGamepadInputCode);
 
-			if(mIsDown)
-				System.out.println("break");
-			
 			// any non-zero value (in the correct axis direction) will count as a down | downTimed
 			mIsDown |= Math.abs(gamepadManager.getGamepadAxis(boundGamepadInputCode)) > 0.05f;
 
-			if(mIsDown)
-				System.out.println("break");
-			
-			// TODO: Need to check this - the gamepad is also using an 'adjusted' value
 			final var result = gamepadManager.getGamepadAxis(boundGamepadInputCode);
 			mIsDown |= Math.abs(result) > 0.02f;
 
-			if(mIsDown)
-				System.out.println("break");
-			
 		}
 
 		// When we've figured out if this event is active, then do the shit with the timed...

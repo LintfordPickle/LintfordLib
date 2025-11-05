@@ -183,7 +183,7 @@ public class InputHelper {
 	}
 	
 	/** Maps code from GamepadInputMap into printable text */
-	public static String getLintfordPrintableKeyForGamepadInputIndex(int lintfordGamepadInputIndex) {
+	public static String getPhysicalKeyNameForGamepadInputIndex(int lintfordGamepadInputIndex) {
 		switch (lintfordGamepadInputIndex) {
 		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH: return "Button 0";
 		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST: return "Button 1";
@@ -200,6 +200,29 @@ public class InputHelper {
 		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT: return "Button 10";
 		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN: return "Button 11";
 		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_UP: return "Button 12";
+
+		default:
+			return "unknown";
+		}
+	}
+	
+	public static String getFriendlyKeyNameForGamepadInputIndex(int lintfordGamepadInputIndex) {
+		switch (lintfordGamepadInputIndex) {
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH: return "Button South";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST: return "Button East";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_WEST: return "Button West";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_NORTH: return "Button North";
+		
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT_SHOULDER: return "L-Shoulder";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT_SHOULDER: return "R-Shoulder";
+		
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_BACK: return "Back";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_START: return "Start";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_GUIDE: return "Guide";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT: return "Left";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT: return "Right";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN: return "Down";
+		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_UP: return "Up";
 
 		default:
 			return "unknown";

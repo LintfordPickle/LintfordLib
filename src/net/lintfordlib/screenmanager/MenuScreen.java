@@ -644,7 +644,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				final var IsDesiredEntry = lEntry == entry;
 
 				if (IsDesiredEntry) {
-					lEntry.mHasFocus = true;
+					lEntry.hasFocus(true);
 					screenManager.contextHintManager().contextHintProvider(lEntry);
 
 					mSelectedLayoutIndex = i;
@@ -653,13 +653,13 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				} else {
 					// need to give this entry a chance to see if one of its children is focused
 					if (lEntry.setFocusOnChildEntry(entry)) {
-						lEntry.mHasFocus = true;
+						lEntry.hasFocus(true);
 						screenManager.contextHintManager().contextHintProvider(lEntry);
 
 						mSelectedLayoutIndex = i;
 						mSelectedEntryIndex = j;
 					} else {
-						lEntry.mHasFocus = false;
+						lEntry.hasFocus(false);
 					}
 				}
 			}
@@ -679,20 +679,20 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	protected void updateAllEntriesToMatchSelected(List<BaseLayout> layouts, int selectedLayoutIndex, int selectedEntryIndex, boolean focusSelected) {
-		final int lNumLayouts = layouts.size();
-		for (int i = 0; i < lNumLayouts; i++) {
+		final int numLayouts = layouts.size();
+		for (int i = 0; i < numLayouts; i++) {
 			final var lIsLayoutSelected = focusSelected && i == selectedLayoutIndex;
-			final var lLayout = layouts.get(i);
-			final int lNumEntries = lLayout.entries().size();
-			for (int j = 0; j < lNumEntries; j++) {
-				final var lEntry = lLayout.entries().get(j);
-				final var lIsEntrySelected = lIsLayoutSelected && j == selectedEntryIndex;
+			final var layout = layouts.get(i);
+			final int numEntries = layout.entries().size();
+			for (int j = 0; j < numEntries; j++) {
+				final var entry = layout.entries().get(j);
+				final var isEntrySelected = lIsLayoutSelected && j == selectedEntryIndex;
 
-				if (lIsEntrySelected) {
-					lEntry.hasFocus(true);
-					screenManager.contextHintManager().contextHintProvider(lEntry);
+				if (isEntrySelected) {
+					entry.hasFocus(true);
+					screenManager.contextHintManager().contextHintProvider(entry);
 				} else {
-					lEntry.hasFocus(false);
+					entry.hasFocus(false);
 				}
 			}
 		}
@@ -932,7 +932,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (layout == null || layout.entries().isEmpty())
 				continue;
 
-			if (!layout.canHaveFocus())
+			if (!layout.canHaveFocus() || !layout.visible())
 				continue;
 
 			mSelectedLayoutIndex = selectedLayoutIndex;
@@ -1005,11 +1005,11 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (selectedLayoutIndex == mSelectedLayoutIndex)
 				return; // We have circled back around to the starting point
 
-			final var lLayout = mLayouts.get(selectedLayoutIndex);
-			if (lLayout == null || lLayout.entries().isEmpty())
+			final var layout = mLayouts.get(selectedLayoutIndex);
+			if (layout == null || layout.entries().isEmpty())
 				continue;
 
-			if (!lLayout.canHaveFocus())
+			if (!layout.canHaveFocus() || !layout.visible())
 				continue;
 
 			mSelectedLayoutIndex = selectedLayoutIndex;

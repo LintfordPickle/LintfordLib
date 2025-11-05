@@ -14,6 +14,7 @@ import net.lintfordlib.core.input.GameInputAction;
 import net.lintfordlib.core.input.IGamepadInputBindingCallback;
 import net.lintfordlib.core.input.IKeyInputCallback;
 import net.lintfordlib.core.input.InputHelper;
+import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -157,7 +158,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			core.input().keyboard().StartKeyInputCapture(this);
 
 			mIsBindingInput = true;
-			mHasFocus = true;
+			hasFocus(true);
 
 			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
@@ -166,7 +167,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			core.input().gamepads().startGamepadBindingCapture(this);
 
 			mIsBindingInput = true;
-			mHasFocus = true;
+			hasFocus(true);
 
 			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
@@ -184,19 +185,19 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 
 			final var eventActionManager = core.input().eventActionManager();
 
-			final var navLeft = eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT);
-			final var navRight = eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT);
-			final var navConfirm = eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM);
+			final var navLeft = eventActionManager.getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT, this);
+			final var navRight = eventActionManager.getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT, this);
+			final var navConfirm = eventActionManager.getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM, this);
 
-			if (!mIsBindingInput && navLeft.isDown()) {
+			if (!mIsBindingInput && navLeft) {
 				mIsKeyAreaSelected = !mIsKeyAreaSelected;
 			}
 
-			if (!mIsBindingInput && navRight.isDown()) {
+			if (!mIsBindingInput && navRight) {
 				mIsKeyAreaSelected = !mIsKeyAreaSelected;
 			}
 
-			if (!mIsBindingInput && navConfirm.isDown() && handleCaptureNewBinding(core)) {
+			if (!mIsBindingInput && navConfirm && handleCaptureNewBinding(core)) {
 				return true;
 			}
 
@@ -216,13 +217,14 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		}
 
 		if (mHasFocus) {
+
+			if (mKeyArea.intersectsAA(core.HUD().getMouseCameraSpace()))
+				mIsKeyAreaSelected = true;
+
+			if (mGamepadArea.intersectsAA(core.HUD().getMouseCameraSpace()))
+				mIsKeyAreaSelected = false;
+
 			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-
-				if (mKeyArea.intersectsAA(core.HUD().getMouseCameraSpace()))
-					mIsKeyAreaSelected = true;
-
-				if (mGamepadArea.intersectsAA(core.HUD().getMouseCameraSpace()))
-					mIsKeyAreaSelected = false;
 
 				if (handleCaptureNewBinding(core)) {
 					return true;
@@ -249,7 +251,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			if (mInputAction != null) {
 
 				mBoundKeyText = InputHelper.getGlfwPrintableKeyFromKeyCode(mInputAction.getBoundKeyCode()).toUpperCase();
-				mBoundGamePadText = InputHelper.getLintfordPrintableKeyForGamepadInputIndex(mInputAction.getBoundGamepadCode()).toUpperCase();
+				mBoundGamePadText = InputHelper.getFriendlyKeyNameForGamepadInputIndex(mInputAction.getBoundGamepadCode()).toUpperCase();
 
 			}
 
@@ -271,19 +273,17 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		final var numBindColumns = 3;
 		final var columnWidth = width() / numBindColumns;
 
-		final var column0X = xoffset + left() + paddingLeft() + 10;
-		final var column1X = xoffset + x() + columnWidth * 1;
-		final var column2X = xoffset + x() + columnWidth * 2;
+		final var column0X = xoffset + x() + padding();
+		final var column1X = xoffset + x() + padding() + columnWidth * 1;
+		final var column2X = xoffset + x() + padding() + columnWidth * 2;
 
-		// ---
-
-		final var lTextBoldFont = mParentScreen.fontBold();
+		final var textBoldFont = mParentScreen.fontBold();
 
 		entryColor.setRGB(1.f, 1.f, 1.f);
 		textColor.a = mParentScreen.screenColor.a;
 
 		final var lUiTextScale = mParentScreen.uiTextScale();
-		final var lFontHeight = lTextBoldFont.fontHeight() * lUiTextScale;
+		final var lFontHeight = textBoldFont.fontHeight() * lUiTextScale;
 		final var lSpriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
@@ -295,6 +295,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		} else if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+			lSpriteBatch.setColorA(.15f);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2 + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f);
 			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + mW / 2 - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f);
@@ -303,16 +304,14 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
 
-		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.setTextColor(textColor);
-		// lTextBoldFont.drawText(mText, lX - lLabelWidth - 20.f, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
-		lTextBoldFont.drawText(mText, column0X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
+		textBoldFont.begin(core.HUD());
+		textBoldFont.setTextColor(textColor);
+		textBoldFont.drawText(mText, column0X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 
 		// Keybinding
 		if (mIsBindingInput && mIsKeyAreaSelected) {
 			// Rebinding the key input
 
-			final String lBoundKeyText = "<ENTER KEY>";
 			final float lColorMod = .5f;
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
@@ -322,17 +321,18 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			lSpriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
-				lTextBoldFont.drawText(lBoundKeyText, column1X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
+				final var boundKeyText = "<ENTER KEY>";
+				textBoldFont.drawText(boundKeyText, column1X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 			}
 
 		} else if (mBoundKeyText != null && mBoundKeyText.length() > 0) {
-			lTextBoldFont.drawText(mBoundKeyText, column1X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
+			textBoldFont.drawText(mBoundKeyText, column1X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 		}
 
 		if (mIsBindingInput && !mIsKeyAreaSelected) {
 			// Rebinding a gamepad input
 
-			final String lBoundKeyText = "<ENTER GAMEPAD>";
+			final String lBoundKeyText = "<PRESS BUTTON>";
 			final float lColorMod = .5f;
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
@@ -342,22 +342,41 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			lSpriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
-				lTextBoldFont.drawText(lBoundKeyText, column2X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
+				textBoldFont.drawText(lBoundKeyText, column2X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 			}
 
 		} else if (mBoundGamePadText != null && mBoundGamePadText.length() > 0) {
-			lTextBoldFont.drawText(mBoundGamePadText, column2X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
+			textBoldFont.drawText(mBoundGamePadText, column2X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
 		}
 
-		// Gamepad Binding
+		textBoldFont.end();
 
-		if (mIsBindingInput) {
-
+		// Gamepad hints
+		if (mHasFocus) {
+			mGamepadMenuIcon.lintfordInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH);
+			if (mIsKeyAreaSelected) {
+				drawGamepadIcon(core, lSpriteBatch, new Rectangle(column1X + columnWidth - 32, mY + mH - 16, 16, 16), 1.f);
+			} else {
+				drawGamepadIcon(core, lSpriteBatch, new Rectangle(column2X + columnWidth - 32, mY + mH - 16, 16, 16), 1.f);
+			}
 		}
 
-		lTextBoldFont.end();
+		//
+		if (mHasFocus) {
+			lSpriteBatch.begin(core.HUD());
+			if (mIsKeyAreaSelected) {
+				lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+				lSpriteBatch.setColorA(.15f);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mKeyArea, mZ);
+			} else {
+				lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+				lSpriteBatch.setColorA(.15f);
+				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mGamepadArea, mZ);
+			}
+			lSpriteBatch.end();
 
-		// -- END
+			renderHighlight(core, screen, false, lSpriteBatch);
+		}
 
 		if (mShowInfoIcon)
 			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, mParentScreen.screenColor.a);
@@ -399,6 +418,11 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	// --------------------------------------
 	// Inherited-Methods
 	// --------------------------------------
+
+	@Override
+	public boolean onNavigationGainFocus(LintfordCore core) {
+		return super.onNavigationGainFocus(core);
+	}
 
 	@Override
 	public boolean keyInput(int key, int scanCode, int action, int mods) {

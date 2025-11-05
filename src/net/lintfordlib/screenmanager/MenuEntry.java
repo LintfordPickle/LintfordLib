@@ -343,7 +343,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void hasFocus(boolean newValue) {
+		if (mHasFocus == newValue)
+			return;
+
 		mHasFocus = newValue;
+		if (mHasFocus)
+			onGainFocus();
 	}
 
 	public boolean isActive() {
@@ -520,7 +525,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		final var screenOffset = mParentScreen != null ? mParentScreen.screenPositionOffset() : Vector2f.Zero;
 		final var tileSize = Math.min(32, mH);
 
-		mGamepadMenuIcon.bounds.set(screenOffset.x + mX + mW, screenOffset.y + mY, 16, 16);
+		mGamepadMenuIcon.bounds.set(screenOffset.x + mX + mW - 16, screenOffset.y + mY + mH - 16, 16, 16);
 
 		if (mShowInfoIcon) // TODO: This isn't correct - the draw code is already offsetting by the screen transition
 			mInfoIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
@@ -797,14 +802,14 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		final var w = destRect.width() * mScale;
 		final var h = destRect.height() * mScale;
-		final var x = destRect.x() - w - 2;
-		final var y = destRect.y() + mH - h - 2;
+		final var x = destRect.x();
+		final var y = destRect.y();
 
 		spriteBatch.setColorRGBA(.1f, .1f, .1f, screenAlpha * 0.7f);
-		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y, w, h, 0, -w, -h, 1.f);
+		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y, w, h, 0, -w / 2, -h / 2, 1.f);
 
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, screenAlpha);
-		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y - 2, w, h, 0, -w, -h, 1.f);
+		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y - 2, w, h, 0, -w / 2, -h / 2, 1.f);
 
 		spriteBatch.end();
 	}
@@ -967,6 +972,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	// Gives entries an opportunity onGainFocus to select a child entry by default (e.g. in horizontal groups).
 	public boolean onNavigationGainFocus(LintfordCore core) {
 		return false;
+	}
+
+	public void onGainFocus() {
+
 	}
 
 }

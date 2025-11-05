@@ -155,10 +155,11 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			return;
 
 		if (!mEnabled || mReadOnly) {
-			mHasFocus = false;
+			hasFocus(false);
 			mIsInputActive = false;
 			return;
 		}
+
 		if (mSingleLine) {
 			mInputAreaRectangle.set(mX + mW / 2.f + mSeparatorOffsetX, mY, mW / 2.f + -(mSeparatorOffsetX), mH);
 		} else {
@@ -436,7 +437,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 
 	@Override
 	public void onCaptureStopped() {
-		mHasFocus = false;
+		hasFocus(false);
 		mShowCaret = false;
 
 		if (mClickListener != null) {

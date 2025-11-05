@@ -17,19 +17,9 @@ public class MenuLabelEntry extends MenuEntry {
 	// Variables
 	// --------------------------------------
 
-	protected boolean mTrimText;
-
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
-
-	public boolean trimText() {
-		return mTrimText;
-	}
-
-	public void trimText(boolean newValue) {
-		mTrimText = newValue;
-	}
 
 	public void label(String newLabel) {
 		mText = newLabel;

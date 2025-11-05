@@ -11,7 +11,7 @@ import net.lintfordlib.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintfordlib.screenmanager.entries.MenuBindingKeyEntry;
-import net.lintfordlib.screenmanager.entries.MenuLabelEntry;
+import net.lintfordlib.screenmanager.entries.MenuLabelHeadersEntry;
 import net.lintfordlib.screenmanager.layouts.BaseLayout;
 import net.lintfordlib.screenmanager.layouts.HorizontalLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
@@ -53,17 +53,17 @@ public class KeyBindOptionsScreen extends MenuScreen {
 
 		createKeyBindSection(mKeyBindListLayout);
 
-		final var lFooterList = new HorizontalLayout(this);
-		lFooterList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
+		final var footerList = new HorizontalLayout(this);
+		footerList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
 		mBackButton = new MenuEntry(screenManager, this, "Go back");
 		mBackButton.registerClickListener(this, BUTTON_CONFIRM);
 		mBackButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
 
-		lFooterList.addMenuEntry(mBackButton);
+		footerList.addMenuEntry(mBackButton);
 
 		addLayout(mKeyBindListLayout);
-		addLayout(lFooterList);
+		addLayout(footerList);
 
 		mSelectedLayoutIndex = 0;
 		mSelectedEntryIndex = 0;
@@ -74,23 +74,16 @@ public class KeyBindOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	private void createKeyBindSection(BaseLayout layout) {
-		final var keyBindOptionsTitle = new MenuLabelEntry(screenManager, this);
+		final var keyBindOptionsTitle = new MenuLabelHeadersEntry(screenManager, this);
 
-		keyBindOptionsTitle.label("Game KeyBinds");
+		keyBindOptionsTitle.addHeader("Game Actions");
+		keyBindOptionsTitle.addHeader("Keyboard");
+		keyBindOptionsTitle.addHeader("Gamepad");
 		keyBindOptionsTitle.drawButtonBackground(true);
 		keyBindOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		keyBindOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		final var keyGameBindOptionsColumns = new MenuLabelEntry(screenManager, this);
-
-		// TODO: Obviously needs work
-		keyGameBindOptionsColumns.label("Key      Gamepad");
-		keyGameBindOptionsColumns.drawButtonBackground(true);
-		keyGameBindOptionsColumns.horizontalAlignment(ALIGNMENT.RIGHT);
-		keyGameBindOptionsColumns.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-
 		layout.addMenuEntry(keyBindOptionsTitle);
-		layout.addMenuEntry(keyGameBindOptionsColumns);
 
 		final var inputManager = screenManager.core().input();
 		final var keyEventActionManager = inputManager.eventActionManager();
@@ -114,18 +107,20 @@ public class KeyBindOptionsScreen extends MenuScreen {
 				layout.addMenuEntry(newActionEntry);
 			}
 		}
-		
-		// Menu Binds
-		final var menuKeyBindOptionsTitle = new MenuLabelEntry(screenManager, this);
 
-		menuKeyBindOptionsTitle.label("Menu KeyBinds");
+		// Menu Binds
+		final var menuKeyBindOptionsTitle = new MenuLabelHeadersEntry(screenManager, this);
+
+		menuKeyBindOptionsTitle.addHeader("Menu Actions");
+		menuKeyBindOptionsTitle.addHeader("Keyboard");
+		menuKeyBindOptionsTitle.addHeader("Gamepad");
 		menuKeyBindOptionsTitle.drawButtonBackground(true);
 		menuKeyBindOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		menuKeyBindOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-		
+
 		layout.addMenuEntry(keyBindOptionsTitle);
 		layout.addMenuEntry(menuKeyBindOptionsTitle);
-		
+
 		final var bindableMenuInputActions = keyEventActionManager.bindableMenuInputActions();
 		if (bindableMenuInputActions != null) {
 			final var binableInputActionList = bindableMenuInputActions.bindableEventActions();
@@ -145,11 +140,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 				layout.addMenuEntry(newActionEntry);
 			}
 		}
-		
-		
-		
-		
-		
+
 	}
 
 	// --------------------------------------

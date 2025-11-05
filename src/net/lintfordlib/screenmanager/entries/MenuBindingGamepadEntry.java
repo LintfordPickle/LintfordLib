@@ -121,7 +121,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputB
 					core.input().gamepads().startGamepadBindingCapture(this);
 
 					mBindingKey = true;
-					mHasFocus = true;
+					hasFocus(true);
 				}
 
 				core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -200,7 +200,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputB
 
 		if (mIsDirty) {
 			if (mKeyEventAction != null)
-				mBoundKeyText = InputHelper.getLintfordPrintableKeyForGamepadInputIndex(mKeyEventAction.getBoundKeyCode()).toUpperCase();
+				mBoundKeyText = InputHelper.getPhysicalKeyNameForGamepadInputIndex(mKeyEventAction.getBoundKeyCode()).toUpperCase();
 
 			mIsDirty = false;
 		}

@@ -325,7 +325,7 @@ public class MenuEnumImageEntry extends MenuEntry {
 	public void onClick(InputManager inputManager) {
 		super.onClick(inputManager);
 
-		mHasFocus = !mHasFocus;
+		hasFocus(!mHasFocus);
 
 		if (mClickListener != null)
 			mClickListener.onMenuEntryChanged(this);

@@ -190,7 +190,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 
 				core.input().keyboard().stopBufferedTextCapture();
 
-				mHasFocus = false;
+				hasFocus(false);
 				mShowCaret = false;
 
 				return true;
@@ -211,7 +211,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 			return;
 
 		if (!mEnabled || mReadOnly) {
-			mHasFocus = false;
+			hasFocus(false);
 			mIsActive = false;
 			return;
 		}
@@ -489,7 +489,7 @@ public class MenuFileInputEntry extends MenuEntry implements IBufferedTextInputC
 
 	@Override
 	public void onCaptureStopped() {
-		mHasFocus = false;
+		hasFocus(false);
 		mShowCaret = false;
 	}
 }

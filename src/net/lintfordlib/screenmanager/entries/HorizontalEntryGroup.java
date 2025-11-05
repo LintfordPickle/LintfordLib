@@ -281,7 +281,9 @@ public class HorizontalEntryGroup extends MenuEntry {
 				mSelectedEntryUid = mChildEntries.size() - 1;
 			}
 
-			if (mChildEntries.get(mSelectedEntryUid) != MenuEntry.menuSeparator())
+			final var isSeparator = mChildEntries.get(mSelectedEntryUid) == MenuEntry.menuSeparator();
+			final var isEnabled = mChildEntries.get(mSelectedEntryUid).enabled();
+			if (!isSeparator && isEnabled)
 				return true;
 
 			mSelectedEntryUid--;
@@ -310,7 +312,9 @@ public class HorizontalEntryGroup extends MenuEntry {
 				mSelectedEntryUid = 0;
 			}
 
-			if (mChildEntries.get(mSelectedEntryUid) != MenuEntry.menuSeparator())
+			final var isSeparator = mChildEntries.get(mSelectedEntryUid) == MenuEntry.menuSeparator();
+			final var isEnabled = mChildEntries.get(mSelectedEntryUid).enabled();
+			if (!isSeparator && isEnabled)
 				return true;
 
 			mSelectedEntryUid++;

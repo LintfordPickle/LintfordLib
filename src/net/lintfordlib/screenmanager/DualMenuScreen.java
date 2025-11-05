@@ -810,7 +810,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 				final var IsDesiredEntry = lEntry == entry;
 
 				if (IsDesiredEntry) {
-					lEntry.mHasFocus = true;
+					lEntry.hasFocus(true);
 
 					screenManager.contextHintManager().contextHintProvider(lEntry);
 
@@ -821,7 +821,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 				} else {
 					// need to give this entry a chance to see if one of its children is focused
 					if (lEntry.setFocusOnChildEntry(entry)) {
-						lEntry.mHasFocus = true;
+						lEntry.hasFocus(true);
 
 						screenManager.contextHintManager().contextHintProvider(lEntry);
 
@@ -829,7 +829,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 						mSelectedLayoutIndex = i;
 						mSelectedEntryIndex = j;
 					} else {
-						lEntry.mHasFocus = false;
+						lEntry.hasFocus(false);
 					}
 				}
 			}
@@ -845,7 +845,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 				final var IsDesiredEntry = lEntry == entry;
 
 				if (IsDesiredEntry) {
-					lEntry.mHasFocus = true;
+					lEntry.hasFocus(true);
 
 					screenManager.contextHintManager().contextHintProvider(lEntry);
 
@@ -856,7 +856,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 				} else {
 					// need to give this entry a chance to see if one of its children is focused
 					if (lEntry.setFocusOnChildEntry(entry)) {
-						lEntry.mHasFocus = true;
+						lEntry.hasFocus(true);
 
 						screenManager.contextHintManager().contextHintProvider(lEntry);
 
@@ -864,7 +864,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 						mRightColumnSelectedEntryIndex = i;
 						mRightColumnSelectedEntryIndex = j;
 					} else {
-						lEntry.mHasFocus = false;
+						lEntry.hasFocus(false);
 					}
 				}
 			}
