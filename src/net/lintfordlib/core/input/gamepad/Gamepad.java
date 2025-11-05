@@ -21,7 +21,7 @@ public class Gamepad {
 	/**
 	 * Setting this to true will skip the SDL gamepad mapping (if available) and use the physical mapping that the user provides via the controller option screen.
 	 */
-	public static final boolean FORCE_CUSTOM_MAPPING = true;
+	public static final boolean FORCE_CUSTOM_MAPPING = false;
 
 	public static final String FileExtension = ".ini";
 	public static final String GamepadsSubDir = "gamepads";
@@ -326,6 +326,7 @@ public class Gamepad {
 		final var numStates = GamepadInputCodes.NUM_BUTTONS;
 		for (int i = 0; i < numStates; i++) {
 			final var codeToCheck = 100 + i;
+						
 			if (isStateChanged(codeToCheck)) {
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Mapped Button Pressed detected: Button index : " + i);
 

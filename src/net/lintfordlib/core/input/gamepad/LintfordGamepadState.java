@@ -74,19 +74,19 @@ public class LintfordGamepadState extends IniFile {
 	public void setupStateObjects() {
 
 		mGamepadInputs.clear();
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH, 		new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST, 			new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_WEST, 			new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_NORTH, 		new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH, 			new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST, 				new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_WEST, 				new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_NORTH, 			new GamepadInputMap());
 		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT_SHOULDER, 	new GamepadInputMap());
 		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT_SHOULDER, 	new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_BACK, 			new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_START, 		new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_GUIDE, 		new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_UP, 			new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN, 			new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT, 			new GamepadInputMap());
-		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT, 		new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_BACK, 				new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_START, 			new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_GUIDE, 			new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_UP, 				new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN, 				new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT, 				new GamepadInputMap());
+		mGamepadInputs.put(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT, 			new GamepadInputMap());
 
 	}
 	// @formatter:on

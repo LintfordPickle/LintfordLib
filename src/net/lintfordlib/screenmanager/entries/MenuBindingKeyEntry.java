@@ -440,7 +440,6 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 
 	@Override
 	public boolean gamepadButtonBindingInput(int lintfordGamepadButtonId) {
-
 		if (mIsBindingInput && isCoolDownElapsed()) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind button " + mInputAction.eventActionUid() + " called to " + lintfordGamepadButtonId);
 

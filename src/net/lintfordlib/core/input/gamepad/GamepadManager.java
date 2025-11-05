@@ -483,24 +483,22 @@ public class GamepadManager extends GLFWJoystickCallback {
 
 				gamepad = createNewInputGamepad(controllerIndex, controllerGuid, controllerName);
 			}
+			gamepad.initialize();
 
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " is present (" + gamepad.name() + ")");
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller guid:" + controllerGuid);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Buttons: " + gamepad.numButtons());
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Num Axis: " + gamepad.numAxis());
 
-			gamepad.initialize();
-
-			final var lNumListeners = mGamepadListeners.size();
-			for (var i = 0; i < lNumListeners; i++) {
-				mGamepadListeners.get(i).onGamepadConnected(gamepad);
-			}
-
 			if (gamepad.isGamepadMappingAvailable())
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " has gamepad mappings available");
 			else
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Controller " + controllerIndex + " has no gamepad mappings available");
 
+			final var lNumListeners = mGamepadListeners.size();
+			for (var i = 0; i < lNumListeners; i++) {
+				mGamepadListeners.get(i).onGamepadConnected(gamepad);
+			}
 		}
 	}
 

@@ -53,7 +53,7 @@ public class GamepadInputMap {
 	public void mapToButton(int buttonIndex) {
 		mMappedToType = GameInputType.button;
 		mMappedTo = buttonIndex;
-
+		mMappedToSignum = 1.f;
 	}
 
 	public void mapToAxis(int axisIndex, float signum) {
@@ -140,13 +140,50 @@ public class GamepadInputMap {
 	}
 
 	public void updateSdl(GLFWGamepadState gamepadState) {
+		final var buttons = gamepadState.buttons();
+		final var axisBuffer = gamepadState.axes();
 
-		// TODO: update input state (sdl)
+		switch (mMappedToType) {
+		default:
+		case None:
+			mValue = mDefaultValue;
+
+			break;
+
+		case button:
+			final var mappedToButtonIndex = mappedTo();
+			if (mappedToButtonIndex == NO_MAPPING)
+				return;
+
+			if (mappedToButtonIndex < 0 || mappedToButtonIndex >= buttons.limit())
+				return; // maybe set the mappedToButtonIndex back to NO_MAPPING?
+
+			mValue = buttons.get(mappedToButtonIndex);
+
+			break;
+
+		case axis:
+			final var mappedToAxisIndex = mappedTo();
+			if (mappedToAxisIndex == NO_MAPPING)
+				return;
+
+			if (mappedToAxisIndex < 0 || mappedToAxisIndex >= axisBuffer.limit())
+				return; // maybe set the mappedToButtonIndex back to NO_MAPPING?
+
+			final var axisValue = axisBuffer.get(mappedToAxisIndex);
+
+			if (Math.abs(axisValue) < 0.02f) {
+				mValue = 0.f;
+				return;
+			}
+
+			mValue = Math.signum(axisValue);
+			break;
+		}
 
 	}
 
 	public void updateRaw(ByteBuffer buttons, FloatBuffer axisBuffer) {
-		// TODO: update input state (raw)
 		switch (mMappedToType) {
 		default:
 		case None:
