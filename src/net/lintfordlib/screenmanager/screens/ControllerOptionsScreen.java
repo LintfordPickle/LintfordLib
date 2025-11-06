@@ -1,5 +1,6 @@
 package net.lintfordlib.screenmanager.screens;
 
+import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.gamepad.Gamepad;
@@ -293,6 +294,40 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		populateActiveGamepads();
 	}
 
+	@Override
+	public void handleInput(LintfordCore core) {
+		super.handleInput(core);
+
+		if (mActiveGamepad == null)
+			return;
+
+		// This needs to be in here so that we can poll only the currently selected gamepad, which the buttons don't know.
+		handleInputEntyState(mActiveGamepad, buttonWestEntry);
+		handleInputEntyState(mActiveGamepad, buttonNorthEntry);
+		handleInputEntyState(mActiveGamepad, buttonSouthEntry);
+		handleInputEntyState(mActiveGamepad, buttonEastEntry);
+
+		handleInputEntyState(mActiveGamepad, duButtonEntry);
+		handleInputEntyState(mActiveGamepad, ddButtonEntry);
+		handleInputEntyState(mActiveGamepad, dlButtonEntry);
+		handleInputEntyState(mActiveGamepad, drButtonEntry);
+
+		handleInputEntyState(mActiveGamepad, selectButtonEntry);
+		handleInputEntyState(mActiveGamepad, startButtonEntry);
+
+		handleInputEntyState(mActiveGamepad, ltriggerButtonEntry);
+		handleInputEntyState(mActiveGamepad, rtriggerButtonEntry);
+	}
+
+	private void handleInputEntyState(Gamepad gamepad, MenuGamepadInputMapEntry entry) {
+		if (entry == null)
+			return;
+
+		final var gamepadInput = gamepad.state.getState(entry.inputCodeUid);
+		entry.isInputOn(gamepadInput.isDown());
+
+	}
+
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
@@ -399,21 +434,21 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		mActiveGamepad = activeGamepad;
 
 		if (mActiveGamepad == null) {
-			buttonWestEntry.activeControllerMap(null);
-			buttonNorthEntry.activeControllerMap(null);
-			buttonSouthEntry.activeControllerMap(null);
-			buttonEastEntry.activeControllerMap(null);
+			buttonWestEntry.activeGamepad(null);
+			buttonNorthEntry.activeGamepad(null);
+			buttonSouthEntry.activeGamepad(null);
+			buttonEastEntry.activeGamepad(null);
 
-			duButtonEntry.activeControllerMap(null);
-			ddButtonEntry.activeControllerMap(null);
-			dlButtonEntry.activeControllerMap(null);
-			drButtonEntry.activeControllerMap(null);
+			duButtonEntry.activeGamepad(null);
+			ddButtonEntry.activeGamepad(null);
+			dlButtonEntry.activeGamepad(null);
+			drButtonEntry.activeGamepad(null);
 
-			ltriggerButtonEntry.activeControllerMap(null);
-			rtriggerButtonEntry.activeControllerMap(null);
+			ltriggerButtonEntry.activeGamepad(null);
+			rtriggerButtonEntry.activeGamepad(null);
 
-			selectButtonEntry.activeControllerMap(null);
-			startButtonEntry.activeControllerMap(null);
+			selectButtonEntry.activeGamepad(null);
+			startButtonEntry.activeGamepad(null);
 
 			mSdlMappingAvailable.isChecked(false);
 
@@ -429,21 +464,21 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 			mUseCustomBindings.readOnly(true);
 		}
 
-		buttonWestEntry.activeControllerMap(mActiveGamepad.state);
-		buttonNorthEntry.activeControllerMap(mActiveGamepad.state);
-		buttonSouthEntry.activeControllerMap(mActiveGamepad.state);
-		buttonEastEntry.activeControllerMap(mActiveGamepad.state);
+		buttonWestEntry.activeGamepad(mActiveGamepad);
+		buttonNorthEntry.activeGamepad(mActiveGamepad);
+		buttonSouthEntry.activeGamepad(mActiveGamepad);
+		buttonEastEntry.activeGamepad(mActiveGamepad);
 
-		duButtonEntry.activeControllerMap(mActiveGamepad.state);
-		ddButtonEntry.activeControllerMap(mActiveGamepad.state);
-		dlButtonEntry.activeControllerMap(mActiveGamepad.state);
-		drButtonEntry.activeControllerMap(mActiveGamepad.state);
+		duButtonEntry.activeGamepad(mActiveGamepad);
+		ddButtonEntry.activeGamepad(mActiveGamepad);
+		dlButtonEntry.activeGamepad(mActiveGamepad);
+		drButtonEntry.activeGamepad(mActiveGamepad);
 
-		selectButtonEntry.activeControllerMap(mActiveGamepad.state);
-		startButtonEntry.activeControllerMap(mActiveGamepad.state);
+		selectButtonEntry.activeGamepad(mActiveGamepad);
+		startButtonEntry.activeGamepad(mActiveGamepad);
 
-		ltriggerButtonEntry.activeControllerMap(mActiveGamepad.state);
-		rtriggerButtonEntry.activeControllerMap(mActiveGamepad.state);
+		ltriggerButtonEntry.activeGamepad(mActiveGamepad);
+		rtriggerButtonEntry.activeGamepad(mActiveGamepad);
 	}
 
 	@Override

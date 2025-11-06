@@ -22,6 +22,7 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// --------------------------------------
 
 	public static final int MAX_NUM_CONTROLLERS = GLFW.GLFW_JOYSTICK_LAST;
+	public static final int NO_GAMEPAD_MAPPING = -1;
 
 	// --------------------------------------
 	// Variables
@@ -37,6 +38,7 @@ public class GamepadManager extends GLFWJoystickCallback {
 	private final List<IGamepadListener> mGamepadListeners = new ArrayList<>();
 
 	// If either of these are set, then there is something waiting on the gamepad for input - so don't process other gamepad input ?
+	private int mMappingGamepadIndex;
 	private IGamepadInputMappingCallback mGamepadInputMappingCallback;
 	private IGamepadInputBindingCallback mGamepadInputBindingCallback;
 
@@ -69,10 +71,11 @@ public class GamepadManager extends GLFWJoystickCallback {
 		return mActiveGamepads;
 	}
 
-	public void startGamepadMappingCapture(IGamepadInputMappingCallback gamepadMappingCallback) {
+	public void startGamepadMappingCapture(IGamepadInputMappingCallback gamepadMappingCallback, int gamepadIndex) {
 		if (mGamepadInputMappingCallback != null || mGamepadInputBindingCallback != null)
 			return; // cannot be capturing two things at a time.
 
+		mMappingGamepadIndex = gamepadIndex;
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "Starting gamepad mapping capture.");
 
 		mGamepadInputMappingCallback = gamepadMappingCallback;
@@ -100,6 +103,8 @@ public class GamepadManager extends GLFWJoystickCallback {
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "Stopping gamepad capture");
 
+		mMappingGamepadIndex = NO_GAMEPAD_MAPPING;
+
 		mGamepadInputMappingCallback = null;
 		mGamepadInputBindingCallback = null;
 		mGamepadCaptureCooldownMs = 300;
@@ -110,6 +115,8 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// --------------------------------------
 
 	public GamepadManager() {
+		mMappingGamepadIndex = NO_GAMEPAD_MAPPING;
+
 	}
 
 	// --------------------------------------
@@ -145,36 +152,38 @@ public class GamepadManager extends GLFWJoystickCallback {
 	}
 
 	private void WaitForRawGamepadInput(LintfordCore core) { // Mapping logic
-		final var numConnectedGamepads = mUpdateGamepadList.size();
-		for (int i = 0; i < numConnectedGamepads; i++) {
-			final var gamepad = mUpdateGamepadList.get(i);
-			if (gamepad.isActive() == false)
-				continue;
 
-			final var buttonResult = gamepad.checkForRawButtonInput();
-			if (buttonResult != -1) {
-				final var accepted = mGamepadInputMappingCallback.gamepadButtonInput(buttonResult);
-				if (!accepted)
-					continue;
+		final var gamepad = mGamepads.get(mMappingGamepadIndex);
 
-				stopGamepadCapture();
+		if (gamepad == null || !gamepad.isActive()) {
+			stopGamepadCapture();
+			return;
+		}
+
+		final var buttonResult = gamepad.checkForRawButtonInput();
+		if (buttonResult != -1) {
+			final var accepted = mGamepadInputMappingCallback.gamepadButtonInput(buttonResult);
+			if (!accepted)
 				return;
-			}
 
-			final var axisResult = gamepad.checkForAxisInput();
-			if (axisResult != null) {
-				final var accepted = mGamepadInputMappingCallback.gamepadAxisInput(axisResult.rawAxisId, Math.signum(axisResult.value));
-				if (!accepted)
-					continue;
+			stopGamepadCapture();
+			return;
+		}
 
-				stopGamepadCapture();
+		final var axisResult = gamepad.checkForAxisInput();
+		if (axisResult != null) {
+			final var accepted = mGamepadInputMappingCallback.gamepadAxisInput(axisResult.rawAxisId, Math.signum(axisResult.value));
+			if (!accepted)
 				return;
-			}
+
+			stopGamepadCapture();
+			return;
 		}
 	}
 
 	// These get bound to GamepadInputCodes - not to the raw/sdl input
 	private void WaitForMappedGamepadInput(LintfordCore core) { // TODO: binding logic
+
 		final var numConnectedGamepads = mUpdateGamepadList.size();
 		for (int i = 0; i < numConnectedGamepads; i++) {
 			final var gamepad = mUpdateGamepadList.get(i);

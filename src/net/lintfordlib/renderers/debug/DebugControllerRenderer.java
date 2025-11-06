@@ -128,7 +128,7 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 			fontUnit.drawText(typeText, hudBounds.right() - 10 - typeTextWidth, hudBounds.top() + 10 + yPos, 1f, 1f);
 			final var numButtons = mActiveGamepad.numButtons();
 			for (int i = 0; i < numButtons; i++) {
-				final var buttonState = mActiveGamepad.getSdlButtonState(i, GLFW.GLFW_PRESS);
+				final var buttonState = mActiveGamepad.debug_getSdlButtonState(i, GLFW.GLFW_PRESS);
 
 				final var buttonName = InputHelper.getGlfwPrintableKeyForGamepadButtons(i);
 				final var buttonText = buttonName + " : " + buttonState;
@@ -139,7 +139,7 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 
 			final var numAxis = mActiveGamepad.numAxis();
 			for (int i = 0; i < numAxis; i++) {
-				final var axisState = mActiveGamepad.getSdlAxisValue(i);
+				final var axisState = mActiveGamepad.debug_getSdlAxisValue(i);
 
 				final var buttonName = InputHelper.getGlfwPrintableKeyForGamepadAxis(i);
 				final var buttonText = String.format("%s : %.2f", buttonName, axisState);
@@ -156,7 +156,7 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 
 			final var numButtons = mActiveGamepad.numButtons();
 			for (int i = 0; i < numButtons; i++) {
-				final var buttonState = mActiveGamepad.getPhysicalButtonState(i, GLFW.GLFW_PRESS);
+				final var buttonState = mActiveGamepad.debug_getPhysicalButtonState(i, GLFW.GLFW_PRESS);
 
 				final var buttonName = "button: " + i;
 				final var buttonText = buttonName + " : " + buttonState;
@@ -167,7 +167,7 @@ public class DebugControllerRenderer extends BaseRenderer implements IGamepadLis
 
 			final var numAxis = mActiveGamepad.numAxis();
 			for (int i = 0; i < numAxis; i++) {
-				final var axisState = mActiveGamepad.getPhysicalAxisValue(i);
+				final var axisState = mActiveGamepad.debug_getPhysicalAxisValue(i);
 
 				final var buttonName = "axis: " + i;
 				final var buttonText = String.format("%s : %.2f ", buttonName, axisState);

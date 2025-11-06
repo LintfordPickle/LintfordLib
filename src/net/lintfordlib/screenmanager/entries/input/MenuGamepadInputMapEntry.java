@@ -9,8 +9,10 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.IGamepadInputMappingCallback;
+import net.lintfordlib.core.input.gamepad.Gamepad;
 import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.core.input.gamepad.LintfordGamepadState;
+import net.lintfordlib.screenmanager.ConstantsScreenManagerAudio;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -28,9 +30,11 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 	// Variables
 	// --------------------------------------
 
-	// TODO: This is the target LintfordInputCode we are trying to map to with a physical button or axis
-	private final int inputCodeUid;
-	private LintfordGamepadState mInputGamepadCustomMap;
+	/**
+	 * This is the target LintfordInputCode we are trying to map to with a physical button or axis
+	 */
+	public final int inputCodeUid;
+
 	private IBindingCallback mBindingCallback;
 
 	public void setBindingCallback(IBindingCallback listener) {
@@ -59,6 +63,8 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 	public float spritePositionH;
 	public float mFlashTimer;
 
+	private Gamepad mActiveGamepad;
+
 	public void setSpriteEnabled(boolean enabled) {
 		spriteEnabled = enabled;
 	}
@@ -75,12 +81,15 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		spritePositionH = h;
 	}
 
-	public void activeControllerMap(LintfordGamepadState inputGamepadCustomMap) {
-		mInputGamepadCustomMap = inputGamepadCustomMap;
+	public void activeGamepad(Gamepad activeGamepad) {
+		mActiveGamepad = activeGamepad;
 	}
 
 	public LintfordGamepadState activeControllerMap() {
-		return mInputGamepadCustomMap;
+		if (mActiveGamepad == null)
+			return null;
+
+		return mActiveGamepad.state;
 	}
 
 	// --------------------------------------
@@ -136,7 +145,42 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
-		return super.onHandleMouseInput(core);
+
+		if (!mIsActive)
+			return false;
+
+		if (mParentScreen == null || !mEnabled || mReadOnly)
+			return false;
+
+		if (!core.input().mouse().isMouseMenuSelectionEnabled()) {
+			mIsMouseOver = false;
+			return false;
+		}
+
+		if (!intersectsAA(core.HUD().getMouseCameraSpace()) || !core.input().mouse().isMouseOverThisComponent(hashCode())) {
+			mIsMouseOver = false;
+			mAnimation.stop();
+			return false;
+		}
+
+		if (!mIsMouseOver) {
+			mAnimation.start();
+			mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_OVER);
+		}
+
+		mIsMouseOver = true;
+
+		if (!mHasFocus && mCanHaveFocus)
+			mParentScreen.setFocusOnEntry(this);
+
+		if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+			if (handleCaptureNewMapping(core)) {
+				return true;
+			}
+		}
+
+		return false;
+		// return super.onHandleMouseInput(core);
 	}
 
 	private boolean handleCaptureNewMapping(LintfordCore core) {
@@ -147,7 +191,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 		final var bindingToInputName = String.format("'%s' (%d)", GamepadInputCodes.getLintfordCodeName(inputCodeUid), inputCodeUid);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "changing gamepad input map for " + bindingToInputName + " ... ");
-		core.input().gamepads().startGamepadMappingCapture(this);
+		core.input().gamepads().startGamepadMappingCapture(this, mActiveGamepad.index());
 
 		mIsBindingInput = true;
 		hasFocus(true);
@@ -231,9 +275,6 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		final var targetInputCodetext = GamepadInputCodes.getLintfordCodeName(inputCodeUid);
 		fontUnit.drawText(targetInputCodetext, parentScreenOffset.x + left(), parentScreenOffset.y + top(), .9f, .9f * mScale);
 
-		if (mHasFocus && mEnabled)
-			renderHighlight(core, screen, true, textureBatch);
-
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
 
 		// TODO: Need to get whatever is currently mapped on the active gamepad to our inputCodeUid
@@ -245,8 +286,10 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 			}
 
-		} else if (mInputGamepadCustomMap != null) {
-			final var gamepadInputMap = mInputGamepadCustomMap.getInputMapping(inputCodeUid);
+		} else if (mActiveGamepad != null) {
+			final var state = mActiveGamepad.state;
+
+			final var gamepadInputMap = state.getInputMapping(inputCodeUid);
 			final var mappedToType = gamepadInputMap.mappedToType();
 			final var mappedToSignum = gamepadInputMap.mappedToSignum();
 			final var mappedToIndex = gamepadInputMap.mappedTo();
@@ -268,6 +311,9 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 		textureBatch.end();
 		fontUnit.end();
+
+		if (mHasFocus && mEnabled)
+			renderHighlight(core, screen, true, textureBatch);
 
 		if (mHasFocus & !mIsBindingInput) {
 			// Set which hint icon to render
@@ -315,7 +361,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 			final var inputName = String.format("'%s' (%d)", GamepadInputCodes.getLintfordCodeName(inputCodeUid), inputCodeUid);
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind " + inputName + " mapped to " + rawButtonUid);
 
-			mInputGamepadCustomMap.setButtonMapping(rawButtonUid, inputCodeUid);
+			mActiveGamepad.state.setButtonMapping(rawButtonUid, inputCodeUid);
 			endBinding();
 
 			return true;
@@ -335,7 +381,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 			// I want to set <inputCodeUid> to use <rawAxisUid, signum>
 
-			mInputGamepadCustomMap.setAxisMapping(rawAxisUid, signum, inputCodeUid);
+			mActiveGamepad.state.setAxisMapping(rawAxisUid, signum, inputCodeUid);
 			endBinding();
 
 			return true;
@@ -344,4 +390,8 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		return false;
 	}
 
+	@Override
+	public void mappingCancelled() {
+		endBinding();
+	}
 }

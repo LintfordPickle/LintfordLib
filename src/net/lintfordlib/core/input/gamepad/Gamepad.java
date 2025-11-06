@@ -110,8 +110,12 @@ public class Gamepad {
 
 		mControllerName = name;
 
-		mIsGamepadMappingAvailable = !FORCE_CUSTOM_MAPPING && GLFW.glfwJoystickIsGamepad(mJoystickIndex);
 		state = new LintfordGamepadState(gamepadMappingFileName, name, guid);
+		mIsGamepadMappingAvailable = !FORCE_CUSTOM_MAPPING && GLFW.glfwJoystickIsGamepad(mJoystickIndex);
+		if (state.isEmpty() && mIsGamepadMappingAvailable) {
+			System.out.println("Sdl Mapping is available for the connected controller. Making it happen ...");
+			state.createSdlMapping();
+		}
 	}
 
 	// --------------------------------------
@@ -174,7 +178,7 @@ public class Gamepad {
 	// Methods
 	// --------------------------------------
 
-	public float getSdlAxisValue(int glfwAxisIndex) {
+	private float getSdlAxisValue(int glfwAxisIndex) {
 		if (mGLFWGamepadState == null)
 			throw new RuntimeException("Error polling sdl axis state (GLFWGamepadState is null)!");
 
@@ -189,7 +193,7 @@ public class Gamepad {
 	 * 
 	 * @param glfwButtonIndex The index of the axis to check. Must be 0 > glfwAxisIndex >= mNumButtons.
 	 */
-	public float getPhysicalAxisValue(int axisIndex) {
+	private float getPhysicalAxisValue(int axisIndex) {
 		if (axisIndex < 0)
 			return 0.f;
 
@@ -202,7 +206,7 @@ public class Gamepad {
 		return mGamepadAxes.get(axisIndex);
 	}
 
-	public boolean getSdlButtonState(int glfwButtonIndex, int glfwButtonState) {
+	private boolean getSdlButtonState(int glfwButtonIndex, int glfwButtonState) {
 		if (glfwButtonIndex < 0)
 			return false;
 
@@ -217,7 +221,7 @@ public class Gamepad {
 		return mappedButtons.get(glfwButtonIndex) == glfwButtonState;
 	}
 
-	public boolean getPhysicalButtonState(int rawButtonIndex, int rawStateToCheckAgainst) {
+	private boolean getPhysicalButtonState(int rawButtonIndex, int rawStateToCheckAgainst) {
 		if (rawButtonIndex < 0)
 			return false;
 
@@ -326,7 +330,7 @@ public class Gamepad {
 		final var numStates = GamepadInputCodes.NUM_BUTTONS;
 		for (int i = 0; i < numStates; i++) {
 			final var codeToCheck = 100 + i;
-						
+
 			if (isStateChanged(codeToCheck)) {
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "Mapped Button Pressed detected: Button index : " + i);
 
@@ -420,6 +424,25 @@ public class Gamepad {
 	private void clearTempStateList() {
 		tempStateMap.clear();
 		mIsCheckedForBindCode = false;
+	}
+
+	// Debug access
+	// ---------------------------------
+
+	public float debug_getSdlAxisValue(int glfwAxisIndex) {
+		return getSdlAxisValue(glfwAxisIndex);
+	}
+
+	public float debug_getPhysicalAxisValue(int axisIndex) {
+		return getPhysicalAxisValue(axisIndex);
+	}
+
+	public boolean debug_getSdlButtonState(int glfwButtonIndex, int glfwButtonState) {
+		return getSdlButtonState(glfwButtonIndex, glfwButtonState);
+	}
+
+	public boolean debug_getPhysicalButtonState(int glfwButtonIndex, int glfwButtonState) {
+		return getPhysicalButtonState(glfwButtonIndex, glfwButtonState);
 	}
 
 }

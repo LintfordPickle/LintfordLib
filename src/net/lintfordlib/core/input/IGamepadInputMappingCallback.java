@@ -13,4 +13,6 @@ public interface IGamepadInputMappingCallback {
 
 	public boolean gamepadAxisInput(int rawAxisId, float value);
 
+	public void mappingCancelled();
+
 }

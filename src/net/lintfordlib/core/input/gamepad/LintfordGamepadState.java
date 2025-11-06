@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWGamepadState;
 
 import net.lintfordlib.core.debug.Debug;
@@ -169,6 +170,24 @@ public class LintfordGamepadState extends IniFile {
 		return buttonInput;
 	}
 
+	public void createSdlMapping() {
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_A);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_B);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_WEST).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_X);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_NORTH).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_Y);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT_SHOULDER).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT_SHOULDER).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_BACK).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_BACK);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_START).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_START);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_GUIDE).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_GUIDE);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_UP).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT);
+		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT);
+		
+		saveConfig();
+	}
+	
 	// CONFIG ---
 
 	public static final int INI_SAVE_TYPE_PREFIX_BUTTON = 0;
@@ -184,8 +203,8 @@ public class LintfordGamepadState extends IniFile {
 
 		if (isEmpty()) {
 
-			// If no file previously existed, just save the defaults to a new file.
-			saveConfig();
+			// We use isEmpty from the GamepadManager to map default keys (depending on whether sdl-mapping is available or not).
+			// saveConfig();
 
 		} else {
 
@@ -261,5 +280,4 @@ public class LintfordGamepadState extends IniFile {
 
 		super.saveConfig();
 	}
-
 }
