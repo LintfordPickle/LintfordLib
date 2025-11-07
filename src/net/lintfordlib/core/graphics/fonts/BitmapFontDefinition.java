@@ -26,6 +26,7 @@ class BitmapFontDefinition {
 	protected int mEntityGroupUid;
 
 	/** The height of the largest glyph is taken to be the height of the font. */
+	@SerializedName(value = "fontHeight")
 	protected float mFontHeight;
 
 	/** The unique name given to this {@link BitmapFontDefinition}. */
@@ -167,8 +168,9 @@ class BitmapFontDefinition {
 			final var lNewY = lSpriteFrame.y() + lSpriteFrame.height();
 			lSpriteFrame.y(lTextureHeight - lNewY);
 
-			if (lSpriteFrame.height() > lFontHeight)
-				lFontHeight = (int) lSpriteFrame.height();
+			// don't override the fontheight from the data file
+//			if (lSpriteFrame.height() > lFontHeight)
+//				lFontHeight = (int) lSpriteFrame.height();
 		}
 
 		if (mFontHeight == 0) {

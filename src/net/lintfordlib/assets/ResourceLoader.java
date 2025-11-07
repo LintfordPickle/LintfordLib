@@ -114,7 +114,7 @@ public abstract class ResourceLoader extends Thread {
 
 		_loadOnBackgroundThread = useBackgroundThread;
 
-		setName("Background Resource Loader Thread");
+		setName("Background Thread");
 		currentStatusMessage("Loading");
 	}
 

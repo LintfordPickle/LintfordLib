@@ -1,0 +1,23 @@
+{
+  "outputDataFilename": "..\\..\\res\\res\\fonts\\fontCoreText.json",
+  "outputImageFilename": "..\\..\\res\\res\\textures\\fonts\\textureFontCoreText.png",
+  "workingDirectory": "CoreText",
+  "textureName": "TEXTURE_FONT_CORE_TEXT",
+  "textureFilepath": "/res/textures/fonts/textureFontCoreText.png",
+  "sortMode": "Area",
+  "borderPadding": 0,
+  "shapeOutlines": false,
+  "crop": false,
+  "trim": false,
+  "allowRotations": false,
+  "spritePadding": 0,
+  "textureWidthMax": 256,
+  "textureWidthActual": 256,
+  "textureHeightMax": 128,
+  "textureHeightActual": 128,
+  "forcePoTTextures": true,
+  "autoSizeTexture": false,
+  "itemFilenames": [
+    "D:\\dev\\java\\ludumdare\\58 - Collector\\projects\\LintfordLib\\raw\\fonts\\CoreText\\*.*"
+  ]
+}
