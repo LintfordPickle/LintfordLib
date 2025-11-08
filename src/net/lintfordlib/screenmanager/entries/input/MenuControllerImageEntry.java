@@ -23,7 +23,6 @@ public class MenuControllerImageEntry extends MenuEntry {
 		super(screenManager, parentScreen);
 
 		mCanHaveFocus = false;
-
 	}
 
 	// --------------------------------------
@@ -35,8 +34,10 @@ public class MenuControllerImageEntry extends MenuEntry {
 		final var textureBatch = core.sharedResources().uiSpriteBatch();
 		final var parentScreenAlpha = mParentScreen.screenColor.a;
 
+		final var alpha = enabled() ? 1.f : 0.15f;
+
 		textureBatch.setColorWhite();
-		textureBatch.setColorA(parentScreenAlpha);
+		textureBatch.setColorA(parentScreenAlpha * alpha);
 		textureBatch.begin(core.HUD());
 
 		final var controllerFrame = mCoreSpritesheet.getSpriteFrame(CoreTextureNames.TEXTURE_CONTROLLERBASE);

@@ -1,6 +1,7 @@
 package net.lintfordlib.screenmanager.screens;
 
 import net.lintfordlib.core.LintfordCore;
+import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.gamepad.Gamepad;
@@ -35,6 +36,7 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 	public static final int BUTTON_SAVE = 11;
 
 	public static final int BUTTON_AVAILABLE_CONTROLLERS = 20;
+	public static final int BUTTON_RESET_SDL = 21;
 
 	// --------------------------------------
 	// Variables
@@ -47,7 +49,7 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 	private GamepadManager mGamepadManager;
 	private MenuEnumEntryIndexed<Gamepad> mAvailableControllers;
 	private MenuToggleEntry mSdlMappingAvailable;
-	private MenuToggleEntry mUseCustomBindings;
+	private MenuEntry mResetSdlMapping;
 
 	private Gamepad mActiveGamepad; // Tracks the gamepad we are currently mapping (using the enum entry).
 	private MenuEntry mBindingEntry; // Used for tracking the binding process
@@ -67,6 +69,8 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 
 	private MenuGamepadInputMapEntry ltriggerButtonEntry;
 	private MenuGamepadInputMapEntry rtriggerButtonEntry;
+
+	private MenuControllerImageEntry mControllerImageEntry;
 
 	// --------------------------------------
 	// Constructor
@@ -96,13 +100,21 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		mSdlMappingAvailable = new MenuToggleEntry(screenManager, this, "SDL Mapping Available");
 		mSdlMappingAvailable.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 		mSdlMappingAvailable.readOnly(true);
+		mSdlMappingAvailable.enabled(false);
 
-		mUseCustomBindings = new MenuToggleEntry(screenManager, this, "Custom Bindings");
-		mUseCustomBindings.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+		mResetSdlMapping = new MenuEntry(screenManager, this, "Reset Mapping");
+		mResetSdlMapping.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
+		mResetSdlMapping.desiredWidth(200);
+		mResetSdlMapping.enabled(false);
+		mResetSdlMapping.registerClickListener(this, BUTTON_RESET_SDL);
+
+		final var horinzonalEntryGroup = new HorizontalEntryGroup(screenManager, this);
+		horinzonalEntryGroup.addEntry(mSdlMappingAvailable);
+		horinzonalEntryGroup.addEntry(mResetSdlMapping);
+		horinzonalEntryGroup.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		controllerSelectionLayout.addMenuEntry(mAvailableControllers);
-		controllerSelectionLayout.addMenuEntry(mSdlMappingAvailable);
-		controllerSelectionLayout.addMenuEntry(mUseCustomBindings);
+		controllerSelectionLayout.addMenuEntry(horinzonalEntryGroup);
 
 		// Mapping Section
 
@@ -114,8 +126,6 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		mmInputMapFloatingLayout.layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
 		mmInputMapFloatingLayout.marginLeft(100);
 		mmInputMapFloatingLayout.marginRight(100);
-
-		createControllerSection(mmInputMapFloatingLayout);
 
 		final var lFooterList = new HorizontalLayout(this);
 		lFooterList.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
@@ -132,6 +142,8 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		footerBar.addEntry(mSaveButton);
 
 		lFooterList.addMenuEntry(footerBar);
+
+		createControllerSection(mmInputMapFloatingLayout);
 
 		addLayout(controllerSelectionLayout);
 		addLayout(mmInputMapFloatingLayout);
@@ -289,7 +301,8 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		layout.addMenuEntry(startButtonEntry);
 
 		// buttons are rendered from last to first, so add the base last.
-		layout.addMenuEntry(new MenuControllerImageEntry(screenManager, this));
+		mControllerImageEntry = new MenuControllerImageEntry(screenManager, this);
+		layout.addMenuEntry(mControllerImageEntry);
 
 		populateActiveGamepads();
 	}
@@ -343,7 +356,13 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		case BUTTON_SAVE:
 			if (mActiveGamepad != null) {
 				mActiveGamepad.state.saveConfig();
+				exitScreen();
 			}
+			break;
+
+		case BUTTON_RESET_SDL:
+			resetSdlMapping();
+
 			break;
 		}
 	}
@@ -387,6 +406,8 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 			mAvailableControllers.addItem(mAvailableControllers.new MenuEnumEntryItem("No Controllers Detected", null));
 			setActiveGamepad(null);
 
+			setEnabledStateOfButtons(false);
+
 		} else {
 			for (int i = 0; i < numConnectedGamepads; i++) {
 				final var gamepad = connectedGamepads.get(i);
@@ -398,12 +419,37 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 					setActiveGamepad(gamepad);
 
 			}
+
+			setEnabledStateOfButtons(true);
+
 		}
 
 		// TODO: Iterate through the list and make sure the currently selected mActiveGamepad is still available.
 
 		mAvailableControllers.setButtonsEnabled(numConnectedGamepads > 1);
+	}
 
+	private void setEnabledStateOfButtons(boolean isEnabled) {
+		mSaveButton.enabled(isEnabled);
+		mResetSdlMapping.enabled(isEnabled);
+
+		buttonWestEntry.enabled(isEnabled);
+		buttonNorthEntry.enabled(isEnabled);
+		buttonSouthEntry.enabled(isEnabled);
+		buttonEastEntry.enabled(isEnabled);
+
+		duButtonEntry.enabled(isEnabled);
+		ddButtonEntry.enabled(isEnabled);
+		dlButtonEntry.enabled(isEnabled);
+		drButtonEntry.enabled(isEnabled);
+
+		selectButtonEntry.enabled(isEnabled);
+		startButtonEntry.enabled(isEnabled);
+
+		ltriggerButtonEntry.enabled(isEnabled);
+		rtriggerButtonEntry.enabled(isEnabled);
+
+		mControllerImageEntry.enabled(isEnabled);
 	}
 
 	@Override
@@ -458,10 +504,11 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		final var isSdlMappingAvailable = activeGamepad.isGamepadMappingAvailable();
 		if (isSdlMappingAvailable) {
 			mSdlMappingAvailable.isChecked(isSdlMappingAvailable);
-			mUseCustomBindings.readOnly(false);
+			mSdlMappingAvailable.enabled(false);
+			mResetSdlMapping.enabled(true);
 		} else {
-			mUseCustomBindings.isChecked(true);
-			mUseCustomBindings.readOnly(true);
+			mSdlMappingAvailable.enabled(false);
+			mResetSdlMapping.enabled(false);
 		}
 
 		buttonWestEntry.activeGamepad(mActiveGamepad);
@@ -516,6 +563,13 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 
 		mBindingEntry = entry;
 
+	}
+
+	private void resetSdlMapping() {
+		if (mActiveGamepad != null) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Resetting gamepad sdl mapping for : " + mActiveGamepad.GUID);
+			mActiveGamepad.state.createSdlMapping();
+		}
 	}
 
 }

@@ -62,6 +62,21 @@ public class HorizontalEntryGroup extends MenuEntry {
 		super.hasFocus(pNewValue);
 	}
 
+	// whether or not a collection of entries can have focus or not depends on the child entries..
+	@Override
+	public boolean canHaveFocus() {
+		final var numEntries = mChildEntries.size();
+		for (int i = 0; i < numEntries; i++) {
+			final var entry = mChildEntries.get(i);
+
+			if (entry.enabled() && entry.canHaveFocus())
+				return true;
+
+		}
+
+		return false;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -177,7 +192,7 @@ public class HorizontalEntryGroup extends MenuEntry {
 			final var lG = parentScreen().screenColor.g;
 			final var lB = parentScreen().screenColor.b;
 
-			Debug.debugManager().drawers().drawRectImmediate(pCore.gameCamera(), pScreen.screenPositionOffset().x + mX, pScreen.screenPositionOffset().y + mY, mW, mH, 0.5f * lR, 0.2f * lG, lB);
+			Debug.debugManager().drawers().drawRectImmediate(pCore.HUD(), pScreen.screenPositionOffset().x + mX, pScreen.screenPositionOffset().y + mY, mW, mH, 0.5f * lR, 0.2f * lG, lB);
 		}
 	}
 
@@ -325,21 +340,24 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 	private void updateEntries() {
 		// Here we will use the position given to us by the parent screen and use it
-		// to orientation our children (for now just horizontally).
+		// to orientate the child entries (for now just horizontally).
 		if (mChildEntries == null || mChildEntries.isEmpty())
 			return;
 
-		int lCount = mChildEntries.size();
-		float lTotalHeight = 0;
-		for (int i = 0; i < lCount; i++) {
-			if (mChildEntries.get(i).height() + mChildEntries.get(i).marginTop() * 2 > lTotalHeight) {
-				lTotalHeight = mChildEntries.get(i).height() + mChildEntries.get(i).marginTop() * 2;
+		int count = mChildEntries.size();
+		float totalHeight = 0;
+		for (int i = 0; i < count; i++) {
+
+			// TODO: potential need to think about the desired heights of the entries (which depends on the VerticalFillType).
+
+			if (mChildEntries.get(i).height() + mChildEntries.get(i).marginTop() * 2 > totalHeight) {
+				totalHeight = mChildEntries.get(i).height() + mChildEntries.get(i).marginTop() * 2;
 			}
 		}
 
 		// how much horizontal h_space can be *shared* and how much h_space should be pre-allocated
 		var takenSpace = 0.f;
-		for (int i = 0; i < lCount; i++) {
+		for (int i = 0; i < count; i++) {
 			final var lEntry = mChildEntries.get(i);
 			if (lEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE)
 				takenSpace += lEntry.desiredWidth();
@@ -350,20 +368,20 @@ public class HorizontalEntryGroup extends MenuEntry {
 
 		final float lHPadding = 0.f; // the padding of *this* control, that is, left and right
 		final float lHInnerSpacing = 0.f;
-		final float lHSpace = (mW - takenSpace) / lCount;
+		final float lHSpace = (mW - takenSpace) / count;
 
 		var neededWidth = lHPadding * 2.f;
-		for (int i = 0; i < lCount; i++) {
+		for (int i = 0; i < count; i++) {
 			final var lEntry = mChildEntries.get(i);
 			final var lEWidth = lEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE ? lEntry.desiredWidth() : lHSpace;
 			neededWidth += lEntry.marginLeft() + lEWidth + lEntry.marginRight();
-			if (i < lCount - 1)
+			if (i < count - 1)
 				neededWidth += lHInnerSpacing;
 		}
 
 		final var lCenterX = mX + mW / 2;
 		float lPosX = lCenterX - neededWidth / 2 + lHPadding;
-		for (int i = 0; i < lCount; i++) {
+		for (int i = 0; i < count; i++) {
 			final var lEntry = mChildEntries.get(i);
 
 			final var lEWidth = lEntry.horizontalFillType() == FILLTYPE.TAKE_DESIRED_SIZE ? lEntry.desiredWidth() : lHSpace;

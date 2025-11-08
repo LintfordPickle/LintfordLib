@@ -284,10 +284,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 		if (isEntryActive())
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -310,10 +310,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 		if (isEntryActive())
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -336,10 +336,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 		if (isEntryActive())
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -391,10 +391,10 @@ public abstract class DualMenuScreen extends MenuScreen {
 		if (isEntryActive())
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);

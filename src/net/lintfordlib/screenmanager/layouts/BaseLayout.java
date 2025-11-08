@@ -183,7 +183,18 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public boolean canHaveFocus() {
-		return mCanHaveFocus;
+
+		boolean atLeastOneChildCanHaveFocus = false;
+		final var numEntries = mMenuEntries.size();
+		for (int i = 0; i < numEntries; i++) {
+			final var entry = mMenuEntries.get(i);
+			if (entry.enabled() && entry.canHaveFocus()) {
+				atLeastOneChildCanHaveFocus = true;
+				break;
+			}
+		}
+
+		return atLeastOneChildCanHaveFocus && mCanHaveFocus;
 	}
 
 	public void canHaveFocus(boolean newValue) {
@@ -534,7 +545,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 	public void addMenuEntry(MenuEntry entryToAdd) {
 		// if (!mMenuEntries.contains(entryToAdd))
-			mMenuEntries.add(entryToAdd);
+		mMenuEntries.add(entryToAdd);
 	}
 
 	public void addMenuEntry(MenuEntry entryToAdd, int pos) {

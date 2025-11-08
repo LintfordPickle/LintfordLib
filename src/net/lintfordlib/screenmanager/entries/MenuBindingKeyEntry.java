@@ -258,9 +258,6 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			mIsDirty = false;
 		}
 
-		final var partWidth = width() / 3;
-		mKeyArea.set(x() + partWidth, y(), partWidth, height());
-		mGamepadArea.set(x() + partWidth * 2, y(), partWidth, height());
 	}
 
 	@Override
@@ -269,6 +266,11 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			return;
 
 		final var xoffset = screen.screenPositionOffset().x;
+		final var yoffset = screen.screenPositionOffset().y;
+
+		final var partWidth = width() / 3;
+		mKeyArea.set(xoffset + x() + partWidth, yoffset + y(), partWidth, height());
+		mGamepadArea.set(xoffset + x() + partWidth * 2, yoffset + y(), partWidth, height());
 
 		final var numBindColumns = 3;
 		final var columnWidth = width() / numBindColumns;
@@ -289,16 +291,20 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		if (mDrawBackground) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColor(entryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + mX, yoffset + mY, mW, mH, parentZDepth + .15f);
 			lSpriteBatch.end();
 
 		} else if (mHasFocus) {
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
 			lSpriteBatch.setColorA(.15f);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2, centerY() - mH / 2, 32, mH, parentZDepth + .15f);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() - mW / 2 + 32, centerY() - mH / 2, mW - 64, mH, parentZDepth + .15f);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, centerX() + mW / 2 - 32, centerY() - mH / 2, 32, mH, parentZDepth + .15f);
+
+			final var xx = xoffset + centerX() - mW / 2;
+			final var yy = yoffset + centerY() - mH / 2;
+
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx, yy, 32, mH, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx + 32, yy, mW - 64, mH, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + centerX() + mW / 2 - 32, yy, 32, mH, parentZDepth + .15f);
 			lSpriteBatch.end();
 		}
 
@@ -338,7 +344,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColor(lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f);
+			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + mX, yoffset + mY, mW, mH, parentZDepth + .15f);
 			lSpriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
@@ -355,9 +361,9 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		if (mHasFocus) {
 			mGamepadMenuIcon.lintfordInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH);
 			if (mIsKeyAreaSelected) {
-				drawGamepadIcon(core, lSpriteBatch, new Rectangle(column1X + columnWidth - 32, mY + mH - 16, 16, 16), 1.f);
+				drawGamepadIcon(core, lSpriteBatch, new Rectangle(xoffset + column1X + columnWidth - 32, yoffset + mY + mH - 16, 16, 16), 1.f);
 			} else {
-				drawGamepadIcon(core, lSpriteBatch, new Rectangle(column2X + columnWidth - 32, mY + mH - 16, 16, 16), 1.f);
+				drawGamepadIcon(core, lSpriteBatch, new Rectangle(xoffset + column2X + columnWidth - 32, yoffset + mY + mH - 16, 16, 16), 1.f);
 			}
 		}
 

@@ -210,9 +210,18 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 		final var parentScreenOffset = mParentScreen.screenPositionOffset();
 		final var parentScreenAlpha = mParentScreen.screenColor.a;
+		final var alpha = enabled() ? 1.f : 0.15f;
 
 		final var buttonWidth = spritePositionW;
 		final var buttonHeight = spritePositionH;
+
+		if (mDrawBackground) {
+			textureBatch.begin(core.HUD());
+			textureBatch.setColorWhite();
+			textureBatch.setColorA(0.5f * parentScreenAlpha);
+			textureBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_PANEL_3X3_00_MID_CENTER, parentScreenOffset.x + mX, parentScreenOffset.y + mY, mW, mH, mZ);
+			textureBatch.end();
+		}
 
 		textureBatch.begin(core.HUD());
 
@@ -221,22 +230,24 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 			final var buttonSpriteFrame = mCoreSpritesheet.getSpriteFrame(spriteFrameUidOn);
 			textureBatch.setColorBlack();
-			textureBatch.setColorA(0.75f);
+			textureBatch.setColorA(0.75f * alpha * parentScreenAlpha);
 			textureBatch.draw(mCoreSpritesheet, buttonSpriteFrame, parentScreenOffset.x + spritePositionX, parentScreenOffset.y + spritePositionY + 3, buttonWidth, buttonHeight, 1f);
 
 			if (mIsInputOn) {
 				// pressed
 				textureBatch.setColorWhite();
+				textureBatch.setColorA(alpha * parentScreenAlpha);
 				textureBatch.draw(mCoreSpritesheet, buttonSpriteFrame, parentScreenOffset.x + spritePositionX, parentScreenOffset.y + spritePositionY + 2, buttonWidth, buttonHeight, 1f);
 
 			} else {
 				if (mIsMouseOver) {
 					textureBatch.setColorWhite();
+					textureBatch.setColorA(alpha * parentScreenAlpha);
 					textureBatch.draw(mCoreSpritesheet, buttonSpriteFrame, parentScreenOffset.x + spritePositionX, parentScreenOffset.y + spritePositionY, buttonWidth, buttonHeight, 1f);
 
 				} else {
 					final var colorOffset = 0.7f;
-					textureBatch.setColorRGBA(colorOffset, colorOffset, colorOffset, 1.f);
+					textureBatch.setColorRGBA(colorOffset, colorOffset, colorOffset, alpha * parentScreenAlpha);
 					textureBatch.draw(mCoreSpritesheet, buttonSpriteFrame, parentScreenOffset.x + spritePositionX, parentScreenOffset.y + spritePositionY, buttonWidth, buttonHeight, 1f);
 				}
 			}
@@ -245,7 +256,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 			// dedicated off-sprite
 			final var buttonSpriteFrame = mCoreSpritesheet.getSpriteFrame(mIsInputOn ? spriteFrameUidOn : spriteFrameUidOff);
 			textureBatch.setColorBlack();
-			textureBatch.setColorA(0.75f);
+			textureBatch.setColorA(0.75f * alpha * parentScreenAlpha);
 			textureBatch.draw(mCoreSpritesheet, buttonSpriteFrame, parentScreenOffset.x + spritePositionX, parentScreenOffset.y + spritePositionY + 3, buttonWidth, buttonHeight, 1f);
 
 			textureBatch.setColorWhite();
@@ -255,25 +266,25 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 				if (mIsInputOn) {
 					textureBatch.setColorWhite();
+					textureBatch.setColorA(alpha * parentScreenAlpha);
 					textureBatch.draw(mCoreSpritesheet, buttonSpriteFrame, parentScreenOffset.x + spritePositionX, parentScreenOffset.y + spritePositionY + 2, buttonWidth, buttonHeight, 1f);
 				} else {
 					final var colorOffset = 0.7f;
-					textureBatch.setColorRGBA(colorOffset, colorOffset, colorOffset, 1.f);
+					textureBatch.setColorRGBA(colorOffset, colorOffset, colorOffset, alpha * parentScreenAlpha);
 					textureBatch.draw(mCoreSpritesheet, buttonSpriteFrame, parentScreenOffset.x + spritePositionX, parentScreenOffset.y + spritePositionY + 2, buttonWidth, buttonHeight, 1f);
 				}
-
 			}
-
 		}
 
 		textureBatch.end();
 
 		textureBatch.begin(core.HUD());
 		fontUnit.setTextColorWhite();
+		fontUnit.setTextColorA(alpha * parentScreenAlpha);
 		fontUnit.begin(core.HUD());
 
 		final var targetInputCodetext = GamepadInputCodes.getLintfordCodeName(inputCodeUid);
-		fontUnit.drawText(targetInputCodetext, parentScreenOffset.x + left(), parentScreenOffset.y + top(), .9f, .9f * mScale);
+		fontUnit.drawText(targetInputCodetext, parentScreenOffset.x + left() + 5.f, parentScreenOffset.y + top(), .9f, .9f * mScale);
 
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
 
@@ -282,7 +293,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		if (mIsBindingInput) {
 			if (mCaretFlashTimer % 1.f > .5f) {
 				final var boundKeyText = "<PRESS BUTTON>";
-				fontUnit.drawText(boundKeyText, parentScreenOffset.x + left() + 5.f, parentScreenOffset.y + top() + 20, 1f, .8f * mScale);
+				fontUnit.drawText(boundKeyText, parentScreenOffset.x + left() + 10.f, parentScreenOffset.y + top() + 20, 1f, .8f * mScale);
 
 			}
 
@@ -306,7 +317,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 				break;
 			}
 
-			fontUnit.drawText(mappedToName, parentScreenOffset.x + left() + 5.f, parentScreenOffset.y + top() + 20, 1f, .8f * mScale);
+			fontUnit.drawText(mappedToName, parentScreenOffset.x + left() + 10.f, parentScreenOffset.y + top() + 20, 1f, .8f * mScale);
 		}
 
 		textureBatch.end();

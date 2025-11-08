@@ -541,7 +541,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		final var screenOffset = mParentScreen != null ? mParentScreen.screenPositionOffset() : Vector2f.Zero;
 		final var tileSize = Math.min(32, mH);
 
-		mGamepadMenuIcon.bounds.set(screenOffset.x + mX + mW - 16, screenOffset.y + mY + mH - 16, 16, 16);
+		var yy = centerY();
 
 		if (mShowInfoIcon) // TODO: This isn't correct - the draw code is already offsetting by the screen transition
 			mInfoIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
@@ -560,7 +560,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (!mIsActive)
+		if (!mIsActive || !enabled() || readOnly())
 			return false;
 
 		if (mParentScreen == null || !mEnabled || mReadOnly)
@@ -710,23 +710,22 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 				else
 					lMenuFont.setTextColor(lTextColor);
 				lMenuFont.setShadowColorRGBA(0.f, 0.f, 0.f, lParentScreenAlpha);
-//				lMenuFont.drawText(mText, 
-//						lScreenOffset.x + centerX() - lStringWidth * 0.5f, 
-//						lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, 
-//						mZ, lUiTextScale);
-
 				lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale);
 
 				lMenuFont.end();
 			}
 		}
 
-		if (mGamepadMenuIcon.isEnabled()) {
-			// icon set statically ('back')
-			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
-		} else if (mHasFocus) {
-			mGamepadMenuIcon.mLintfordInputCode = GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH;
-			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
+		if (!parentScreen().otherScreenHasFocus()) {
+			if (mGamepadMenuIcon.isEnabled()) {
+				// icon set statically ('back')
+				mGamepadMenuIcon.bounds.set(lScreenOffset.x + mX + mW - 16, lScreenOffset.y + mY + mH - 16, 16, 16);
+				drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
+			} else if (mHasFocus) {
+				mGamepadMenuIcon.bounds.set(lScreenOffset.x + mX + mW - 16, lScreenOffset.y + mY + mH - 16, 16, 16);
+				mGamepadMenuIcon.mLintfordInputCode = GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH;
+				drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
+			}
 		}
 
 		// TODO: if gamepad connected
@@ -804,9 +803,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		int spriteFrameUid = -1;
 		switch (mGamepadMenuIcon.mLintfordInputCode) {
+
 		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH:
 			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_GREEN;
 			break;
+
 		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST:
 			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_RED;
 			break;

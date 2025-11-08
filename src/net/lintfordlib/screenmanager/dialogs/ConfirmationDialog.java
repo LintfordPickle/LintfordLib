@@ -51,15 +51,15 @@ public class ConfirmationDialog extends BaseDialog {
 
 		mListLayout = new ListLayout(this);
 
-		mConfirmEntry = new MenuEntry(screenManager, this, "Okay");
-		mConfirmEntry.registerClickListener(this, BUTTON_CONFIRM_YES);
-
 		if (withCancelButton) {
 			mCancelEntry = new MenuEntry(screenManager, this, "Cancel");
 			mCancelEntry.registerClickListener(this, BUTTON_CONFIRM_NO);
 
 			mListLayout.addMenuEntry(mCancelEntry);
 		}
+
+		mConfirmEntry = new MenuEntry(screenManager, this, "Okay");
+		mConfirmEntry.registerClickListener(this, BUTTON_CONFIRM_YES);
 
 		mMenuTitle = title;
 

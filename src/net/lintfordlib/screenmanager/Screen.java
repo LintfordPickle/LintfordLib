@@ -73,13 +73,9 @@ public abstract class Screen implements IInputProcessor {
 	protected boolean mShowContextualFooterBar;
 	protected boolean mShowContextualKeyHints;
 
-	protected boolean acceptMouseInput;
-	protected boolean acceptKeyboardInput;
-	protected boolean acceptGamepadInput;
-
-	protected boolean mBlockKeyboardInputInBackground;
-	protected boolean mBlockGamepadInputInBackground;
-	protected boolean mBlockMouseInputInBackground;
+	protected boolean mAcceptMouseInput;
+	protected boolean mAcceptKeyboardInput;
+	protected boolean mAcceptGamepadInput;
 
 	protected float mInputTimer;
 	protected final Vector2f mScreenOffset = new Vector2f();
@@ -95,6 +91,13 @@ public abstract class Screen implements IInputProcessor {
 	// --------------------------------------
 	// Properties
 	// -------------------------------------
+
+	/**
+	 * Updated in the update() method. This flag states whether this screen is covered by another (non-popup) screen in the screenmanager screen stack.
+	 */
+	public boolean otherScreenHasFocus() {
+		return mOtherScreenHasFocus;
+	}
 
 	public boolean overrideUiStretch() {
 		return mOverrideUiStretch;
@@ -317,11 +320,11 @@ public abstract class Screen implements IInputProcessor {
 
 		mCanBeHidden = true;
 
-		mBlockKeyboardInputInBackground = true;
-		mBlockMouseInputInBackground = true;
-		mBlockGamepadInputInBackground = true;
-
 		screenColor.a = 1.f;
+
+		mAcceptKeyboardInput = true;
+		mAcceptGamepadInput = true;
+		mAcceptMouseInput = true;
 	}
 
 	// --------------------------------------
@@ -502,17 +505,17 @@ public abstract class Screen implements IInputProcessor {
 
 	@Override
 	public boolean allowGamepadInput() {
-		return acceptGamepadInput;
+		return mAcceptGamepadInput;
 	}
 
 	@Override
 	public boolean allowKeyboardInput() {
-		return acceptKeyboardInput;
+		return mAcceptKeyboardInput;
 	}
 
 	@Override
 	public boolean allowMouseInput() {
-		return acceptMouseInput;
+		return mAcceptMouseInput;
 	}
 
 	@Override

@@ -145,9 +145,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		mShowContextualFooterBar = true;
 
 		mMenuTitle = menuTitle;
-		mBlockKeyboardInputInBackground = true;
-		mBlockMouseInputInBackground = true;
-		mBlockGamepadInputInBackground = true;
 
 		mScreenPaddingTop = 0.f;
 		mScreenPaddingBottom = 0.f;
@@ -706,10 +703,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		if (mESCBackEnabled)
@@ -723,10 +720,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
@@ -753,10 +750,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -778,10 +775,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		if (mActiveEntry != null)
 			return;
 
-		if (inputType == InputType.Gamepad && !acceptGamepadInput)
+		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
 			return;
 
-		if (inputType == InputType.Keyboard && !acceptKeyboardInput)
+		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -866,7 +863,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 						mSelectedEntryIndex = 0;
 						return;
 					}
-					
+
 					final var foundEntry = layout.entries().get(checkEntryIndex);
 					if (!foundEntry.enabled() || !foundEntry.canHaveFocus())
 						continue;

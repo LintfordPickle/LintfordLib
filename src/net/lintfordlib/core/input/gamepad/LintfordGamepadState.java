@@ -184,10 +184,10 @@ public class LintfordGamepadState extends IniFile {
 		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_DOWN).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN);
 		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT);
 		mGamepadInputs.get(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_RIGHT).mapToButton(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT);
-		
+
 		saveConfig();
 	}
-	
+
 	// CONFIG ---
 
 	public static final int INI_SAVE_TYPE_PREFIX_BUTTON = 0;

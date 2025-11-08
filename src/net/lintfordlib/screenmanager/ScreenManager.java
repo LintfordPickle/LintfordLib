@@ -198,24 +198,14 @@ public class ScreenManager implements IInputClickedFocusManager {
 		if (mScreens.isEmpty())
 			return;
 
-		var acceptKeyboardInput = true;
-		var acceptGamepadInput = true;
-		var acceptMouseInput = true;
-
 		final int lScreenCount = mScreens.size() - 1;
 		for (int i = lScreenCount; i >= 0; i--) {
 			final var lScreen = mScreens.get(i);
 
-			lScreen.acceptKeyboardInput = acceptKeyboardInput;
-			lScreen.acceptGamepadInput = acceptGamepadInput;
-			lScreen.acceptMouseInput = acceptMouseInput;
-
-			if (lScreen.screenState() == ScreenState.ACTIVE)
+			if (lScreen.screenState() == ScreenState.ACTIVE) {
 				lScreen.handleInput(core);
-
-			acceptKeyboardInput = acceptKeyboardInput && !lScreen.mBlockKeyboardInputInBackground;
-			acceptGamepadInput = acceptGamepadInput && !lScreen.mBlockGamepadInputInBackground;
-			acceptMouseInput = acceptMouseInput && !lScreen.mBlockMouseInputInBackground;
+				break;// only the top screen can accept input (?)
+			}
 		}
 
 		if (mTrackedInputControl != null) {

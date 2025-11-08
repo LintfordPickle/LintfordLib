@@ -100,7 +100,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
-		if (mReadOnly)
+		if (mReadOnly || !enabled())
 			return false;
 
 		if (mParentScreen == null)
