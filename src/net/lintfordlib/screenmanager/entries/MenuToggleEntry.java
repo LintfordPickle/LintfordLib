@@ -187,7 +187,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		lTextBoldFont.begin(core.HUD());
 		lTextBoldFont.setTextColor(textColor);
-		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + 32.f / 2.f - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
+		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
 		lTextBoldFont.drawText(SEPARATOR_STRING, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
 
 		if (mShowCheckedText) {
@@ -199,9 +199,9 @@ public class MenuToggleEntry extends MenuEntry {
 
 		lTextBoldFont.end();
 
-		if(mHasFocus)
+		if (mHasFocus)
 			drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
-		
+
 		if (mShowInfoIcon)
 			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
 
@@ -218,6 +218,9 @@ public class MenuToggleEntry extends MenuEntry {
 	@Override
 	public void onClick(InputManager inputManager) {
 		mIsChecked = !mIsChecked;
+
+		if (mClickListener != null)
+			mClickListener.onMenuEntryChanged(this);
 
 		super.onClick(inputManager);
 	}

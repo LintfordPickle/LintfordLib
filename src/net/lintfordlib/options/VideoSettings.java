@@ -170,20 +170,34 @@ public class VideoSettings {
 		mAspectRatioIndex = videoSettingsToCopy.aspectRatioIndex();
 		mMonitorIndex = videoSettingsToCopy.monitorIndex();
 		mVSyncEnabled = videoSettingsToCopy.vSyncEnabled();
+		mUiWidth = videoSettingsToCopy.uiWidth();
+		mUiHeight = videoSettingsToCopy.uiHeight();
 	}
 
 	public boolean isDifferent(VideoSettings videoSettingsToCheckAgainst) {
 		if (videoSettingsToCheckAgainst == null)
 			return true;
 
+		final var isFullScreenSelected = mFullScreenIndex == VideoSettings.FULLSCREEN_YES_INDEX;
+
 		// @formatter:off
-		return mFullScreenIndex != videoSettingsToCheckAgainst.fullScreenIndex() 
-				|| mWindowWidth != videoSettingsToCheckAgainst.windowWidth() 
-				|| mWindowHeight != videoSettingsToCheckAgainst.windowHeight() 
-				|| mRefreshRate != videoSettingsToCheckAgainst.refreshRate()
-				|| mAspectRatioIndex != videoSettingsToCheckAgainst.aspectRatioIndex() 
-				|| mMonitorIndex != videoSettingsToCheckAgainst.monitorIndex() 
-				|| mVSyncEnabled != videoSettingsToCheckAgainst.vSyncEnabled();
+		final var fullScreenChanged 	= mFullScreenIndex 		!= videoSettingsToCheckAgainst.fullScreenIndex();
+		final var windowWidthChanged 	= mWindowWidth 			!= videoSettingsToCheckAgainst.windowWidth();
+		final var windowHeightChanged 	= mWindowHeight 		!= videoSettingsToCheckAgainst.windowHeight();
+		final var refreshRateChanged 	= mRefreshRate 			!= videoSettingsToCheckAgainst.refreshRate();
+		final var aspectRatioChanged 	= mAspectRatioIndex 	!= videoSettingsToCheckAgainst.aspectRatioIndex();
+		final var monitorIndexChanged 	= mMonitorIndex 		!= videoSettingsToCheckAgainst.monitorIndex();
+		final var vSyncChanged 			= mVSyncEnabled 		!= videoSettingsToCheckAgainst.vSyncEnabled();
+		
+		// resolution changes are only relevant in full screen mode.
+		final var resRelevantChange = isFullScreenSelected && fullScreenChanged && (windowWidthChanged || windowHeightChanged); 
+		
+		return fullScreenChanged
+				|| resRelevantChange
+				|| refreshRateChanged
+				|| aspectRatioChanged
+				|| monitorIndexChanged
+				|| vSyncChanged;
 		// @formatter:on
 	}
 }

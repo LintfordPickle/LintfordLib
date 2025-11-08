@@ -46,10 +46,6 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 	private static final int CONFIRMATION_TIMER_MILLI = 15000; // ms
 
-	private static final String FULLSCREEN_DISABLED = "Disabled";
-	private static final String FULLSCREEN_YES = "Yes";
-	private static final String FULLSCREEN_NO = "No";
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -59,7 +55,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	private TimedConfirmationDialog m15SecConfirmationDialog;
 	private MenuEntry mApplyButton;
 	private MenuToggleEntry mVSync;
-	private MenuEnumEntryIndexed<Integer> mFullScreenEntry;
+	private MenuToggleEntry mFullScreenToggle;
 	private MenuEnumEntryIndexed<Long> mMonitorEntry;
 	private MenuDropDownEntry<GLFWVidMode> mResolutionEntry;
 	private MenuLabelEntry mChangesPendingWarning;
@@ -140,21 +136,21 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	// --------------------------------------
 
 	private void createVideoSection(BaseLayout layout) {
-		final var lVideoOptionsTitle = new MenuLabelEntry(screenManager, this);
 
 		// As we know the game canvas size
 		final float lDesiredEntryWidth = 56.f;
 		final float lDesiredEntryHeight = 25.f;
 
+		final var lVideoOptionsTitle = new MenuLabelEntry(screenManager, this);
 		lVideoOptionsTitle.label("Video Options");
 		lVideoOptionsTitle.drawButtonBackground(true);
 		lVideoOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		lVideoOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mFullScreenEntry = new MenuEnumEntryIndexed<>(screenManager, this, "Fullscreen");
-		mFullScreenEntry.desiredWidth(lDesiredEntryWidth);
-		mFullScreenEntry.desiredHeight(lDesiredEntryHeight);
-		mFullScreenEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+		mFullScreenToggle = new MenuToggleEntry(screenManager, this, "Fullscreen");
+		mFullScreenToggle.desiredWidth(lDesiredEntryWidth);
+		mFullScreenToggle.desiredHeight(lDesiredEntryHeight);
+		mFullScreenToggle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mResolutionEntry = new MenuDropDownEntry<>(screenManager, this, "Resolution");
 		mResolutionEntry.desiredWidth(lDesiredEntryWidth);
@@ -167,35 +163,24 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		mMonitorEntry.desiredHeight(lDesiredEntryHeight);
 		mMonitorEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		mVSync = new MenuToggleEntry(screenManager, this);
+		mVSync = new MenuToggleEntry(screenManager, this, "V-Sync");
 		mVSync.desiredWidth(lDesiredEntryWidth);
 		mVSync.desiredHeight(lDesiredEntryHeight);
 		mVSync.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		final var lDisplayConfig = screenManager.core().config().display();
-
-		if (lDisplayConfig.currentOptionsConfig().resizeable()) {
-			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_NO, VideoSettings.FULLSCREEN_NO_INDEX));
-			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_YES, VideoSettings.FULLSCREEN_YES_INDEX));
-			mFullScreenEntry.setButtonsEnabled(true);
-		} else {
-			mFullScreenEntry.addItem(mFullScreenEntry.new MenuEnumEntryItem(FULLSCREEN_DISABLED, VideoSettings.FULLSCREEN_YES_INDEX));
-			mFullScreenEntry.setButtonsEnabled(false);
-			mFullScreenEntry.enabled(false);
-			mFullScreenEntry.setToolTip("This option has been disabled");
-			mFullScreenEntry.showInfoButton(true);
-		}
-
-		mVSync.label("V-Sync");
-
-		mFullScreenEntry.registerClickListener(this, BUTTON_FULLSCREEN);
 		mResolutionEntry.registerClickListener(this, BUTTON_RESOLUTION);
 		mResolutionEntry.showInfoButton(true);
 		mMonitorEntry.registerClickListener(this, BUTTON_MONITOR);
 		mVSync.registerClickListener(this, BUTTON_VSYNC);
 
 		layout.addMenuEntry(lVideoOptionsTitle);
-		layout.addMenuEntry(mFullScreenEntry);
+
+		final var lDisplayConfig = screenManager.core().config().display();
+		if (lDisplayConfig.currentOptionsConfig().resizeable()) {
+			mFullScreenToggle.registerClickListener(this, BUTTON_FULLSCREEN);
+			layout.addMenuEntry(mFullScreenToggle);
+		}
+
 		layout.addMenuEntry(mMonitorEntry);
 		layout.addMenuEntry(mResolutionEntry);
 		layout.addMenuEntry(mVSync);
@@ -261,6 +246,10 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 
+		case BUTTON_FULLSCREEN:
+			fullscreenEntryChanged();
+			break;
+
 		case BUTTON_CANCEL_CHANGES:
 			exitScreen();
 			break;
@@ -270,7 +259,10 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 			if (currentVideoConfig.equals(modifiedVideoConfig))
 				exitScreen(); // shows
+			break;
 
+		case BUTTON_VSYNC:
+			modifiedVideoConfig.vSyncEnabled(mVSync.isChecked());
 			break;
 
 		case ConfirmationDialog.BUTTON_CONFIRM_YES: // exit without saving
@@ -310,6 +302,44 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 			break;
 		}
+
+		var haveSettingsChanged = modifiedVideoConfig.isDifferent(currentVideoConfig);
+		mConfirmChangesLayout.visible(haveSettingsChanged);
+		mApplyButton.enabled(haveSettingsChanged);
+	}
+
+	private void fullscreenEntryChanged() {
+		var isFullScreenChecked = mFullScreenToggle.isChecked();
+		modifiedVideoConfig.fullScreenIndex(isFullScreenChecked ? VideoSettings.FULLSCREEN_YES_INDEX : VideoSettings.FULLSCREEN_NO_INDEX);
+
+		if (isFullScreenChecked) {
+			mMonitorEntry.enabled(true);
+			mResolutionEntry.enabled(true);
+
+			final var lSelectedMonitorIndex = mMonitorEntry.selectedItem().value;
+			modifiedVideoConfig.monitorIndex(lSelectedMonitorIndex);
+
+			final var lVidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+
+			final var lVidModeItems = mResolutionEntry.items();
+			final var lNumItems = lVidModeItems.size();
+			for (int i = 0; i < lNumItems; i++) {
+				final var lItem = lVidModeItems.get(i).value;
+				if (lItem == null)
+					continue;
+
+				if (lVidMode.width() == lItem.width() && lVidMode.height() == lItem.height()) {
+					mResolutionEntry.setSelectEntry(lItem);
+					modifiedVideoConfig.windowWidth(mResolutionEntry.selectedItem().value.width());
+					modifiedVideoConfig.windowHeight(mResolutionEntry.selectedItem().value.height());
+					break;
+				}
+			}
+
+		} else {
+			mMonitorEntry.enabled(false);
+			mResolutionEntry.enabled(false);
+		}
 	}
 
 	@Override
@@ -318,37 +348,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		switch (menuEntry.entryID()) {
 		case BUTTON_FULLSCREEN:
-			modifiedVideoConfig.fullScreenIndex(mFullScreenEntry.selectedItem().value);
-
-			if (modifiedVideoConfig.fullScreenIndex() == VideoSettings.FULLSCREEN_YES_INDEX) {
-				mMonitorEntry.enabled(true);
-				mResolutionEntry.enabled(true);
-
-				final var lSelectedMonitorIndex = mMonitorEntry.selectedItem().value;
-				modifiedVideoConfig.monitorIndex(lSelectedMonitorIndex);
-
-				final var lVidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-
-				final var lVidModeItems = mResolutionEntry.items();
-				final var lNumItems = lVidModeItems.size();
-				for (int i = 0; i < lNumItems; i++) {
-					final var lItem = lVidModeItems.get(i).value;
-					if (lItem == null)
-						continue;
-
-					if (lVidMode.width() == lItem.width() && lVidMode.height() == lItem.height()) {
-						mResolutionEntry.setSelectEntry(lItem);
-						modifiedVideoConfig.windowWidth(mResolutionEntry.selectedItem().value.width());
-						modifiedVideoConfig.windowHeight(mResolutionEntry.selectedItem().value.height());
-						break;
-					}
-				}
-
-			} else {
-				mMonitorEntry.enabled(false);
-				mResolutionEntry.enabled(false);
-			}
-
+			fullscreenEntryChanged();
 			break;
 
 		case BUTTON_VSYNC:
@@ -370,13 +370,14 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		}
 
-		mConfirmChangesLayout.visible(modifiedVideoConfig.isDifferent(currentVideoConfig));
-		mApplyButton.enabled(modifiedVideoConfig.isDifferent(currentVideoConfig));
+		var haveSettingsChanged = modifiedVideoConfig.isDifferent(currentVideoConfig);
+		mConfirmChangesLayout.visible(haveSettingsChanged);
+		mApplyButton.enabled(haveSettingsChanged);
 	}
 
 	private void setUIFromVideoSettings(VideoSettings videoSettings) {
 		mVSync.isChecked(videoSettings.vSyncEnabled());
-		mFullScreenEntry.setSelectedEntry(videoSettings.fullScreenIndex());
+		mFullScreenToggle.isChecked(videoSettings.fullscreen());
 		mMonitorEntry.enabled(videoSettings.fullScreenIndex() == VideoSettings.FULLSCREEN_YES_INDEX);
 
 		setResolutionEntry(videoSettings.windowWidth(), videoSettings.windowHeight(), 60);

@@ -65,7 +65,7 @@ public class AudioOptionsScreen extends MenuScreen {
 	// --------------------------------------
 
 	public AudioOptionsScreen(ScreenManager screenManager) {
-		super(screenManager, null);
+		super(screenManager, "AUDIO OPTIONS");
 
 		mAudioConfig = screenManager.core().config().audio();
 
@@ -76,8 +76,6 @@ public class AudioOptionsScreen extends MenuScreen {
 		mAudioList.cropPaddingBottom(0.f);
 		mAudioList.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		mAudioList.layoutFillType(FILLTYPE.FILL_CONTAINER);
-		mAudioList.showTitle(true);
-		mAudioList.title("Audio Options");
 
 		createAudioSection(mAudioList);
 
@@ -145,10 +143,16 @@ public class AudioOptionsScreen extends MenuScreen {
 
 	private void createAudioSection(BaseLayout layout) {
 		final var lAudioConfig = screenManager.core().config().audio();
-
+		
 		// As we know the game canvas size
 		final float lDesiredEntryWidth = 56.f;
 		final float lDesiredEntryHeight = 25.f;
+		
+		final var musicOptionsLabel = new MenuLabelEntry(screenManager, this);
+		musicOptionsLabel.label("Music");
+		musicOptionsLabel.drawButtonBackground(true);
+		musicOptionsLabel.horizontalAlignment(ALIGNMENT.LEFT);
+		musicOptionsLabel.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
 		mMusicEnabledEntry = new MenuToggleEntry(screenManager, this);
 		mMusicEnabledEntry.registerClickListener(this, BUTTON_ENABLED_MUSIC);
@@ -171,6 +175,13 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMusicVolumeEntry.desiredHeight(lDesiredEntryHeight);
 		mMusicVolumeEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
+		
+		final var sfxOptionsLabel = new MenuLabelEntry(screenManager, this);
+		sfxOptionsLabel.label("Sfx");
+		sfxOptionsLabel.drawButtonBackground(true);
+		sfxOptionsLabel.horizontalAlignment(ALIGNMENT.LEFT);
+		sfxOptionsLabel.horizontalFillType(FILLTYPE.FILL_CONTAINER);
+		
 		mSoundEnabledEntry = new MenuToggleEntry(screenManager, this);
 		mSoundEnabledEntry.label("SoundFX Enabled");
 		mSoundEnabledEntry.registerClickListener(this, BUTTON_ENABLED_SOUNDFX);
@@ -191,12 +202,15 @@ public class AudioOptionsScreen extends MenuScreen {
 		mSoundVolumnEntry.desiredHeight(lDesiredEntryHeight);
 		mSoundVolumnEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
+		layout.addMenuEntry(musicOptionsLabel);
 		layout.addMenuEntry(MenuEntry.menuSeparator());
 
 		layout.addMenuEntry(mMusicEnabledEntry);
 		layout.addMenuEntry(mMusicVolumeEntry);
+		
 		layout.addMenuEntry(MenuEntry.menuSeparator());
-
+		layout.addMenuEntry(sfxOptionsLabel);
+		layout.addMenuEntry(MenuEntry.menuSeparator());
 		layout.addMenuEntry(mSoundEnabledEntry);
 		layout.addMenuEntry(mSoundVolumnEntry);
 

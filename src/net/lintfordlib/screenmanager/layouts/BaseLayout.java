@@ -533,7 +533,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 	}
 
 	public void addMenuEntry(MenuEntry entryToAdd) {
-		if (!mMenuEntries.contains(entryToAdd))
+		// if (!mMenuEntries.contains(entryToAdd))
 			mMenuEntries.add(entryToAdd);
 	}
 

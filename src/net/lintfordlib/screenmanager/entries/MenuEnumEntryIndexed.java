@@ -285,7 +285,6 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 
 	@Override
 	public void onClick(InputManager inputManager) {
-		super.onClick(inputManager);
 
 		mSelectedIndex++;
 		if (mSelectedIndex >= mItems.size())
@@ -294,6 +293,8 @@ public class MenuEnumEntryIndexed<T> extends MenuEntry {
 		if (mClickListener != null)
 			mClickListener.onMenuEntryChanged(this);
 
+		super.onClick(inputManager);
+		
 	}
 
 	public void addItem(MenuEnumEntryItem item) {

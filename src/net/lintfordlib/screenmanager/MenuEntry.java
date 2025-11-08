@@ -87,9 +87,21 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			MENU_SEPARATOR.isActive(false);
 			MENU_SEPARATOR.enableUpdateDraw(false);
 			MENU_SEPARATOR.drawButtonBackground(false);
+			MENU_SEPARATOR.desiredHeight(5.f);
 		}
 
 		return MENU_SEPARATOR;
+	}
+
+	public static MenuEntry newMenuSeparator() {
+		final var newSeparator = new MenuEntry(null, null, null);
+
+		newSeparator.enabled(false);
+		newSeparator.isActive(false);
+		newSeparator.enableUpdateDraw(false);
+		newSeparator.drawButtonBackground(false);
+
+		return newSeparator;
 	}
 
 	// --------------------------------------
@@ -375,17 +387,18 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mReadOnly = readOnly;
 	}
 
+	/**
+	 * Gets whether the update/draw methods are called automatically by the screenmanager.
+	 */
 	public boolean enableUpdateDraw() {
 		return mEnableUpdateDraw;
 	}
 
+	/**
+	 * Sets whether the update/draw methods should be called automatically from the screenmanager. Default is true.
+	 */
 	public void enableUpdateDraw(boolean enableUpdateDraw) {
 		mEnableUpdateDraw = enableUpdateDraw;
-	}
-
-	@Override
-	public float height() {
-		return !mEnableUpdateDraw ? 0 : super.height();
 	}
 
 	public int entryID() {
@@ -428,8 +441,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		return mDesiredHeight;
 	}
 
+	/** Sets a desired heigt for this entry. Note: Setting this value will automatically change the vertical fill type to 'FILLTYPE.TAKE_DESIRED_SIZE'. */
 	public void desiredHeight(float newValue) {
 		mDesiredHeight = newValue;
+
+		mVerticalFillType = FILLTYPE.TAKE_DESIRED_SIZE;
 	}
 
 	@Override
@@ -688,7 +704,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
 				final var lTextColor = ColorConstants.getTempColorCopy(!mEnabled ? ColorConstants.GREY_DARK() : mHasFocus ? ColorConstants.MenuEntryHighlightColor : ColorConstants.TextHeadingColor);
 				lTextColor.a = lParentScreenAlpha;
-				
+
 				if (mHasFocus && mEnabled)
 					lMenuFont.setTextColor(ColorConstants.MenuEntrySelectedColor);
 				else
@@ -698,8 +714,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 //						lScreenOffset.x + centerX() - lStringWidth * 0.5f, 
 //						lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, 
 //						mZ, lUiTextScale);
-				
-				
+
 				lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale);
 
 				lMenuFont.end();
@@ -939,7 +954,11 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		mAnimationTimer = MenuScreen.ANIMATION_TIMER_LENGTH;
 		mScreenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_SELECTED);
+
 		mClickListener.menuEntryOnClick(inputManager, mMenuEntryID);
+
+		// This should be called from the MenuEntry super classes, to notify of state changes.
+		// mClickListener.onMenuEntryChanged(this);
 	}
 
 	@Override
