@@ -694,13 +694,13 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 				else
 					lMenuFont.setTextColor(lTextColor);
 				lMenuFont.setShadowColorRGBA(0.f, 0.f, 0.f, lParentScreenAlpha);
-				lMenuFont.drawText(mText, 
-						lScreenOffset.x + centerX() - lStringWidth * 0.5f, 
-						lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, 
-						mZ, lUiTextScale);
+//				lMenuFont.drawText(mText, 
+//						lScreenOffset.x + centerX() - lStringWidth * 0.5f, 
+//						lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, 
+//						mZ, lUiTextScale);
 				
 				
-				// lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale);
+				lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale);
 
 				lMenuFont.end();
 			}

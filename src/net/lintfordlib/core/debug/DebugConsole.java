@@ -541,19 +541,22 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 					final float lB = lColorRgb.z;
 					mConsoleFont.setTextColorRGBA(lR, lG, lB, 1.0f);
 
+					float shadowOffset = 1.f;
+					
 					// Draw Timestamp
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);
-					mConsoleFont.drawText(lMessage.timestamp(), mX + POSITION_OFFSET_TIME, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mTextScaleFactor, 18);
+					mConsoleFont.drawShadowedText(lMessage.timestamp(), mX + POSITION_OFFSET_TIME, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, shadowOffset, shadowOffset, mTextScaleFactor, 18);
 
 					// Draw TAG
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);
-					mConsoleFont.drawText(lMessage.tag(), mX + POSITION_OFFSET_TAG, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mTextScaleFactor, 18);
+					mConsoleFont.drawShadowedText(lMessage.tag(), mX + POSITION_OFFSET_TAG, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, shadowOffset, shadowOffset, mTextScaleFactor, 18);
 
 					// Draw MESSAGE
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);
 					final float lCharWidth = mConsoleFont.getStringWidth("e");
 					final float lHorizontalSpace = core.HUD().getWidth() - POSITION_OFFSET_MESSAGE;
-					mConsoleFont.drawText(lMessage.message(), mX + POSITION_OFFSET_MESSAGE, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, mTextScaleFactor, lHorizontalSpace / lCharWidth - 3);
+
+					mConsoleFont.drawShadowedText(lMessage.message(), mX + POSITION_OFFSET_MESSAGE, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, shadowOffset, shadowOffset, mTextScaleFactor, lHorizontalSpace / lCharWidth - 3);
 				}
 			}
 		}

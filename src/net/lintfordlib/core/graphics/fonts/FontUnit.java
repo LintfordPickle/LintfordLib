@@ -266,11 +266,15 @@ public class FontUnit {
 	}
 
 	public void drawShadowedText(String text, float positionX, float positionY, float zDepth, float shadowXOffset, float shadowYOffset, float scale) {
+		drawShadowedText(text, positionX, positionY, zDepth, shadowXOffset, shadowYOffset, scale, -1);
+	}
+
+	public void drawShadowedText(String text, float positionX, float positionY, float zDepth, float shadowXOffset, float shadowYOffset, float scale, float wordWrap) {
 		mSpriteBatch.setColor(mShadowColor);
-		_drawText(text, positionX + shadowXOffset, positionY + shadowYOffset, zDepth, scale, -1);
+		_drawText(text, positionX + shadowXOffset, positionY + shadowYOffset, zDepth, scale, wordWrap);
 
 		mSpriteBatch.setColor(mTextColor);
-		_drawText(text, positionX, positionY, zDepth, scale, -1);
+		_drawText(text, positionX, positionY, zDepth, scale, wordWrap);
 	}
 
 	private void _drawText(String text, float positionX, float positionY, float zDepth, float scale, float wrapWidth) {
