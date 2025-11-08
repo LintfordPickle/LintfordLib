@@ -850,7 +850,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 				if (mLayouts.size() > 1) {
 					getPreviousEnabledLayout();
 
-					// whatever layout is now active, go with it
 					final var layout = mLayouts.get(mSelectedLayoutIndex);
 
 					if (layout.entries().isEmpty()) {
@@ -860,13 +859,17 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 					checkEntryIndex = layout.entries().size() - 1;
 
-					if (checkEntryIndex == mSelectedEntryIndex)
+					if (checkEntryIndex == mSelectedEntryIndex) // TODO: This seems strange if we are crossing layout borders
 						return;
 
 					if (!layout.hasEntry(checkEntryIndex)) {
 						mSelectedEntryIndex = 0;
 						return;
 					}
+					
+					final var foundEntry = layout.entries().get(checkEntryIndex);
+					if (!foundEntry.enabled() || !foundEntry.canHaveFocus())
+						continue;
 
 					mSelectedEntryIndex = checkEntryIndex;
 					return;
