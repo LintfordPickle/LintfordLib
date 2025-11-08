@@ -118,7 +118,9 @@ public class KeyBindOptionsScreen extends MenuScreen {
 		menuKeyBindOptionsTitle.horizontalAlignment(ALIGNMENT.LEFT);
 		menuKeyBindOptionsTitle.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		layout.addMenuEntry(keyBindOptionsTitle);
+		final var newMenuSeparator = MenuEntry.newMenuSeparator();
+		newMenuSeparator.desiredHeight(20);
+		layout.addMenuEntry(newMenuSeparator);
 		layout.addMenuEntry(menuKeyBindOptionsTitle);
 
 		final var bindableMenuInputActions = keyEventActionManager.bindableMenuInputActions();
@@ -140,6 +142,8 @@ public class KeyBindOptionsScreen extends MenuScreen {
 				layout.addMenuEntry(newActionEntry);
 			}
 		}
+
+		layout.addMenuEntry(newMenuSeparator);
 
 	}
 

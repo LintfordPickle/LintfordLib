@@ -15,7 +15,6 @@ public class MenuToggleEntry extends MenuEntry {
 	// --------------------------------------
 
 	private static final long serialVersionUID = 51472065385268475L;
-	private static final float SPACE_BETWEEN_TEXT = 15;
 
 	private static final String SEPARATOR_STRING = " : ";
 
@@ -187,7 +186,7 @@ public class MenuToggleEntry extends MenuEntry {
 
 		lTextBoldFont.begin(core.HUD());
 		lTextBoldFont.setTextColor(textColor);
-		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - SPACE_BETWEEN_TEXT - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
+		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
 		lTextBoldFont.drawText(SEPARATOR_STRING, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
 
 		if (mShowCheckedText) {
