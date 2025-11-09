@@ -104,7 +104,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		final var lBackButton = new MenuEntry(screenManager, this, "Back");
 		lBackButton.registerClickListener(this, BUTTON_BACK_BUTTON);
-		lBackButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
+		lBackButton.gamepadMenuIcon.manualGamepadInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
 		mApplyButton = new MenuEntry(screenManager, this, "Apply");
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);
@@ -124,6 +124,8 @@ public class AudioOptionsScreen extends MenuScreen {
 		mSelectedEntryIndex = 0;
 
 		mConfirmChangesLayout.visible(false);
+
+		setFocusOnEntry(mMusicEnabledEntry);
 	}
 
 	// --------------------------------------
@@ -143,11 +145,11 @@ public class AudioOptionsScreen extends MenuScreen {
 
 	private void createAudioSection(BaseLayout layout) {
 		final var lAudioConfig = screenManager.core().config().audio();
-		
+
 		// As we know the game canvas size
 		final float lDesiredEntryWidth = 56.f;
 		final float lDesiredEntryHeight = 25.f;
-		
+
 		final var musicOptionsLabel = new MenuLabelEntry(screenManager, this);
 		musicOptionsLabel.label("Music");
 		musicOptionsLabel.drawButtonBackground(true);
@@ -175,13 +177,12 @@ public class AudioOptionsScreen extends MenuScreen {
 		mMusicVolumeEntry.desiredHeight(lDesiredEntryHeight);
 		mMusicVolumeEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
 
-		
 		final var sfxOptionsLabel = new MenuLabelEntry(screenManager, this);
 		sfxOptionsLabel.label("Sfx");
 		sfxOptionsLabel.drawButtonBackground(true);
 		sfxOptionsLabel.horizontalAlignment(ALIGNMENT.LEFT);
 		sfxOptionsLabel.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-		
+
 		mSoundEnabledEntry = new MenuToggleEntry(screenManager, this);
 		mSoundEnabledEntry.label("SoundFX Enabled");
 		mSoundEnabledEntry.registerClickListener(this, BUTTON_ENABLED_SOUNDFX);
@@ -207,7 +208,7 @@ public class AudioOptionsScreen extends MenuScreen {
 
 		layout.addMenuEntry(mMusicEnabledEntry);
 		layout.addMenuEntry(mMusicVolumeEntry);
-		
+
 		layout.addMenuEntry(MenuEntry.menuSeparator());
 		layout.addMenuEntry(sfxOptionsLabel);
 		layout.addMenuEntry(MenuEntry.menuSeparator());

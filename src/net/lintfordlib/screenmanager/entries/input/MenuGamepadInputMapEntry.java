@@ -326,11 +326,8 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		if (mHasFocus && mEnabled)
 			renderHighlight(core, screen, true, textureBatch);
 
-		if (mHasFocus & !mIsBindingInput) {
-			// Set which hint icon to render
-			mGamepadMenuIcon.lintfordInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH);
-			drawGamepadIcon(core, textureBatch, mGamepadMenuIcon.bounds, parentScreenAlpha);
-		}
+		if (!mIsBindingInput)
+			drawGamepadIcon(core, textureBatch, parentScreenOffset.x + mX + mW - 16, parentScreenOffset.y + mY + mH - 16, parentScreenAlpha);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			textureBatch.begin(core.HUD());

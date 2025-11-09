@@ -109,7 +109,7 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 
 		final var backButton = new MenuEntry(screenManager, this, "Back");
 		backButton.registerClickListener(this, BUTTON_CANCEL_CHANGES);
-		backButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
+		backButton.gamepadMenuIcon.manualGamepadInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
 		mApplyButton = new MenuEntry(screenManager, this, "Apply");
 		mApplyButton.registerClickListener(this, BUTTON_APPLY_CHANGES);
 		mApplyButton.enabled(false);
@@ -129,6 +129,8 @@ public class VideoOptionsScreen extends MenuScreen implements ITimedDialog {
 		mSelectedEntryIndex = 0;
 
 		mConfirmChangesLayout.visible(false);
+
+		setFocusOnEntry(mFullScreenToggle);
 	}
 
 	// --------------------------------------

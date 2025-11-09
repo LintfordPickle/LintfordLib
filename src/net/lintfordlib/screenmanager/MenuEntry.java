@@ -21,44 +21,64 @@ import net.lintfordlib.screenmanager.animations.IUiAnimationTarget;
 import net.lintfordlib.screenmanager.animations.UiScaleAnimator;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
-// TODO: remove the inheritance to Rectangle (serializable) and use composition (AABB) instead
 public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipProvider, IContextHintProvider, IUiAnimationTarget {
 
 	public class GamepadMenuIcon {
-		public final Rectangle bounds = new Rectangle();
-		private ALIGNMENT mAlignment;
-		private boolean mIsEnabled;
 
-		// TODO: Need to track if custom set (or automatically set because of onFocus => gamepad 'A')
+		private boolean mIsManualEnabled;
+		private boolean mIsFocusHintDisabled;
 
-		// GamepadInputMap
-		private int mLintfordInputCode;
+		private int mGamepadInputCodeManual;
 
-		public void lintfordInputCode(int inputCode) {
-			mLintfordInputCode = inputCode;
+		public void manualGamepadInputCode(int inputCode) {
+			mGamepadInputCodeManual = inputCode;
+			mIsManualEnabled = mGamepadInputCodeManual != -1;
 		}
 
-		public boolean isEnabled() {
-			return mIsEnabled;
+		public boolean focusHintDisabled() {
+			return mIsFocusHintDisabled;
 		}
 
-		public ALIGNMENT alignment() {
-			return mAlignment;
+		public void focusHintDisabled(boolean isDisabled) {
+			mIsFocusHintDisabled = isDisabled;
 		}
 
-		public void initialize(ALIGNMENT alignment, int lintfordInputCode) {
-			mIsEnabled = true;
-			mAlignment = alignment;
-			mLintfordInputCode = lintfordInputCode;
+		public void manualInputCode(int gamepadInputCode) {
+			mIsManualEnabled = true;
+			mGamepadInputCodeManual = gamepadInputCode;
 		}
 
-		public void reset() {
-			mIsEnabled = false;
+		public int manualGamepadInputCode() {
+			return mGamepadInputCodeManual;
 		}
-	}
 
-	public void setGamepadIcon(ALIGNMENT left, int lintfordInputCode) {
-		mGamepadMenuIcon.initialize(left, lintfordInputCode);
+		public void disableManualInputCode() {
+			mIsManualEnabled = false;
+		}
+
+		public void disableFocusInputCode() {
+			mIsManualEnabled = false;
+		}
+
+		public int getSpriteFrame(int gamepadInputCode) {
+			switch (gamepadInputCode) {
+
+			case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_NORTH:
+				return CoreTextureNames.TEXTURE_GAMEPAD_YELLOW;
+
+			case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH:
+				return CoreTextureNames.TEXTURE_GAMEPAD_GREEN;
+
+			case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST:
+				return CoreTextureNames.TEXTURE_GAMEPAD_RED;
+
+			case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_WEST:
+				return CoreTextureNames.TEXTURE_GAMEPAD_BLUE;
+
+			}
+
+			return -1;
+		}
 
 	}
 
@@ -122,7 +142,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public final Color entryColor = new Color();
 	public final Color textColor = new Color();
 	protected SpriteSheetDefinition mCoreSpritesheet;
-	public final GamepadMenuIcon mGamepadMenuIcon = new GamepadMenuIcon();
+	public final GamepadMenuIcon gamepadMenuIcon = new GamepadMenuIcon();
 	public final ContextHintState contextHintState = new ContextHintState();
 	protected float mSeparatorOffsetX;
 
@@ -541,8 +561,6 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		final var screenOffset = mParentScreen != null ? mParentScreen.screenPositionOffset() : Vector2f.Zero;
 		final var tileSize = Math.min(32, mH);
 
-		var yy = centerY();
-
 		if (mShowInfoIcon) // TODO: This isn't correct - the draw code is already offsetting by the screen transition
 			mInfoIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
 
@@ -716,19 +734,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			}
 		}
 
-		if (!parentScreen().otherScreenHasFocus()) {
-			if (mGamepadMenuIcon.isEnabled()) {
-				// icon set statically ('back')
-				mGamepadMenuIcon.bounds.set(lScreenOffset.x + mX + mW - 16, lScreenOffset.y + mY + mH - 16, 16, 16);
-				drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
-			} else if (mHasFocus) {
-				mGamepadMenuIcon.bounds.set(lScreenOffset.x + mX + mW - 16, lScreenOffset.y + mY + mH - 16, 16, 16);
-				mGamepadMenuIcon.mLintfordInputCode = GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH;
-				drawGamepadIcon(core, spriteBatch, mGamepadMenuIcon.bounds, lParentScreenAlpha);
-			}
-		}
-
-		// TODO: if gamepad connected
+		drawGamepadIcon(core, spriteBatch, lScreenOffset.x + mX + mW - 16, lScreenOffset.y + mY + mH - 16, lParentScreenAlpha);
 
 		if (mShowInfoIcon)
 			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
@@ -799,22 +805,21 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		return false;
 	}
 
-	public void drawGamepadIcon(LintfordCore core, SpriteBatch spriteBatch, Rectangle destRect, float screenAlpha) {
+	public void drawGamepadIcon(LintfordCore core, SpriteBatch spriteBatch, float posX, float posY, float screenAlpha) {
+		if (parentScreen().otherScreenHasFocus())
+			return; // don't render gamepad icons on background screens
+
+		if (!core.input().gamepads().isGamepadAvailable())
+			return;
 
 		int spriteFrameUid = -1;
-		switch (mGamepadMenuIcon.mLintfordInputCode) {
+		if (gamepadMenuIcon.mIsManualEnabled) {
+			spriteFrameUid = gamepadMenuIcon.getSpriteFrame(gamepadMenuIcon.manualGamepadInputCode());
+		} else if (mHasFocus) {
+			if (gamepadMenuIcon.focusHintDisabled())
+				return;
 
-		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH:
 			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_GREEN;
-			break;
-
-		case GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST:
-			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_RED;
-			break;
-
-		// TODO: These should be taken from the current event action mapping ...
-		// TODO: Need to finish up the mapping I guess ..
-
 		}
 
 		if (spriteFrameUid == -1)
@@ -822,16 +827,14 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		spriteBatch.begin(core.HUD());
 
-		final var w = destRect.width() * mScale;
-		final var h = destRect.height() * mScale;
-		final var x = destRect.x();
-		final var y = destRect.y();
+		final var w = 16 * mScale;
+		final var h = 16 * mScale;
 
 		spriteBatch.setColorRGBA(.1f, .1f, .1f, screenAlpha * 0.7f);
-		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y, w, h, 0, -w / 2, -h / 2, 1.f);
+		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, posX, posY, w, h, 0, -w / 2, -h / 2, 1.f);
 
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, screenAlpha);
-		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, x, y - 2, w, h, 0, -w / 2, -h / 2, 1.f);
+		spriteBatch.drawAroundCenter(mCoreSpritesheet, spriteFrameUid, posX, posY - 2, w, h, 0, -w / 2, -h / 2, 1.f);
 
 		spriteBatch.end();
 	}
@@ -971,6 +974,18 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	@Override
 	public ContextHintState contextHints() {
 		return contextHintState;
+	}
+
+	/**
+	 * Sets the gamepad hint code to be shown when a controller is available. The button shown is not dependant on the state of the button (i.e. hasFocus etc.). Setting the hintCode has not effect on the bound logic. Pass -1 to disable.
+	 */
+	public void setGamepadHintCode(int gamepadInputCode) {
+		if (gamepadInputCode == -1) {
+			gamepadMenuIcon.disableManualInputCode();
+			return;
+		}
+
+		gamepadMenuIcon.manualGamepadInputCode(gamepadInputCode);
 	}
 
 	// ---

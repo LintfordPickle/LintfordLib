@@ -14,7 +14,6 @@ import net.lintfordlib.core.input.GameInputAction;
 import net.lintfordlib.core.input.IGamepadInputBindingCallback;
 import net.lintfordlib.core.input.IKeyInputCallback;
 import net.lintfordlib.core.input.InputHelper;
-import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.Screen;
@@ -359,11 +358,10 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 
 		// Gamepad hints
 		if (mHasFocus) {
-			mGamepadMenuIcon.lintfordInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_SOUTH);
 			if (mIsKeyAreaSelected) {
-				drawGamepadIcon(core, lSpriteBatch, new Rectangle(xoffset + column1X + columnWidth - 32, yoffset + mY + mH - 16, 16, 16), 1.f);
+				drawGamepadIcon(core, lSpriteBatch, xoffset + column1X + columnWidth - 32, yoffset + mY + mH - 16, 1.f);
 			} else {
-				drawGamepadIcon(core, lSpriteBatch, new Rectangle(xoffset + column2X + columnWidth - 32, yoffset + mY + mH - 16, 16, 16), 1.f);
+				drawGamepadIcon(core, lSpriteBatch, xoffset + column2X + columnWidth - 32, yoffset + mY + mH - 16, 1.f);
 			}
 		}
 

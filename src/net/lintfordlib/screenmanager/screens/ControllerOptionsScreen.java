@@ -11,7 +11,6 @@ import net.lintfordlib.core.input.gamepad.IGamepadListener;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.ScreenManager;
-import net.lintfordlib.screenmanager.ScreenManagerConstants.ALIGNMENT;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
 import net.lintfordlib.screenmanager.entries.HorizontalEntryGroup;
@@ -132,7 +131,7 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 
 		mBackButton = new MenuEntry(screenManager, this, "Back");
 		mBackButton.registerClickListener(this, BUTTON_BACK);
-		mBackButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
+		mBackButton.gamepadMenuIcon.manualGamepadInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
 
 		mSaveButton = new MenuEntry(screenManager, this, "Save & Exit");
 		mSaveButton.registerClickListener(this, BUTTON_SAVE);

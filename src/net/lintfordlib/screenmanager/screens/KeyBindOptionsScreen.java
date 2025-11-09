@@ -58,7 +58,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 
 		mBackButton = new MenuEntry(screenManager, this, "Go back");
 		mBackButton.registerClickListener(this, BUTTON_CONFIRM);
-		mBackButton.setGamepadIcon(ALIGNMENT.LEFT, GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
+		mBackButton.gamepadMenuIcon.manualGamepadInputCode(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_EAST);
 
 		footerList.addMenuEntry(mBackButton);
 

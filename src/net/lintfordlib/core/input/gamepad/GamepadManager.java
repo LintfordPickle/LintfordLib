@@ -47,6 +47,7 @@ public class GamepadManager extends GLFWJoystickCallback {
 	// calling out to GLFW.glfwIsJoystickPresent(index) can trigger the connect/disconnect for other pads.
 	// During the frames where a gamepad is connected or removed, we need to rebuild the gamepad lists.
 	private boolean mGamepadManagerDirty;
+	private boolean mIsGamepadAvailable;
 
 	// --------------------------------------
 	// Properties
@@ -114,13 +115,17 @@ public class GamepadManager extends GLFWJoystickCallback {
 		mGamepadCaptureCooldownMs = 300;
 	}
 
+	public boolean isGamepadAvailable() {
+		return mIsGamepadAvailable;
+	}
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
 	public GamepadManager() {
 		mMappingGamepadIndex = NO_GAMEPAD_MAPPING;
-
+		mIsGamepadAvailable = false;
 	}
 
 	// --------------------------------------
@@ -520,7 +525,9 @@ public class GamepadManager extends GLFWJoystickCallback {
 			}
 		}
 
+		mIsGamepadAvailable = mActiveGamepads.size() > 0;
 		mGamepadManagerDirty = true;
+		
 	}
 
 	private int gamepadGuidPresent(String guid) {
@@ -555,6 +562,7 @@ public class GamepadManager extends GLFWJoystickCallback {
 		}
 
 		disconnectedGamepad.reset();
+		mIsGamepadAvailable = mActiveGamepads.size() > 0;
 		mGamepadManagerDirty = true;
 	}
 

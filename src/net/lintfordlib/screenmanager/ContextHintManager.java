@@ -104,7 +104,7 @@ public class ContextHintManager {
 		if (mDrawFooterBar)
 			drawFooterText(core);
 
-		if (mGamePadHintsEnabled)
+		if (mGamePadHintsEnabled && core.input().gamepads().isGamepadAvailable())
 			drawGamePadHints(core);
 	}
 
@@ -199,7 +199,7 @@ public class ContextHintManager {
 
 		if (hintText != null) {
 			xPos -= font.getStringWidth(hintText);
-			font.drawText(hintText, xPos, yPos + ICON_SIZE * .5f - font.fontHeight() * .5f, .01f, 1.f);
+			font.drawShadowedText(hintText, xPos, yPos + ICON_SIZE * .5f - font.fontHeight() * .5f, .01f, 1, 1, 1.f);
 		}
 
 		mPositionMarker.y -= 20;
