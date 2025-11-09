@@ -501,6 +501,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mParentScreen = parentScreen;
 
 		mText = menuEntryLabel;
+		mMenuEntryID = -1;
 
 		mEnableUpdateDraw = true;
 		mEnabled = true;
