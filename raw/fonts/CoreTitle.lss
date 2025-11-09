@@ -1,9 +1,10 @@
 {
-  "outputDataFilename": "D:\\dev\\java\\ludumdare\\58 - Collector\\projects\\LintfordLib\\res\\res\\fonts\\fontCoreTitle.json",
-  "outputImageFilename": "D:\\dev\\java\\ludumdare\\58 - Collector\\projects\\LintfordLib\\res\\res\\textures\\fonts\\textureFontCoreTitle.png",
-  "workingDirectory": "D:\\dev\\java\\ludumdare\\58 - Collector\\projects\\LintfordLib\\raw\\fonts\\CoreTitle",
+  "outputDataFilename": "..\\..\\res\\res\\fonts\\fontCoreTitle.json",
+  "outputImageFilename": "..\\..\\res\\res\\textures\\fonts\\textureFontCoreTitle.png",
+  "workingDirectory": "CoreTitle",
   "textureName": "TEXTURE_FONT_CORE_TITLE",
   "textureFilepath": "/res/textures/fonts/textureFontCoreTitle.png",
+  "fontHeight": 0,
   "sortMode": "Area",
   "borderPadding": 0,
   "shapeOutlines": false,
@@ -18,6 +19,6 @@
   "forcePoTTextures": true,
   "autoSizeTexture": false,
   "itemFilenames": [
-    "CoreTitle\\*.*"
+    "D:\\dev\\java\\ludumdare\\58 - Collector\\projects\\LintfordLib\\raw\\fonts\\CoreTitle\\*.*"
   ]
 }

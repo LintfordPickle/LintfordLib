@@ -1,0 +1,24 @@
+{
+  "outputDataFilename": "..\\..\\res\\res\\fonts\\fontConsole.json",
+  "outputImageFilename": "..\\..\\res\\res\\textures\\fonts\\textureFontConsole.png",
+  "workingDirectory": "CoreConsole",
+  "textureName": "TEXTURE_FONT_CONSOLE",
+  "textureFilepath": "/res/textures/fonts/textureFontConsole.png",
+  "fontHeight": 10,
+  "sortMode": "Area",
+  "borderPadding": 0,
+  "shapeOutlines": false,
+  "crop": false,
+  "trim": false,
+  "allowRotations": false,
+  "spritePadding": 0,
+  "textureWidthMax": 128,
+  "textureWidthActual": 128,
+  "textureHeightMax": 128,
+  "textureHeightActual": 128,
+  "forcePoTTextures": true,
+  "autoSizeTexture": false,
+  "itemFilenames": [
+    "CoreConsole\\*.*"
+  ]
+}
