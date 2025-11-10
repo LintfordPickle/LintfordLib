@@ -381,9 +381,6 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 	@Override
 	public boolean gamepadAxisInput(int rawAxisUid, float signum) {
 
-		// TODO: Need to use the value to figure out which direction the axis was trigger in.
-		System.out.println("Axis input : " + rawAxisUid + " (" + (signum > 0.f ? "+" : "-") + ")");
-
 		if (mIsBindingInput && isCoolDownElapsed()) {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind axis <...> mapped to " + rawAxisUid);
 

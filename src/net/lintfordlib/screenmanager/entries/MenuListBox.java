@@ -6,13 +6,13 @@ import java.util.List;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.MenuInputActionsMap;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
-import net.lintfordlib.core.input.InputType;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
 import net.lintfordlib.renderers.windows.components.ScrollBarContentRectangle;
@@ -203,7 +203,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		if (!mIsActive || !mIsInputActive)
 			return false;
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
+		final var eventUp = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_UP, this);
+		if (eventUp) {
 			mSelectedItemIndex--;
 
 			if (mSelectedItemIndex < 0)
@@ -213,7 +214,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			return true;
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
+		final var eventDown = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_DOWN, this);
+		if (eventDown) {
 			mSelectedItemIndex++;
 
 			if (mSelectedItemIndex >= mItems.size())
@@ -223,17 +225,20 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			return true;
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
+		final var eventLeft = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT, this);
+		if (eventLeft) {
 			mIsInputActive = false;
-			mParentScreen.onNavigationLeft(core, InputType.Keyboard);
+			mParentScreen.onNavigationLeft(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
+		final var eventRight = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT, this);
+		if (eventRight) {
 			mIsInputActive = false;
-			mParentScreen.onNavigationRight(core, InputType.Keyboard);
+			mParentScreen.onNavigationRight(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
+		final var eventConfirm = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM, this);
+		if (eventConfirm) {
 
 			// The capture is managed in the onClick() method
 			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
@@ -249,7 +254,9 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		if (!mIsActive || !mIsInputActive)
 			return false;
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+		final var eventActionManager = core.input().eventActionManager();
+
+		if (eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_UP).isDownTimed()) {
 			mSelectedItemIndex--;
 
 			if (mSelectedItemIndex < 0)
@@ -257,11 +264,11 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
-			// scrollContentItemIntoView(mHighlightedIndex);
+			scrollContentItemIntoView(mSelectedItemIndex);
 			return true;
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+		if (eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_DOWN).isDownTimed()) {
 			mSelectedItemIndex++;
 
 			if (mSelectedItemIndex >= mItems.size())
@@ -269,29 +276,27 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
-			// scrollContentItemIntoView(mHighlightedIndex);
+			scrollContentItemIntoView(mSelectedItemIndex);
 			return true;
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CROSS, this)) {
-
-			// The capture is managed in the onClick() method
-			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
-
+		if (eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM).isDownTimed()) {
 			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
 			mParentScreen.onMenuEntryDeactivated(this);
+
+			return true; // block further input (on screen).
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CIRCLE, this)) {
+		// TODO: 
 
-			// The capture is managed in the onClick() method
-			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
-
+		if (eventActionManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_BACK).isDownTimed()) {
 			core.input().mouse().isMouseMenuSelectionEnabled(false);
 
 			mParentScreen.onMenuEntryDeactivated(this);
 			mIsInputActive = false;
+
+			return true; // block further input (on screen).
 		}
 
 		return false;

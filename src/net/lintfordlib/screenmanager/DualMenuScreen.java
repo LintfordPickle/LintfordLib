@@ -3,11 +3,9 @@ package net.lintfordlib.screenmanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
-
+import net.lintfordlib.MenuInputActionsMap;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
-import net.lintfordlib.core.input.InputType;
 import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_ALIGNMENT;
@@ -124,54 +122,51 @@ public abstract class DualMenuScreen extends MenuScreen {
 		if (mAnimationTimer > 0)
 			return; // don't handle input if 'animation' is playing
 
-		if (mESCBackEnabled) {
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
-				if (mScreenState == ScreenState.ACTIVE) {
-					onEscPressed();
-					return;
-				}
-			}
-		}
-
 		if (mLayouts.isEmpty() && mRightLayouts.isEmpty())
 			return; // nothing to do
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
-			onNavigationUp(core, InputType.Keyboard);
+		final var lLeftLayoutCount = mLayouts.size();
+		for (int i = 0; i < lLeftLayoutCount; i++) {
+			final var lLayout = mLayouts.get(i);
+			if (lLayout.handleInput(core))
+				return;
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
-			onNavigationUp(core, InputType.Gamepad);
+		final var lRightLayoutCount = mRightLayouts.size();
+		for (int i = 0; i < lRightLayoutCount; i++) {
+			final var lLayout = mRightLayouts.get(i);
+			if (lLayout.handleInput(core))
+				return;
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
-			onNavigationDown(core, InputType.Keyboard);
+		if (mESCBackEnabled && mScreenState == ScreenState.ACTIVE) {
+			final var escPressed = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_BACK, this);
+			if (escPressed) {
+				onEscPressed();
+				return;
+			}
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
-			onNavigationDown(core, InputType.Gamepad);
+		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_UP, this)) {
+			onNavigationUp(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
-			onNavigationLeft(core, InputType.Keyboard);
+		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_DOWN, this)) {
+			onNavigationDown(core);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
-			onNavigationLeft(core, InputType.Gamepad);
+		final var eventLeft = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT, this);
+		if (eventLeft) {
+			onNavigationLeft(core);
 		}
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
-			onNavigationRight(core, InputType.Keyboard);
+		final var eventRight = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT, this);
+		if (eventRight) {
+			onNavigationRight(core);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
-			onNavigationRight(core, InputType.Gamepad);
-		}
-
-		// This might become a problem if we have entries which capture the input in a dual screen. Should call out to onNavigationBack/Confirm
-
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
-
+		final var eventConfirmation = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM, this);
+		if (eventConfirmation) {
 			final var lSelectedLayouts = mRightColumnSelected ? mRightLayouts : mLayouts;
 			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;
 			final var lSelectedEntryIndex = mRightColumnSelected ? mRightColumnSelectedEntryIndex : mSelectedEntryIndex;
@@ -179,18 +174,6 @@ public abstract class DualMenuScreen extends MenuScreen {
 
 			if (lEntry != null && !lEntry.readOnly() && lEntry.enabled())
 				lEntry.onClick(core.input());
-		}
-
-		final var lLeftLayoutCount = mLayouts.size();
-		for (int i = 0; i < lLeftLayoutCount; i++) {
-			final var lLayout = mLayouts.get(i);
-			lLayout.handleInput(core);
-		}
-
-		final var lRightLayoutCount = mRightLayouts.size();
-		for (int i = 0; i < lRightLayoutCount; i++) {
-			final var lLayout = mRightLayouts.get(i);
-			lLayout.handleInput(core);
 		}
 
 		return;
@@ -280,14 +263,8 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationUp(LintfordCore core, InputType inputType) {
+	protected void onNavigationUp(LintfordCore core) {
 		if (isEntryActive())
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -306,14 +283,8 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationDown(LintfordCore core, InputType inputType) {
+	protected void onNavigationDown(LintfordCore core) {
 		if (isEntryActive())
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -332,14 +303,8 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	public void onNavigationLeft(LintfordCore core, InputType inputType) {
+	public void onNavigationLeft(LintfordCore core) {
 		if (isEntryActive())
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -387,14 +352,8 @@ public abstract class DualMenuScreen extends MenuScreen {
 	}
 
 	@Override
-	public void onNavigationRight(LintfordCore core, InputType inputType) {
+	public void onNavigationRight(LintfordCore core) {
 		if (isEntryActive())
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);

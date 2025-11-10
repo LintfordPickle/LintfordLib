@@ -175,14 +175,14 @@ public class KeyBindOptionsScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationUp(LintfordCore core, InputType inputType) {
+	protected void onNavigationUp(LintfordCore core) {
 
 		final var selectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
 		if (selectedEntry instanceof MenuBindingKeyEntry entry) {
 			mKeyAreaSelected = entry.keyAreaSelected();
 		}
 
-		super.onNavigationUp(core, inputType);
+		super.onNavigationUp(core);
 
 		final var newSelectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
 		if (newSelectedEntry instanceof MenuBindingKeyEntry entry) {
@@ -191,13 +191,13 @@ public class KeyBindOptionsScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void onNavigationDown(LintfordCore core, InputType inputType) {
+	protected void onNavigationDown(LintfordCore core) {
 		final var selectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
 		if (selectedEntry instanceof MenuBindingKeyEntry entry) {
 			mKeyAreaSelected = entry.keyAreaSelected();
 		}
 
-		super.onNavigationDown(core, inputType);
+		super.onNavigationDown(core);
 
 		final var newSelectedEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
 		if (newSelectedEntry instanceof MenuBindingKeyEntry entry) {

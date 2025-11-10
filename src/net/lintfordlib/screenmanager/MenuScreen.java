@@ -3,15 +3,12 @@ package net.lintfordlib.screenmanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintfordlib.MenuInputActionsMap;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.input.InputManager;
-import net.lintfordlib.core.input.InputType;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.SimpleRendererManager;
 import net.lintfordlib.renderers.ZLayers;
@@ -216,57 +213,51 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 		super.handleInput(core);
 
-		final var escPressed = core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this);
-		if (mESCBackEnabled) {
-			// TODO: Use actual gamepad button mapping for 'backwards'
-			if (escPressed /* || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this) */) {
-				if (mScreenState == ScreenState.ACTIVE) {
-					onEscPressed();
-					return;
-				}
+		// Child elements have priority (because they can have focus).
+		final var lLayoutCount = mLayouts.size();
+		for (int i = 0; i < lLayoutCount; i++) {
+			final var lLayout = mLayouts.get(i);
+			if (lLayout.handleInput(core))
+				return;
+
+		}
+
+		if (mESCBackEnabled && mScreenState == ScreenState.ACTIVE) {
+			final var escPressed = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_BACK, this);
+			if (escPressed) {
+				onEscPressed();
+				return;
 			}
 		}
 
-		// TODO : This is where I am now stuck - need to somehow map both the axis and the DPad to the same event.
-		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_UP, this)) {
-			// screenManager.contextHintManager().setKeyboardHints();
-
-			onNavigationUp(core, InputType.Keyboard);
+		final var eventUp = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_UP, this);
+		if (eventUp) {
+			onNavigationUp(core);
 		}
 
-		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_DOWN, this)) {
-			// screenManager.contextHintManager().setKeyboardHints();
-
-			onNavigationDown(core, InputType.Keyboard);
-
+		final var eventDown = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_DOWN, this);
+		if (eventDown) {
+			onNavigationDown(core);
 		}
 
 		final var eventLeft = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT, this);
 		if (eventLeft) {
-			onNavigationLeft(core, InputType.Gamepad);
+			onNavigationLeft(core);
 		}
 
 		final var eventRight = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT, this);
 		if (eventRight) {
-			onNavigationRight(core, InputType.Gamepad);
+			onNavigationRight(core);
 		}
 
 		final var eventBack = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_BACK, this);
 		if (eventBack) {
-			onNavigationBack(core, InputType.Gamepad);
-
+			onNavigationBack(core);
 		}
 
 		final var eventConfirmation = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM, this);
 		if (eventConfirmation) {
-			onNavigationConfirm(core, InputType.Keyboard);
-
-		}
-
-		final var lLayoutCount = mLayouts.size();
-		for (int i = 0; i < lLayoutCount; i++) {
-			final var lLayout = mLayouts.get(i);
-			lLayout.handleInput(core);
+			onNavigationConfirm(core);
 		}
 	}
 
@@ -697,16 +688,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	// NAVIGATION ---------------------------
 
-	protected void onNavigationBack(LintfordCore core, InputType inputType) {
-		System.out.println("nav back");
+	protected void onNavigationBack(LintfordCore core) {
+		screenManager.toastManager().addMessage("Info", "MenuScreen: nav back");
 
 		if (mActiveEntry != null)
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		if (mESCBackEnabled)
@@ -714,16 +699,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	}
 
-	protected void onNavigationConfirm(LintfordCore core, InputType inputType) {
-		System.out.println("nav confirm");
+	protected void onNavigationConfirm(LintfordCore core) {
+		screenManager.toastManager().addMessage("Info", "MenuScreen: nav confirm");
 
 		if (mActiveEntry != null)
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
@@ -744,16 +723,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		selectedLayout.scrollContentItemIntoView(mSelectedEntryIndex);
 	}
 
-	protected void onNavigationUp(LintfordCore core, InputType inputType) {
-		System.out.println("nav up");
+	protected void onNavigationUp(LintfordCore core) {
+		screenManager.toastManager().addMessage("Info", "MenuScreen: nav up");
 
 		if (mActiveEntry != null)
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -769,16 +742,10 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_UP);
 	}
 
-	protected void onNavigationDown(LintfordCore core, InputType inputType) {
-		System.out.println("nav down");
+	protected void onNavigationDown(LintfordCore core) {
+		screenManager.toastManager().addMessage("Info", "MenuScreen: nav down");
 
 		if (mActiveEntry != null)
-			return;
-
-		if (inputType == InputType.Gamepad && !mAcceptGamepadInput)
-			return;
-
-		if (inputType == InputType.Keyboard && !mAcceptKeyboardInput)
 			return;
 
 		core.input().mouse().isMouseMenuSelectionEnabled(false);
@@ -794,8 +761,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		screenManager.uiSounds().play(ConstantsScreenManagerAudio.SCREENMANAGER_AUDIO_ENTRY_NAVIGATION_DOWN);
 	}
 
-	public void onNavigationLeft(LintfordCore core, InputType inputType) {
-		System.out.println("nav left");
+	public void onNavigationLeft(LintfordCore core) {
+		screenManager.toastManager().addMessage("Info", "MenuScreen: nav left");
 
 		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
 
@@ -807,8 +774,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 
 	}
 
-	public void onNavigationRight(LintfordCore core, InputType inputType) {
-		System.out.println("nav right");
+	public void onNavigationRight(LintfordCore core) {
+		screenManager.toastManager().addMessage("Info", "MenuScreen: nav right");
 
 		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
 
