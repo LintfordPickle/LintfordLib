@@ -93,8 +93,6 @@
 		</copy>
 	</target>
 
-
-
 	<!-- Define the set of .jar files in the dist lib dir for inclusion on the classpath. -->
 	<path id="build.class.path">
 		<fileset dir="${basedir}/${input.lib.natives.dir}">

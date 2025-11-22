@@ -17,7 +17,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/lwjgl"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL3-Windows"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry exported="true" kind="lib" path="libs/mockito-core-5.14.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/objenesis-3.4.jar"/>
@@ -28,5 +27,21 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/gson-2.11.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="natives-win/lwjgl-assimp-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-win/lwjgl-freetype-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-win/lwjgl-glfw-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-win/lwjgl-jemalloc-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-win/lwjgl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-win/lwjgl-openal-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-win/lwjgl-opengl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-win/lwjgl-stb-natives-windows.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-assimp-natives-linux.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-freetype-natives-linux.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-glfw-natives-linux.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-jemalloc-natives-linux.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-natives-linux.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-openal-natives-linux.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-opengl-natives-linux.jar"/>
+	<classpathentry kind="lib" path="natives-lin/lwjgl-stb-natives-linux.jar"/>
 	<classpathentry kind="output" path="target/"/>
 </classpath>
