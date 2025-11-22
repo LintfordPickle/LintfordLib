@@ -405,9 +405,15 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
+
+			final var menuEntry = mMenuEntries.get(i);
+
+			// note: different input methods have precedence.
+
 			var lInputHandled = false;
-			lInputHandled = mMenuEntries.get(i).onHandleKeyboardInput(core);
-			lInputHandled = lInputHandled || mMenuEntries.get(i).onHandleGamepadInput(core);
+			lInputHandled = menuEntry.onHandleInputActions(core);
+			lInputHandled = lInputHandled || menuEntry.onHandleKeyboardInput(core);
+			lInputHandled = lInputHandled || menuEntry.onHandleGamepadInput(core);
 
 			if (lInputHandled)
 				return lInputHandled;
@@ -507,14 +513,6 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 
 		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
 			mMenuEntries.get(i).postStencilDraw(core, parentScreen, componentDepth + i * .001f);
-		}
-
-		// TODO: Delete when finished testing stencil
-		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			spriteBatch.begin(core.HUD());
-			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.draw(spriteSheetCore, CoreTextureNames.TEXTURE_WHITE, contentDisplayArea(), ZLayers.LAYER_DEBUG);
-			spriteBatch.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

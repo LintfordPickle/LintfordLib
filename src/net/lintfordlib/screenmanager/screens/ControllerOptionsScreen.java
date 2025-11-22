@@ -13,6 +13,8 @@ import net.lintfordlib.screenmanager.MenuScreen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
+import net.lintfordlib.screenmanager.dialogs.ConfirmationDialog;
+import net.lintfordlib.screenmanager.dialogs.ControllerBindingDialog;
 import net.lintfordlib.screenmanager.entries.HorizontalEntryGroup;
 import net.lintfordlib.screenmanager.entries.MenuEnumEntryIndexed;
 import net.lintfordlib.screenmanager.entries.MenuToggleEntry;
@@ -70,6 +72,8 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 	private MenuGamepadInputMapEntry rtriggerButtonEntry;
 
 	private MenuControllerImageEntry mControllerImageEntry;
+
+	private ControllerBindingDialog mInputBindingDialog;
 
 	// --------------------------------------
 	// Constructor
@@ -151,6 +155,10 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		mSelectedLayoutIndex = 0;
 		mSelectedEntryIndex = 0;
 	}
+
+	// --------------------------------------
+	// Methods
+	// --------------------------------------
 
 	private void createControllerSection(BaseLayout layout) {
 
@@ -340,10 +348,6 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 
 	}
 
-	// --------------------------------------
-	// Methods
-	// --------------------------------------
-
 	@Override
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
@@ -472,6 +476,11 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 			mActiveGamepad.state.saveConfig();
 		}
 
+		if (mInputBindingDialog != null) {
+			mInputBindingDialog.exitScreen();
+			mInputBindingDialog = null;
+		}
+
 		super.exitScreen();
 	}
 
@@ -550,7 +559,19 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 
 	@Override
 	public void finishedBinding() {
+
+		if (mBindingEntry != null && mBindingEntry instanceof MenuGamepadInputMapEntry) {
+			final var entry = (MenuGamepadInputMapEntry) mBindingEntry;
+			entry.cancelBinding();
+		}
+
 		mBindingEntry = null;
+		mAvailableControllers.enabled(true);
+		mResetSdlMapping.enabled(true);
+
+		if (mInputBindingDialog != null) {
+			mInputBindingDialog.exitScreen();
+		}
 
 	}
 
@@ -561,6 +582,17 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		}
 
 		mBindingEntry = entry;
+		mAvailableControllers.enabled(false);
+		mResetSdlMapping.enabled(false);
+
+		mInputBindingDialog = new ControllerBindingDialog(screenManager, this, (MenuGamepadInputMapEntry) mBindingEntry);
+		mInputBindingDialog.setDialogIcon(mCoreSpritesheet, CoreTextureNames.TEXTURE_ICON_GAMEPAD);
+		mInputBindingDialog.resetCoolDownTimer(300);
+
+		mInputBindingDialog.cancelEntry().entryText("Cancel");
+		mInputBindingDialog.cancelEntry().registerClickListener(this, ConfirmationDialog.BUTTON_CONFIRM_NO);
+
+		screenManager.addScreen(mInputBindingDialog);
 
 	}
 

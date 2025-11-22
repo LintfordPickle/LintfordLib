@@ -86,23 +86,23 @@ public class KeyBindOptionsScreen extends MenuScreen {
 		layout.addMenuEntry(keyBindOptionsTitle);
 
 		final var inputManager = screenManager.core().input();
-		final var keyEventActionManager = inputManager.eventActionManager();
+		final var keyEventActionManager = inputManager.actionManager();
 
-		final var bindableGameInputActions = keyEventActionManager.bindableGameInputActions();
+		final var bindableGameInputActions = keyEventActionManager.bindableGameActions();
 		if (bindableGameInputActions != null) {
-			final var binableInputActionList = bindableGameInputActions.bindableEventActions();
+			final var binableInputActionList = bindableGameInputActions.bindableActions();
 			final var numBindableInputActions = binableInputActionList.size();
 			for (int i = 0; i < numBindableInputActions; i++) {
 				final var bindableInput = binableInputActionList.get(i);
 
-				final var registeredEventAction = keyEventActionManager.getGameInputActionByUid(bindableInput.eventActionUid);
+				final var registeredEventAction = keyEventActionManager.getGlobalInputAction(bindableInput.actionUid);
 				if (registeredEventAction == null)
 					continue;
 
 				final var newActionEntry = new MenuBindingKeyEntry(screenManager, this, registeredEventAction);
 				newActionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-				newActionEntry.label(bindableInput.eventActionName);
-				newActionEntry.registerClickListener(this, bindableInput.eventActionUid);
+				newActionEntry.label(bindableInput.actionName);
+				newActionEntry.registerClickListener(this, bindableInput.actionUid);
 
 				layout.addMenuEntry(newActionEntry);
 			}
@@ -123,21 +123,22 @@ public class KeyBindOptionsScreen extends MenuScreen {
 		layout.addMenuEntry(newMenuSeparator);
 		layout.addMenuEntry(menuKeyBindOptionsTitle);
 
-		final var bindableMenuInputActions = keyEventActionManager.bindableMenuInputActions();
+		final var bindableMenuInputActions = keyEventActionManager.bindableMenuActions();
 		if (bindableMenuInputActions != null) {
-			final var binableInputActionList = bindableMenuInputActions.bindableEventActions();
+			final var binableInputActionList = bindableMenuInputActions.bindableActions();
 			final var numBindableInputActions = binableInputActionList.size();
 			for (int i = 0; i < numBindableInputActions; i++) {
-				final var bindableInput = binableInputActionList.get(i);
 
-				final var registeredEventAction = keyEventActionManager.getGameInputActionByUid(bindableInput.eventActionUid);
+				final var bindableInput = binableInputActionList.get(i);
+				final var registeredEventAction = keyEventActionManager.getGlobalInputAction(bindableInput.actionUid);
+
 				if (registeredEventAction == null)
 					continue;
 
 				final var newActionEntry = new MenuBindingKeyEntry(screenManager, this, registeredEventAction);
 				newActionEntry.horizontalFillType(FILLTYPE.FILL_CONTAINER);
-				newActionEntry.label(bindableInput.eventActionName);
-				newActionEntry.registerClickListener(this, bindableInput.eventActionUid);
+				newActionEntry.label(bindableInput.actionName);
+				newActionEntry.registerClickListener(this, bindableInput.actionUid);
 
 				layout.addMenuEntry(newActionEntry);
 			}
@@ -155,7 +156,7 @@ public class KeyBindOptionsScreen extends MenuScreen {
 	public void exitScreen() {
 		// TODO: Maybe cancel and waiting keybaord/gamepad input events?
 
-		screenManager.core().input().eventActionManager().saveConfig();
+		screenManager.core().input().actionManager().saveConfig();
 
 		super.exitScreen();
 	}

@@ -1,9 +1,10 @@
 package net.lintfordlib.screenmanager.dialogs;
 
+import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
-import net.lintfordlib.screenmanager.layouts.ListLayout;
+import net.lintfordlib.screenmanager.layouts.FloatingLayout;
 
 public class ConfirmationDialog extends BaseDialog {
 
@@ -14,13 +15,19 @@ public class ConfirmationDialog extends BaseDialog {
 	public static final int BUTTON_CONFIRM_YES = 100;
 	public static final int BUTTON_CONFIRM_NO = 101;
 
+	public static final int BUTTON_WIDTH = 200;
+	public static final int BUTTON_HEIGHT = 25;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
-	protected ListLayout mListLayout;
+	protected FloatingLayout mFloatingLayout;
+
 	private MenuEntry mConfirmEntry;
 	private MenuEntry mCancelEntry;
+
+	private boolean mHasCancelButton;
 
 	// --------------------------------------
 	// Properties
@@ -49,13 +56,14 @@ public class ConfirmationDialog extends BaseDialog {
 	public ConfirmationDialog(ScreenManager screenManager, Screen parentScreen, String title, String dialogMessage, boolean withCancelButton) {
 		super(screenManager, parentScreen, dialogMessage);
 
-		mListLayout = new ListLayout(this);
+		mFloatingLayout = new FloatingLayout(this);
+		mHasCancelButton = withCancelButton;
 
-		if (withCancelButton) {
+		if (mHasCancelButton) {
 			mCancelEntry = new MenuEntry(screenManager, this, "Cancel");
 			mCancelEntry.registerClickListener(this, BUTTON_CONFIRM_NO);
 
-			mListLayout.addMenuEntry(mCancelEntry);
+			mFloatingLayout.addMenuEntry(mCancelEntry);
 		}
 
 		mConfirmEntry = new MenuEntry(screenManager, this, "Okay");
@@ -63,10 +71,9 @@ public class ConfirmationDialog extends BaseDialog {
 
 		mMenuTitle = title;
 
-		mListLayout.addMenuEntry(mConfirmEntry);
+		mFloatingLayout.addMenuEntry(mConfirmEntry);
 
-		addLayout(mListLayout);
-		mScreenPaddingTop = DIALOG_HEIGHT / 2.f - (mListLayout.getMenuEntryCount() > 1 ? 96.f : 64.f);
+		addLayout(mFloatingLayout);
 
 		mIsPopup = true;
 		mShowBackgroundScreens = true;
@@ -75,6 +82,27 @@ public class ConfirmationDialog extends BaseDialog {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	@Override
+	public void update(LintfordCore core, boolean otherScreenHasFocus, boolean coveredByOtherScreen) {
+		super.update(core, otherScreenHasFocus, coveredByOtherScreen);
+
+		// Because we are using a floating layout for the dialog, we need to manually place the buttons.
+
+		final var dialogArea = mDialogArea;
+
+		if (mHasCancelButton) {
+			mCancelEntry.width(150);
+			mCancelEntry.setPosition(dialogArea.centerX() - 150 - 5, dialogArea.centerY() + 10);
+
+			mConfirmEntry.width(150);
+			mConfirmEntry.setPosition(dialogArea.centerX() + 5, dialogArea.centerY() + 10);
+		} else {
+			mConfirmEntry.width(150);
+			mConfirmEntry.setPosition(dialogArea.centerX() - 150 / 2, dialogArea.centerY() + 10);
+		}
+
+	}
 
 	@Override
 	protected void handleOnClick() {

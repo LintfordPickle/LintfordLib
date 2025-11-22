@@ -453,7 +453,6 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void sleepScreen() {
-		System.out.println("sleepScreen()");
 		if (mTransitionOff == null || mTransitionOff.timeSpan().equals(TimeSpan.zero())) {
 			mScreenState = ScreenState.HIDDEN;
 		} else {
@@ -462,7 +461,6 @@ public abstract class Screen implements IInputProcessor {
 	}
 
 	public void resumeScreen() {
-		System.out.println("resumeScreen()");
 		if (mTransitionResume == null || mTransitionResume.timeSpan().equals(TimeSpan.zero())) {
 			mScreenState = ScreenState.ACTIVE;
 		} else {
@@ -493,10 +491,13 @@ public abstract class Screen implements IInputProcessor {
 
 		screenManager.contextHintManager().drawVersionBar(mShowContextualFooterBar);
 		screenManager.contextHintManager().drawContextBackground(mShowContextualKeyHints);
+
+		// Dopn't process lingering input from previous (maybe exiting screen).
+		resetCoolDownTimer();
 	}
 
 	public void onLostFocus() {
-
+		resetCoolDownTimer();
 	}
 
 	public void onViewportChange(float width, float height) {

@@ -14,7 +14,7 @@ import net.lintfordlib.screenmanager.MenuScreen;
 public class FloatingLayout extends BaseLayout implements IInputProcessor {
 
 	// --------------------------------------
-	// COnstants
+	// Constants
 	// --------------------------------------
 
 	private static final long serialVersionUID = -7568188688210642680L;
@@ -63,7 +63,9 @@ public class FloatingLayout extends BaseLayout implements IInputProcessor {
 
 		// limit mouse interaction within the baseLayout to within the contentDisplayArea
 		// due to the constraints imposed by the title bar, via the crop top and crop bottom, the contentDisplayArea is a subset of the layout
-		if (core.input().mouse().isMouseMenuSelectionEnabled() && contentDisplayArea().intersectsAA(core.HUD().getMouseCameraSpace())) {
+		final var mouseMenuSelectedEnabled = core.input().mouse().isMouseMenuSelectionEnabled();
+		final var mouseIntersectsUs = mouseMenuSelectedEnabled && contentDisplayArea().intersectsAA(core.HUD().getMouseCameraSpace());
+		if (mouseIntersectsUs) {
 			final int lCount = mMenuEntries.size();
 			for (int i = 0; i < lCount; i++) {
 				var lInputHandled = false;
@@ -81,9 +83,15 @@ public class FloatingLayout extends BaseLayout implements IInputProcessor {
 
 		final int lCount = mMenuEntries.size();
 		for (int i = 0; i < lCount; i++) {
+
+			final var menuEntry = mMenuEntries.get(i);
+
+			// note: different input methods have precedence.
+
 			var lInputHandled = false;
-			lInputHandled = mMenuEntries.get(i).onHandleKeyboardInput(core);
-			lInputHandled = lInputHandled || mMenuEntries.get(i).onHandleGamepadInput(core);
+			lInputHandled = menuEntry.onHandleInputActions(core);
+			lInputHandled = lInputHandled || menuEntry.onHandleKeyboardInput(core);
+			lInputHandled = lInputHandled || menuEntry.onHandleGamepadInput(core);
 
 			if (lInputHandled)
 				return lInputHandled;
@@ -107,6 +115,7 @@ public class FloatingLayout extends BaseLayout implements IInputProcessor {
 		for (int i = 0; i < entryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
 
+			// TODO: Wtf is this supposed to be doing? Setting itself with .. itself ..
 			lMenuEntry.set(lMenuEntry.x(), lMenuEntry.y(), lMenuEntry.desiredWidth(), lMenuEntry.desiredHeight());
 
 		}
@@ -137,8 +146,6 @@ public class FloatingLayout extends BaseLayout implements IInputProcessor {
 		final var spriteBatch = parentScreen.spriteBatch();
 		final var spriteSheetCore = core.resources().spriteSheetManager().coreSpritesheet();
 
-		final var screenOffset = parentScreen.screenPositionOffset();
-
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
@@ -149,7 +156,7 @@ public class FloatingLayout extends BaseLayout implements IInputProcessor {
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.draw(spriteSheetCore, CoreTextureNames.TEXTURE_WHITE, screenOffset.x + mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
+			spriteBatch.draw(spriteSheetCore, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, ZLayers.LAYER_DEBUG);
 			spriteBatch.end();
 		}
 

@@ -4,15 +4,15 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import net.lintfordlib.ConstantsApp;
-import net.lintfordlib.MenuInputActionsMap;
+import net.lintfordlib.MenuActions;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
-import net.lintfordlib.core.input.GameInputAction;
 import net.lintfordlib.core.input.IGamepadInputBindingCallback;
 import net.lintfordlib.core.input.IKeyInputCallback;
+import net.lintfordlib.core.input.InputAction;
 import net.lintfordlib.core.input.InputHelper;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
@@ -40,7 +40,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	private String mBoundGamePadText;
 
 	private float mPadding = 15f;
-	private final GameInputAction mInputAction; // TODO: Rename to EventAction
+	private final InputAction mInputAction; // TODO: Rename to EventAction
 
 	private boolean mIsBindingInput;
 	private float mCaretFlashTimer;
@@ -71,7 +71,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		mIsStateValid = newValue;
 	}
 
-	public GameInputAction eventAction() {
+	public InputAction eventAction() {
 		return mInputAction;
 	}
 
@@ -97,7 +97,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	// Constructor
 	// --------------------------------------
 
-	public MenuBindingKeyEntry(ScreenManager screenManager, MenuScreen parentScreen, GameInputAction eventAction) {
+	public MenuBindingKeyEntry(ScreenManager screenManager, MenuScreen parentScreen, InputAction eventAction) {
 		super(screenManager, parentScreen, "");
 
 		mInputAction = eventAction;
@@ -116,93 +116,34 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	// --------------------------------------
 
 	@Override
-	public boolean onHandleKeyboardInput(LintfordCore core) {
+	public boolean onHandleInputActions(LintfordCore core) {
 		if (!mEnabled)
 			return false;
 
 		if (mHasFocus) {
 
-			if (!mIsBindingInput && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_LEFT, this)) {
-				mIsKeyAreaSelected = !mIsKeyAreaSelected;
-			}
+			final var actionManager = core.input().actionManager();
 
-			if (!mIsBindingInput && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_RIGHT, this)) {
-				mIsKeyAreaSelected = !mIsKeyAreaSelected;
-			}
+			final var navLeft = actionManager.getActionState(MenuActions.NAV_LEFT);
+			final var navRight = actionManager.getActionState(MenuActions.NAV_RIGHT);
+			final var navConfirm = actionManager.getActionState(MenuActions.NAV_CONFIRM);
 
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) && handleCaptureNewBinding(core)) {
+			if (!mIsBindingInput && navLeft.isDownTimed(this)) {
+				mIsKeyAreaSelected = !mIsKeyAreaSelected;
 				return true;
 			}
 
-		}
-
-		return super.onHandleKeyboardInput(core);
-	}
-
-	private boolean handleCaptureNewBinding(LintfordCore core) {
-		if (mInputAction == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error calibrating EventAction. The EventAction has not been correctly registered. Check the stack trace below:");
-			Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
-			return false; // TODO: handle this case
-		}
-
-		final var capturingKeyboard = core.input().keyboard().isSomeComponentCapturingInputKeys();
-		final var capturingGamepad = core.input().gamepads().isSomeComponentCapturingInput();
-
-		if (capturingKeyboard || capturingGamepad)
-			return false;
-
-		if (mIsKeyAreaSelected) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key binding for " + mInputAction.eventActionUid());
-			core.input().keyboard().StartKeyInputCapture(this);
-
-			mIsBindingInput = true;
-			hasFocus(true);
-
-			core.input().mouse().isMouseMenuSelectionEnabled(false);
-
-		} else {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing gamepad binding for " + mInputAction.eventActionUid());
-			core.input().gamepads().startGamepadBindingCapture(this);
-
-			mIsBindingInput = true;
-			hasFocus(true);
-
-			core.input().mouse().isMouseMenuSelectionEnabled(false);
-
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean onHandleGamepadInput(LintfordCore core) {
-		if (!mEnabled)
-			return false;
-
-		if (mHasFocus) {
-
-			final var eventActionManager = core.input().eventActionManager();
-
-			final var navLeft = eventActionManager.getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT, this);
-			final var navRight = eventActionManager.getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT, this);
-			final var navConfirm = eventActionManager.getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM, this);
-
-			if (!mIsBindingInput && navLeft) {
+			if (!mIsBindingInput && navRight.isDownTimed(this)) {
 				mIsKeyAreaSelected = !mIsKeyAreaSelected;
-			}
-
-			if (!mIsBindingInput && navRight) {
-				mIsKeyAreaSelected = !mIsKeyAreaSelected;
-			}
-
-			if (!mIsBindingInput && navConfirm && handleCaptureNewBinding(core)) {
 				return true;
 			}
 
+			if (!mIsBindingInput && navConfirm.isDownTimed(this) && handleCaptureNewBinding(core)) {
+				return true;
+			}
 		}
 
-		return super.onHandleGamepadInput(core);
+		return super.onHandleInputActions(core);
 	}
 
 	@Override
@@ -420,6 +361,50 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	}
 
 	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	private boolean handleCaptureNewBinding(LintfordCore core) {
+		if (mInputAction == null) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error calibrating action. The action has not been correctly registered. Check the stack trace below:");
+			Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
+			return false;
+		}
+
+		final var capturingKeyboard = core.input().keyboard().isSomeComponentCapturingInputKeys();
+		final var capturingGamepad = core.input().gamepads().isSomeComponentCapturingInput();
+
+		if (capturingKeyboard || capturingGamepad)
+			return false;
+
+		if (mIsKeyAreaSelected) {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key binding for " + mInputAction.actionUid);
+			core.input().keyboard().StartKeyInputCapture(this);
+
+			resetCoolDownTimer();
+
+			mIsBindingInput = true;
+			hasFocus(true);
+
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		} else {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "changing gamepad binding for " + mInputAction.actionUid);
+			core.input().gamepads().startGamepadBindingCapture(this);
+
+			resetCoolDownTimer();
+
+			mIsBindingInput = true;
+			hasFocus(true);
+
+			core.input().mouse().isMouseMenuSelectionEnabled(false);
+
+		}
+
+		return true;
+	}
+
+	// --------------------------------------
 	// Inherited-Methods
 	// --------------------------------------
 
@@ -431,7 +416,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	@Override
 	public boolean keyInput(int key, int scanCode, int action, int mods) {
 		if (mIsBindingInput && isCoolDownElapsed()) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "key bind invoke " + mInputAction.eventActionUid() + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(key), scanCode));
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "key bind invoke " + mInputAction.actionUid + " called to " + GLFW.glfwGetKeyName(GLFW.glfwGetKeyScancode(key), scanCode));
 			mInputAction.boundKeyCode(key);
 			mIsBindingInput = false;
 			mIsDirty = true;
@@ -445,7 +430,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	@Override
 	public boolean gamepadButtonBindingInput(int lintfordGamepadButtonId) {
 		if (mIsBindingInput && isCoolDownElapsed()) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind button " + mInputAction.eventActionUid() + " called to " + lintfordGamepadButtonId);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind button " + mInputAction.actionUid + " called to " + lintfordGamepadButtonId);
 
 			mInputAction.boundGamepadCode(lintfordGamepadButtonId);
 			mIsBindingInput = false;
@@ -460,7 +445,7 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 	@Override
 	public boolean gamepadAxisBindingInput(int lintfordGamepadButtonId) {
 		if (mIsBindingInput && isCoolDownElapsed()) {
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind axis " + mInputAction.eventActionUid() + " called to " + lintfordGamepadButtonId);
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "gamepad bind axis " + mInputAction.actionUid + " called to " + lintfordGamepadButtonId);
 
 			mInputAction.boundGamepadCode(lintfordGamepadButtonId);
 			mIsBindingInput = false;

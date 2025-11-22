@@ -249,7 +249,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		if (!mIsActive || !mIsInputActive)
 			return false;
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
 			mSelectedItemIndex--;
 
 			if (mSelectedItemIndex < 0)
@@ -261,7 +261,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			return true;
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
 			mSelectedItemIndex++;
 
 			if (mSelectedItemIndex >= mItems.size())
@@ -273,7 +273,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			return true;
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CROSS, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CROSS, this)) {
 
 			// The capture is managed in the onClick() method
 			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
@@ -283,7 +283,7 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 			mParentScreen.onMenuEntryDeactivated(this);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CIRCLE, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CIRCLE, this)) {
 
 			// The capture is managed in the onClick() method
 			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...

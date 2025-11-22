@@ -3,11 +3,12 @@ package net.lintfordlib.screenmanager.entries.input;
 import org.lwjgl.glfw.GLFW;
 
 import net.lintfordlib.ConstantsApp;
-import net.lintfordlib.MenuInputActionsMap;
+import net.lintfordlib.MenuActions;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
+import net.lintfordlib.core.input.ActionManager;
 import net.lintfordlib.core.input.IGamepadInputMappingCallback;
 import net.lintfordlib.core.input.gamepad.Gamepad;
 import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
@@ -42,7 +43,6 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 	}
 
 	private boolean mIsBindingInput;
-	private float mCaretFlashTimer;
 
 	private boolean mIsInputOn;
 
@@ -83,6 +83,10 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 
 	public void activeGamepad(Gamepad activeGamepad) {
 		mActiveGamepad = activeGamepad;
+	}
+
+	public Gamepad activeGamepad() {
+		return mActiveGamepad;
 	}
 
 	public LintfordGamepadState activeControllerMap() {
@@ -131,10 +135,10 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 			return false;
 
 		if (mHasFocus) {
-			final var eventManager = core.input().eventActionManager();
+			final var eventManager = core.input().actionManager();
 
-			final var confirmAction = eventManager.getGameInputActionByUid(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM);
-			if (confirmAction.isDownTimed() && handleCaptureNewMapping(core)) {
+			final var confirmAction = eventManager.getActionState(MenuActions.NAV_CONFIRM, ActionManager.PLAYER_INDEX_ALL);
+			if (confirmAction.isDownTimed(this) && handleCaptureNewMapping(core)) {
 				return true;
 			}
 
@@ -286,18 +290,7 @@ public class MenuGamepadInputMapEntry extends MenuEntry implements IGamepadInput
 		final var targetInputCodetext = GamepadInputCodes.getLintfordCodeName(inputCodeUid);
 		fontUnit.drawText(targetInputCodetext, parentScreenOffset.x + left() + 5.f, parentScreenOffset.y + top(), .9f, .9f * mScale);
 
-		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
-
-		// TODO: Need to get whatever is currently mapped on the active gamepad to our inputCodeUid
-
-		if (mIsBindingInput) {
-			if (mCaretFlashTimer % 1.f > .5f) {
-				final var boundKeyText = "<PRESS BUTTON>";
-				fontUnit.drawText(boundKeyText, parentScreenOffset.x + left() + 10.f, parentScreenOffset.y + top() + 20, 1f, .8f * mScale);
-
-			}
-
-		} else if (mActiveGamepad != null) {
+		if (mActiveGamepad != null) {
 			final var state = mActiveGamepad.state;
 
 			final var gamepadInputMap = state.getInputMapping(inputCodeUid);

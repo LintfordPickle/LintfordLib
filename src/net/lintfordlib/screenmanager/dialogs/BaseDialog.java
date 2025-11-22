@@ -68,8 +68,8 @@ public abstract class BaseDialog extends MenuScreen {
 	// Constants
 	// --------------------------------------
 
-	public static final int DIALOG_WIDTH = 600;
-	public static final int DIALOG_HEIGHT = 250;
+	public static final int DEFAULT_DIALOG_WIDTH = 500;
+	public static final int DEFAULT_DIALOG_HEIGHT = 250;
 
 	public static final float TEXT_HORIZONTAL_PADDING = 20;
 
@@ -77,7 +77,10 @@ public abstract class BaseDialog extends MenuScreen {
 	// Variables
 	// --------------------------------------
 
+	protected final Rectangle mDialogArea = new Rectangle();
+
 	protected String mMessageString;
+
 	protected Screen mParentScreen;
 	protected boolean mDrawBackground;
 	protected boolean mDarkenBackground;
@@ -91,6 +94,27 @@ public abstract class BaseDialog extends MenuScreen {
 	public void setDialogIcon(SpriteSheetDefinition spritesheetDefinition, int spriteFrameIndex) {
 		mIconSpritesheet = spritesheetDefinition;
 		mIconSpriteFrameIndex = spriteFrameIndex;
+	}
+
+	public void setDisplayAreaDimensions(float width, float height) {
+		final var origCenterX = mDialogArea.centerX();
+		final var origCenterY = mDialogArea.centerY();
+
+		setDisplayArea(mDialogArea.x(), mDialogArea.y(), width, height);
+
+		// recenter around previous point with updated dimensions
+		mDialogArea.setCenterPosition(origCenterX, origCenterY);
+	}
+
+	public void setDisplayAreaPosition(float x, float y) {
+		setDisplayArea(x, y, mDialogArea.width(), mDialogArea.height());
+	}
+
+	public void setDisplayArea(float x, float y, float width, float height) {
+		mDialogArea.set(x, y, width, height);
+
+		// TODO: The padding top (used for positioning the first of the menu entries) should take the height of the message into account. 
+		mScreenPaddingTop = mDialogArea.centerY();
 	}
 
 	public boolean drawBackground() {
@@ -136,9 +160,10 @@ public abstract class BaseDialog extends MenuScreen {
 		mTransitionOff = null;
 		screenColor.a = 1.f;
 
-		mScreenPaddingTop = DIALOG_HEIGHT / 2.f - 64.f;
-
 		mIsPopup = true;
+
+		setDisplayArea(-DEFAULT_DIALOG_WIDTH / 2, -DEFAULT_DIALOG_HEIGHT / 2, DEFAULT_DIALOG_WIDTH, DEFAULT_DIALOG_HEIGHT);
+
 	}
 
 	// --------------------------------------
@@ -158,11 +183,21 @@ public abstract class BaseDialog extends MenuScreen {
 	public void updateLayoutSize(LintfordCore core) {
 		super.updateLayoutSize(core);
 
+		// Also, because the BaseDialog inherits from MenuScreen, it can have many layouts, but we I am assigning them all the same area.
+		// The BaseDialogs and derived classes should use a floating layout (with will have the same 'area' as the dialog) and manage
+		// the positioning and the size of the menu entries themselves. I.E. multiple list layout's wont work here.
+
 		final int lLayoutCount = mLayouts.size();
 		for (int i = 0; i < lLayoutCount; i++) {
-			final var lBaseLayout = mLayouts.get(i);
-			lBaseLayout.set(-DIALOG_WIDTH * 0.5f, mScreenPaddingTop, DIALOG_WIDTH, DIALOG_HEIGHT);
-			lBaseLayout.updateStructure();
+			final var baseLayout = mLayouts.get(i);
+
+			final var x = mDialogArea.x();
+			final var y = mDialogArea.y();
+			final var width = mDialogArea.width();
+			final var height = mDialogArea.height();
+
+			baseLayout.set(x, y, width, height);
+			baseLayout.updateStructure();
 		}
 	}
 
@@ -189,10 +224,10 @@ public abstract class BaseDialog extends MenuScreen {
 
 		final float TILE_SIZE = 32f;
 		if (mDrawBackground) {
-			final float x = -DIALOG_WIDTH / 2.f;
-			final float y = -DIALOG_HEIGHT / 2.f;
-			final float w = DIALOG_WIDTH;
-			final float h = DIALOG_HEIGHT;
+			final float x = mDialogArea.left();
+			final float y = mDialogArea.top();
+			final float w = mDialogArea.width();
+			final float h = mDialogArea.height();
 
 			lSpriteBatch.begin(core.HUD());
 			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
@@ -212,8 +247,8 @@ public abstract class BaseDialog extends MenuScreen {
 
 		final boolean lDrawIcon = mIconSpriteFrameIndex != -1 && mIconSpritesheet != null;
 		if (lDrawIcon) {
-			final float x = -DIALOG_WIDTH / 2.f;
-			final float y = -DIALOG_HEIGHT / 2.f;
+			final float x = mDialogArea.left();
+			final float y = mDialogArea.top();
 
 			final var lSpriteFrame = mIconSpritesheet.getSpriteFrame(mIconSpriteFrameIndex);
 			final var lIconWidth = lSpriteFrame.width();
@@ -230,13 +265,13 @@ public abstract class BaseDialog extends MenuScreen {
 
 			mMenuFont.begin(core.HUD());
 			mMenuFont.setTextColor(screenColor);
-			mMenuFont.drawText(mMenuTitle, -DIALOG_WIDTH / 2f + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, -DIALOG_HEIGHT / 2f + mMenuFont.fontHeight(), lZDepth, 1.f);
+			mMenuFont.drawText(mMenuTitle, mDialogArea.left() + TEXT_HORIZONTAL_PADDING + lHorizontalOffsetX, mDialogArea.top() + mMenuFont.fontHeight(), lZDepth, 1.f);
 			mMenuFont.end();
 		}
 
 		mMenuFont.begin(core.HUD());
 		mMenuFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-		mMenuFont.drawText(mMessageString, -DIALOG_WIDTH * 0.5f + 15.f * 2.f + 64.f, -DIALOG_HEIGHT * 0.5f + 48f, lZDepth, 1f, DIALOG_WIDTH - 120.f);
+		mMenuFont.drawText(mMessageString, mDialogArea.left() + 15.f * 2.f + 64.f, mDialogArea.top() + 48f, lZDepth, 1f, DEFAULT_DIALOG_WIDTH - 120.f);
 		mMenuFont.end();
 
 		final int lCount = mLayouts.size();

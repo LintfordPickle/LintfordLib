@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.lintfordlib.MenuInputActionsMap;
+import net.lintfordlib.MenuActions;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.ColorConstants;
@@ -228,36 +228,36 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		}
 
 		// TODO : This is where I am now stuck - need to somehow map both the axis and the DPad to the same event.
-		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_UP, this)) {
+		if (core.input().actionManager().getCurrentControlActionStateTimed(MenuActions.NAV_UP, this)) {
 			// screenManager.contextHintManager().setKeyboardHints();
 
 			onNavigationUp(core, InputType.Keyboard);
 		}
 
-		if (core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_DOWN, this)) {
+		if (core.input().actionManager().getCurrentControlActionStateTimed(MenuActions.NAV_DOWN, this)) {
 			// screenManager.contextHintManager().setKeyboardHints();
 
 			onNavigationDown(core, InputType.Keyboard);
 
 		}
 
-		final var eventLeft = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_LEFT, this);
+		final var eventLeft = core.input().actionManager().getCurrentControlActionStateTimed(MenuActions.NAV_LEFT, this);
 		if (eventLeft) {
 			onNavigationLeft(core, InputType.Gamepad);
 		}
 
-		final var eventRight = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_RIGHT, this);
+		final var eventRight = core.input().actionManager().getCurrentControlActionStateTimed(MenuActions.NAV_RIGHT, this);
 		if (eventRight) {
 			onNavigationRight(core, InputType.Gamepad);
 		}
 
-		final var eventBack = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_BACK, this);
+		final var eventBack = core.input().actionManager().getCurrentControlActionStateTimed(MenuActions.NAV_BACK, this);
 		if (eventBack) {
 			onNavigationBack(core, InputType.Gamepad);
 
 		}
 
-		final var eventConfirmation = core.input().eventActionManager().getCurrentControlActionStateTimed(MenuInputActionsMap.MENU_KEY_BINDING_NAV_CONFIRM, this);
+		final var eventConfirmation = core.input().actionManager().getCurrentControlActionStateTimed(MenuActions.NAV_CONFIRM, this);
 		if (eventConfirmation) {
 			onNavigationConfirm(core, InputType.Keyboard);
 
@@ -577,7 +577,7 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 		exitScreen();
 	}
 
-	/** This is called when an entry is clicked.This is called regardless (and including) if an entry was registered as a click listener. */
+	/** This is called when an entry is clicked. This is called regardlessor whether the MenuEntry was registered as a click listener or not. */
 	public void menuEntryOnClick(InputManager inputState, MenuEntry entry) {
 		mClickAction.setNewClick(entry.entryID());
 	}

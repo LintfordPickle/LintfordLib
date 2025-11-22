@@ -7,7 +7,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.options.DisplayManager;
-import net.lintfordlib.screenmanager.IMenuAction;
+import net.lintfordlib.screenmanager.IMenuScreenCallbacks;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
@@ -34,7 +34,7 @@ public class PressToContinueIntroScreen extends Screen {
 	protected float mBackgroundZDepth;
 	protected float mContentZDepth;
 	protected float mFlashZDepth;
-	private IMenuAction mActionCallback;
+	private IMenuScreenCallbacks mActionCallback;
 	private boolean mStretchBackgroundToFit;
 
 	// --------------------------------------
@@ -166,7 +166,7 @@ public class PressToContinueIntroScreen extends Screen {
 	// Methods
 	// --------------------------------------
 
-	public void setTimerFinishedCallback(IMenuAction callback) {
+	public void setTimerFinishedCallback(IMenuScreenCallbacks callback) {
 		mActionCallback = callback;
 	}
 }

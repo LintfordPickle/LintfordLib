@@ -26,7 +26,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	public class GamepadMenuIcon {
 
 		private boolean mIsManualEnabled;
-		private boolean mIsFocusHintDisabled;
+		private boolean mIsFocusHintEnabled;
 
 		private int mGamepadInputCodeManual;
 
@@ -35,12 +35,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			mIsManualEnabled = mGamepadInputCodeManual != -1;
 		}
 
-		public boolean focusHintDisabled() {
-			return mIsFocusHintDisabled;
+		public boolean focusHintEnabled() {
+			return mIsFocusHintEnabled;
 		}
 
-		public void focusHintDisabled(boolean isDisabled) {
-			mIsFocusHintDisabled = isDisabled;
+		public void focusHintEnabled(boolean isEnabled) {
+			mIsFocusHintEnabled = isEnabled;
 		}
 
 		public void manualInputCode(int gamepadInputCode) {
@@ -518,11 +518,12 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		mMinWidth = 32.f;
 		mMaxWidth = 2048.f;
-		mDesiredWidth = 400.f;
 
 		mScale = 1.f;
 		mMinHeight = 4.f;
 		mMaxHeight = 512.f;
+
+		mDesiredWidth = 400.f;
 		mDesiredHeight = ENTRY_DEFAULT_HEIGHT;
 
 		mW = mDesiredWidth;
@@ -534,10 +535,13 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
 		mHorizontalFillType = FILLTYPE.HALF_PARENT;
 
+		// maybe set this from some global constants or options
+		gamepadMenuIcon.focusHintEnabled(true);
 		contextHintState.buttonA = true;
 		contextHintState.buttonAHint = "select";
 		contextHintState.keyReturn = true;
 		contextHintState.keyReturnHint = "select";
+
 	}
 
 	// --------------------------------------
@@ -569,6 +573,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 			mWarnIconDstRectangle.set(screenOffset.x + mX + paddingLeft(), screenOffset.y + mY, tileSize, tileSize);
 
 	};
+
+	public boolean onHandleInputActions(LintfordCore core) {
+		return false;
+	}
 
 	public boolean onHandleKeyboardInput(LintfordCore core) {
 		return false;
@@ -817,7 +825,7 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		if (gamepadMenuIcon.mIsManualEnabled) {
 			spriteFrameUid = gamepadMenuIcon.getSpriteFrame(gamepadMenuIcon.manualGamepadInputCode());
 		} else if (mHasFocus) {
-			if (gamepadMenuIcon.focusHintDisabled())
+			if (!gamepadMenuIcon.focusHintEnabled())
 				return;
 
 			spriteFrameUid = CoreTextureNames.TEXTURE_GAMEPAD_GREEN;

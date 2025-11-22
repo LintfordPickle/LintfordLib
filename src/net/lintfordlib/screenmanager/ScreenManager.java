@@ -123,7 +123,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mIsinitialized = false;
 		mResourcesLoaded = false;
 
-		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TITLE_NAME, "/res/fonts/fontCoreText.json");
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TITLE_NAME, "/res/fonts/fontCoreTitle.json");
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_ENTRY_NAME, "/res/fonts/fontCoreText.json");
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_BOLD_ENTRY_NAME, "/res/fonts/fontCoreText.json");
 		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TOOLTIP_NAME, "/res/fonts/fontCoreText.json");
@@ -280,7 +280,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		for (int i = 0; i < lNumScreens; i++) {
 			final var lScreen = mScreensToDraw.get(i);
 
-			if (lScreen.screenState() == ScreenState.HIDDEN && !lScreen.showBackgroundScreens())
+			if (lScreen.screenState() == ScreenState.HIDDEN)
 				continue;
 
 			lScreen.draw(core);

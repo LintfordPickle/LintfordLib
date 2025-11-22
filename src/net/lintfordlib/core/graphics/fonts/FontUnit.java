@@ -35,9 +35,19 @@ public class FontUnit {
 	private final Color mTextColor;
 	private final Color mShadowColor;
 
+	private float mLineSpacingInPx = 3;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float lineSpacingInPx() {
+		return mLineSpacingInPx;
+	}
+
+	public void lineSpacingInPx(float newLineSpacing) {
+		mLineSpacingInPx = newLineSpacing;
+	}
 
 	public void setTextColorWhite() {
 		mTextColor.r = 1.f;
@@ -277,48 +287,48 @@ public class FontUnit {
 		_drawText(text, positionX, positionY, zDepth, scale, wordWrap);
 	}
 
-	private void _drawText(String text, float positionX, float positionY, float zDepth, float scale, float wrapWidth) {
+	private void _drawText(String text, float positionX, float positionY, float zDepth, float scale, float wrapWidthCap) {
 		if (text == null)
 			return;
 
-		var lX = positionX;
-		var lY = positionY;
+		var xx = positionX;
+		var yy = positionY;
 
-		int lWrapWidth = 0;
-		boolean lJustWrapped = false;
-		int lWordWidth = 0;
-		boolean lClearedWord = false;
-		boolean lBreakCharFitsOnThisLine = false;
+		var wrapWidth = 0;
+		var wordWidth = 0;
+		var justWrapped = false;
 
-		final float lSpaceBetweenLines = 0f;
+		boolean clearedWord = false;
+		boolean breakCharFitsOnThisLine = false;
 
-		final float lScaledLineHeight = (mFontDefinition.getFontHeight() + lSpaceBetweenLines) * scale;
-		final int lLineSpacing = BitmapFontDefinition.LINE_SPACING;
-		int lCharacterLength = text.length();
-		for (int i = 0; i < lCharacterLength; i++) {
-			char lCurrentCharacter = text.charAt(i);
-			var lCurrentGlyph = mFontDefinition.getGlyphFrame(lCurrentCharacter);
+		final var scaledLineHeight = (mFontDefinition.getFontHeight() + mLineSpacingInPx) * scale;
+		final var lineSpacing = BitmapFontDefinition.LINE_SPACING;
+
+		int characterLength = text.length();
+		for (int i = 0; i < characterLength; i++) {
+			var currentCharacter = text.charAt(i);
+			var currentGlyph = mFontDefinition.getGlyphFrame(currentCharacter);
 
 			// Special characters
-			if (lCurrentCharacter == '\n' || lCurrentCharacter == '\r') {
-				lX = (int) positionX;
-				lY += mFontDefinition.getFontHeight() + lLineSpacing;
-				lWrapWidth = 0;
-				lClearedWord = false;
+			if (currentCharacter == '\n' || currentCharacter == '\r') {
+				xx = (int) positionX;
+				yy += mFontDefinition.getFontHeight() + lineSpacing;
+				wrapWidth = 0;
+				clearedWord = false;
 				continue;
 			}
 
-			if (BREAK_CHARS.indexOf(lCurrentCharacter) >= 0)
-				lClearedWord = false;
+			if (BREAK_CHARS.indexOf(currentCharacter) >= 0)
+				clearedWord = false;
 
-			if (wrapWidth != NO_WORD_WRAP) {
-				if (mWrapType == WrapType.WORD_WRAP || mWrapType == WrapType.WORD_WRAP_TRIM && !lClearedWord) {
-					if (mWrapType == WrapType.WORD_WRAP_TRIM && lJustWrapped)
+			if (wrapWidthCap != NO_WORD_WRAP) {
+				if (mWrapType == WrapType.WORD_WRAP || mWrapType == WrapType.WORD_WRAP_TRIM && !clearedWord) {
+					if (mWrapType == WrapType.WORD_WRAP_TRIM && justWrapped)
 						break;
 
-					lWordWidth = (int) Math.ceil(lCurrentGlyph.width() * scale);
-					lBreakCharFitsOnThisLine = lWrapWidth + lCurrentGlyph.width() <= wrapWidth;
-					if ((lX == positionX) || BREAK_CHARS.indexOf(lCurrentCharacter) >= 0) {
+					wordWidth = (int) Math.ceil(currentGlyph.width() * scale);
+					breakCharFitsOnThisLine = wrapWidth + currentGlyph.width() <= wrapWidthCap;
+					if ((xx == positionX) || BREAK_CHARS.indexOf(currentCharacter) >= 0) {
 						for (int j = i + 1; j < text.length(); j++) {
 							char lCharcterNext = text.charAt(j);
 							var lNextGlyph = mFontDefinition.getGlyphFrame(lCharcterNext);
@@ -327,29 +337,29 @@ public class FontUnit {
 								continue;
 
 							if (BREAK_CHARS.indexOf(lCharcterNext) >= 0) {
-								lClearedWord = true;
-								lWrapWidth += lWordWidth;
+								clearedWord = true;
+								wrapWidth += wordWidth;
 								break;
 							}
 
 							float lOverflowSpaceForElipsis = mWrapType == WrapType.WORD_WRAP_TRIM ? 20.f : 0.f;
-							if (lWrapWidth + lWordWidth + lNextGlyph.width() * scale + lOverflowSpaceForElipsis * scale > wrapWidth) {
-								lWrapWidth = 0;
-								lJustWrapped = true;
+							if (wrapWidth + wordWidth + lNextGlyph.width() * scale + lOverflowSpaceForElipsis * scale > wrapWidthCap) {
+								wrapWidth = 0;
+								justWrapped = true;
 
 								break;
 							}
 
-							lWordWidth += lNextGlyph.width() * scale;
+							wordWidth += lNextGlyph.width() * scale;
 						}
 					}
 				} else if (mWrapType == WrapType.LETTER_COUNT_TRIM) {
 					final int lNumElpsis = 3;
-					if (i >= wrapWidth - lNumElpsis) {
+					if (i >= wrapWidthCap - lNumElpsis) {
 						final var lDotGlyph = mFontDefinition.getGlyphFrame('.');
 						if (lDotGlyph != null) {
 							for (int j = 0; j < lNumElpsis; j++) {
-								mSpriteBatch.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), lX + j * lDotGlyph.width() * scale, lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth);
+								mSpriteBatch.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), xx + j * lDotGlyph.width() * scale, yy, currentGlyph.width() * scale, currentGlyph.height() * scale, zDepth);
 							}
 						}
 
@@ -358,45 +368,45 @@ public class FontUnit {
 				}
 			}
 
-			if (lCurrentGlyph == null) {
-				lCurrentGlyph = mFontDefinition.getGlyphFrame('?');
+			if (currentGlyph == null) {
+				currentGlyph = mFontDefinition.getGlyphFrame('?');
 			}
 
-			if (lJustWrapped && mWrapType == WrapType.WORD_WRAP_TRIM) {
+			if (justWrapped && mWrapType == WrapType.WORD_WRAP_TRIM) {
 				final int lNumElpsis = 3;
 
 				final var lDotGlyph = mFontDefinition.getGlyphFrame('.');
 				if (lDotGlyph != null) {
 					for (int j = 0; j < lNumElpsis; j++) {
-						mSpriteBatch.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), lX + j * lDotGlyph.width() * scale, lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth);
+						mSpriteBatch.draw(mFontDefinition.texture(), lDotGlyph.x(), lDotGlyph.y(), lDotGlyph.width(), lDotGlyph.height(), xx + j * lDotGlyph.width() * scale, yy, currentGlyph.width() * scale, currentGlyph.height() * scale, zDepth);
 					}
 				}
 
 				return;
 			}
 
-			if (lJustWrapped) {
-				lY += lScaledLineHeight;
-				lX = (int) positionX;
+			if (justWrapped) {
+				yy += scaledLineHeight;
+				xx = (int) positionX;
 			}
 
-			if (lCurrentCharacter == ' ' && lX == positionX && lY > positionY) {
-				lJustWrapped = false;
+			if (currentCharacter == ' ' && xx == positionX && yy > positionY) {
+				justWrapped = false;
 				continue;
 			}
 
-			if (lCurrentGlyph != null)
-				mSpriteBatch.draw(mFontDefinition.texture(), lCurrentGlyph.x(), lCurrentGlyph.y(), lCurrentGlyph.width(), lCurrentGlyph.height(), lX, lY, lCurrentGlyph.width() * scale, lCurrentGlyph.height() * scale, zDepth);
+			if (currentGlyph != null)
+				mSpriteBatch.draw(mFontDefinition.texture(), currentGlyph.x(), currentGlyph.y(), currentGlyph.width(), currentGlyph.height(), xx, yy, currentGlyph.width() * scale, currentGlyph.height() * scale, zDepth);
 
-			if (lJustWrapped && lBreakCharFitsOnThisLine) {
-				lY += lScaledLineHeight;
-				lX = (int) positionX;
+			if (justWrapped && breakCharFitsOnThisLine) {
+				yy += scaledLineHeight;
+				xx = (int) positionX;
 			} else {
-				lX += lCurrentGlyph.width() * scale;
+				xx += currentGlyph.width() * scale;
 			}
 
-			lJustWrapped = false;
-			lBreakCharFitsOnThisLine = true;
+			justWrapped = false;
+			breakCharFitsOnThisLine = true;
 		}
 	}
 

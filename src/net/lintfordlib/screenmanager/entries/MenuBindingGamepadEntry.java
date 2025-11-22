@@ -8,7 +8,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
-import net.lintfordlib.core.input.GameInputAction;
+import net.lintfordlib.core.input.InputAction;
 import net.lintfordlib.core.input.IGamepadInputBindingCallback;
 import net.lintfordlib.core.input.InputHelper;
 import net.lintfordlib.screenmanager.MenuEntry;
@@ -33,7 +33,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputB
 	private String mBoundKeyText;
 	private float mPadding = 15f;
 	private boolean mShow;
-	private final GameInputAction mKeyEventAction;
+	private final InputAction mKeyEventAction;
 	private boolean mBindingKey;
 	private float mCaretFlashTimer;
 
@@ -51,7 +51,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputB
 		mIsStateValid = newValue;
 	}
 
-	public GameInputAction eventAction() {
+	public InputAction eventAction() {
 		return mKeyEventAction;
 	}
 
@@ -85,7 +85,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputB
 	// Constructor
 	// --------------------------------------
 
-	public MenuBindingGamepadEntry(ScreenManager screenManager, MenuScreen parentScreen, GameInputAction eventAction) {
+	public MenuBindingGamepadEntry(ScreenManager screenManager, MenuScreen parentScreen, InputAction eventAction) {
 		super(screenManager, parentScreen, "");
 
 		mKeyEventAction = eventAction;
@@ -115,7 +115,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputB
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Error calibrating EventAction. The EventAction has not been correctly registered. Check the stack trace below:");
 					Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
 				} else {
-					Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mKeyEventAction.eventActionUid());
+					Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mKeyEventAction.actionUid);
 
 					// TODO: Display a message on the screen about
 					core.input().gamepads().startGamepadBindingCapture(this);
@@ -171,7 +171,7 @@ public class MenuBindingGamepadEntry extends MenuEntry implements IGamepadInputB
 					Debug.debugManager().logger().e(getClass().getSimpleName(), "Error calibrating EventAction. The EventAction has not been correctly registered. Check the stack trace below:");
 					Debug.debugManager().logger().printStacktrace(getClass().getSimpleName());
 				} else {
-					Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mKeyEventAction.eventActionUid());
+					Debug.debugManager().logger().i(getClass().getSimpleName(), "changing key bind for " + mKeyEventAction.actionUid);
 
 					core.input().gamepads().startGamepadBindingCapture(this);
 

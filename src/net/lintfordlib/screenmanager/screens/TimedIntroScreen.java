@@ -7,7 +7,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.textures.Texture;
-import net.lintfordlib.screenmanager.IMenuAction;
+import net.lintfordlib.screenmanager.IMenuScreenCallbacks;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 
@@ -26,7 +26,7 @@ public class TimedIntroScreen extends Screen {
 	private boolean mUserRequestSkip;
 	private boolean mTimedActionPerformed;
 	private Rectangle mSrcTextureRect;
-	private IMenuAction mActionCallback;
+	private IMenuScreenCallbacks mActionCallback;
 	private boolean mStretchBackgroundToFit;
 
 	// --------------------------------------
@@ -149,7 +149,7 @@ public class TimedIntroScreen extends Screen {
 	// Methods
 	// --------------------------------------
 
-	public void setTimerFinishedCallback(IMenuAction callback) {
+	public void setTimerFinishedCallback(IMenuScreenCallbacks callback) {
 		mActionCallback = callback;
 	}
 }

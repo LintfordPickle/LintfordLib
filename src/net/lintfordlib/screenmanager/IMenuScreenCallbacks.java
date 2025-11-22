@@ -1,6 +1,6 @@
 package net.lintfordlib.screenmanager;
 
-public interface IMenuAction {
+public interface IMenuScreenCallbacks {
 
 	public abstract void TimerFinished(Screen screen);
 	

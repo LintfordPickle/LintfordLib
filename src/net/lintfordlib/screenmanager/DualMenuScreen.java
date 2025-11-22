@@ -125,7 +125,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 			return; // don't handle input if 'animation' is playing
 
 		if (mESCBackEnabled) {
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
+			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE, this) || core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_B, this)) {
 				if (mScreenState == ScreenState.ACTIVE) {
 					onEscPressed();
 					return;
@@ -140,7 +140,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 			onNavigationUp(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_UP, this)) {
 			onNavigationUp(core, InputType.Gamepad);
 		}
 
@@ -148,7 +148,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 			onNavigationDown(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
 			onNavigationDown(core, InputType.Gamepad);
 		}
 
@@ -156,7 +156,7 @@ public abstract class DualMenuScreen extends MenuScreen {
 			onNavigationLeft(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_LEFT, this)) {
 			onNavigationLeft(core, InputType.Gamepad);
 		}
 
@@ -164,13 +164,13 @@ public abstract class DualMenuScreen extends MenuScreen {
 			onNavigationRight(core, InputType.Keyboard);
 		}
 
-		if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
+		if (core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_RIGHT, this)) {
 			onNavigationRight(core, InputType.Gamepad);
 		}
 
 		// This might become a problem if we have entries which capture the input in a dual screen. Should call out to onNavigationBack/Confirm
 
-		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
+		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this) || core.input().gamepads().isAnyGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_A, this)) {
 
 			final var lSelectedLayouts = mRightColumnSelected ? mRightLayouts : mLayouts;
 			final var lSelectedLayoutIndex = mRightColumnSelected ? mRightColumnSelectedLayoutIndex : mSelectedLayoutIndex;

@@ -3,15 +3,13 @@ package net.lintfordlib.screenmanager.entries;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintfordlib.ConstantsApp;
+import net.lintfordlib.MenuActions;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.ColorConstants;
 import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.input.InputManager;
-import net.lintfordlib.core.input.gamepad.GamepadInputCodes;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.renderers.ZLayers;
 import net.lintfordlib.renderers.windows.components.ScrollBar;
@@ -176,6 +174,60 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 	// --------------------------------------
 
 	@Override
+	public boolean onHandleInputActions(LintfordCore core) {
+		if (!mIsActive || !mEnabled)
+			return false;
+
+		if (mIsInputActive) {
+
+			final var actionManager = core.input().actionManager();
+
+			final var leftNav = actionManager.getActionState(MenuActions.NAV_LEFT);
+			final var upNav = actionManager.getActionState(MenuActions.NAV_UP);
+			if (leftNav.isDownTimed(this) || upNav.isDownTimed(this)) {
+				mSelectedIndex--;
+
+				if (mSelectedIndex < 0)
+					mSelectedIndex = 0;
+
+				mHighlightedIndex = mSelectedIndex;
+				scrollContentItemIntoView(mHighlightedIndex);
+				return true;
+			}
+
+			final var rightNav = actionManager.getActionState(MenuActions.NAV_RIGHT);
+			final var downNav = actionManager.getActionState(MenuActions.NAV_DOWN);
+			if (rightNav.isDownTimed(this) || downNav.isDownTimed(this)) {
+				mSelectedIndex++;
+
+				if (mSelectedIndex >= mItems.size())
+					mSelectedIndex = mItems.size() - 1;
+
+				mHighlightedIndex = mSelectedIndex;
+				scrollContentItemIntoView(mHighlightedIndex);
+				return true;
+			}
+
+			final var confirmNav = actionManager.getActionState(MenuActions.NAV_CONFIRM);
+			if (mOpen && confirmNav.isDownTimed(this)) {
+				mSelectedIndex = mHighlightedIndex;
+				mOpen = false;
+				mParentScreen.onMenuEntryDeactivated(this);
+			}
+
+			// TODO: add tool tip triangle to all entries
+			final var infoNav = actionManager.getActionState(MenuActions.NAV_INFO);
+			if (mShowInfoIcon && infoNav.isDownTimed(this)) {
+				mToolTipEnabled = true;
+				mToolTipTimer = 1000;
+			}
+
+		}
+
+		return super.onHandleInputActions(core);
+	}
+
+	@Override
 	public boolean onHandleMouseInput(LintfordCore core) {
 		if (!mEnabled)
 			return false;
@@ -258,99 +310,6 @@ public class MenuDropDownEntry<T> extends MenuEntry implements IScrollBarArea {
 		}
 
 		return mOpen;
-	}
-
-	@Override
-	public boolean onHandleKeyboardInput(LintfordCore core) {
-		if (!mIsActive)
-			return false;
-
-		if (mIsInputActive) {
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_UP, this)) {
-				mSelectedIndex--;
-
-				if (mSelectedIndex < 0)
-					mSelectedIndex = 0;
-
-				mHighlightedIndex = mSelectedIndex;
-				scrollContentItemIntoView(mHighlightedIndex);
-
-				core.input().mouse().isMouseMenuSelectionEnabled(false);
-
-				return true;
-			}
-
-			if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_DOWN, this)) {
-				mSelectedIndex++;
-
-				if (mSelectedIndex >= mItems.size())
-					mSelectedIndex = mItems.size() - 1;
-
-				mHighlightedIndex = mSelectedIndex;
-				scrollContentItemIntoView(mHighlightedIndex);
-
-				core.input().mouse().isMouseMenuSelectionEnabled(false);
-
-				return true;
-			}
-
-			if (mOpen && core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
-				mSelectedIndex = mHighlightedIndex;
-				mOpen = false;
-				// mIsInputActive = false; // handled below in onClick
-				mParentScreen.onMenuEntryDeactivated(this);
-
-				core.input().mouse().isMouseMenuSelectionEnabled(false);
-
-			}
-
-		}
-
-		return super.onHandleKeyboardInput(core);
-	}
-
-	@Override
-	public boolean onHandleGamepadInput(LintfordCore core) {
-		if (!mIsActive)
-			return false;
-
-		if (mIsInputActive) {
-			if (core.input().gamepads().isGamepadButtonDown(GamepadInputCodes.LINTFORD_GAMEPAD_BUTTON_LEFT, this)) {
-				mSelectedIndex--;
-
-				if (mSelectedIndex < 0)
-					mSelectedIndex = 0;
-
-				mHighlightedIndex = mSelectedIndex;
-				scrollContentItemIntoView(mHighlightedIndex);
-				return true;
-			}
-
-			if (core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_DPAD_DOWN, this)) {
-				mSelectedIndex++;
-
-				if (mSelectedIndex >= mItems.size())
-					mSelectedIndex = mItems.size() - 1;
-
-				mHighlightedIndex = mSelectedIndex;
-				scrollContentItemIntoView(mHighlightedIndex);
-				return true;
-			}
-
-			if (mOpen && core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_CROSS, this)) {
-				mSelectedIndex = mHighlightedIndex;
-				mOpen = false;
-				mParentScreen.onMenuEntryDeactivated(this);
-			}
-
-			// TODO: add tool tip triangle to all entries
-			if (mShowInfoIcon && core.input().gamepads().isGamepadButtonDownTimed(GLFW.GLFW_GAMEPAD_BUTTON_TRIANGLE, this)) {
-				mToolTipEnabled = true;
-				mToolTipTimer = 1000;
-			}
-		}
-
-		return super.onHandleGamepadInput(core);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL13;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.GameInfo;
-import net.lintfordlib.MenuInputActionsMap;
+import net.lintfordlib.MenuActions;
 import net.lintfordlib.assets.ResourceGroupProvider;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.controllers.ControllerManager;
@@ -35,7 +35,7 @@ import net.lintfordlib.core.debug.Debug.DebugLogLevel;
 import net.lintfordlib.core.debug.DebugMemory;
 import net.lintfordlib.core.debug.GLDebug;
 import net.lintfordlib.core.graphics.fonts.BitmapFontManager;
-import net.lintfordlib.core.input.GameInputActionManager;
+import net.lintfordlib.core.input.ActionManager;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.core.maths.MathHelper;
 import net.lintfordlib.core.rendering.SharedResources;
@@ -497,7 +497,7 @@ public abstract class LintfordCore {
 
 		mInputState.initialize(this);
 
-		final var eventActionManager = mInputState.eventActionManager();
+		final var eventActionManager = mInputState.actionManager();
 		onInitializeInputActions(eventActionManager);
 
 		onInitializeBitmapFontSources(mResourceManager.fontManager());
@@ -522,10 +522,10 @@ public abstract class LintfordCore {
 	/**
 	 * Allows the registration of game input actions and the respective key bindings.
 	 */
-	protected void onInitializeInputActions(GameInputActionManager eventActionManager) {
+	protected void onInitializeInputActions(ActionManager eventActionManager) {
 		eventActionManager.loadConfig();
 
-		eventActionManager.addMenuKeyActions(new MenuInputActionsMap());
+		eventActionManager.addMenuActions(new MenuActions());
 	}
 
 	/**
