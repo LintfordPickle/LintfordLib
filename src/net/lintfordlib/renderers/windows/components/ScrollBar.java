@@ -401,7 +401,6 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 
 	public void AbsCurrentYPos(float value) {
 		mScrollPosition = value;
-		System.out.println(mScrollPosition);
 	}
 
 }

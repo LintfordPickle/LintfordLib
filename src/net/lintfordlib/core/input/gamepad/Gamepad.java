@@ -113,7 +113,7 @@ public class Gamepad {
 		state = new LintfordGamepadState(gamepadMappingFileName, name, guid);
 		mIsGamepadMappingAvailable = !FORCE_CUSTOM_MAPPING && GLFW.glfwJoystickIsGamepad(mJoystickIndex);
 		if (state.isEmpty() && mIsGamepadMappingAvailable) {
-			System.out.println("Sdl Mapping is available for the connected controller. Making it happen ...");
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "Sdl Mapping is available for the connected controller ..");
 			state.createSdlMapping();
 		}
 	}
@@ -304,7 +304,6 @@ public class Gamepad {
 				final var value = currentState - benchmarkState;
 				if (Math.abs(value) > 0.1f) {
 					Debug.debugManager().logger().i(getClass().getSimpleName(), "Raw Axis movement detected: Axis index : " + i);
-					System.out.println("Raw Axis movement detected: Axis index : " + i + " (+)");
 
 					clearTempCheckList();
 

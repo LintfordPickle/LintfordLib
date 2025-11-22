@@ -509,8 +509,8 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 		final var lHudBb = core.HUD().boundingRectangle();
 
 		final var POSITION_OFFSET_TIME = 5.f;
-		final var POSITION_OFFSET_TAG = 170.f * mTextScaleFactor;
-		final var POSITION_OFFSET_MESSAGE = 420.f * mTextScaleFactor;
+		final var POSITION_OFFSET_TAG = 130.f * mTextScaleFactor;
+		final var POSITION_OFFSET_MESSAGE = 350.f * mTextScaleFactor;
 
 		if (mConsoleState == CONSOLE_STATE.open) {
 			mTAGFilterText.textScale(mTextScaleFactor);
@@ -542,14 +542,14 @@ public class DebugConsole extends Rectangle implements IBufferedTextInputCallbac
 					mConsoleFont.setTextColorRGBA(lR, lG, lB, 1.0f);
 
 					float shadowOffset = 1.f;
-					
+
 					// Draw Timestamp
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);
 					mConsoleFont.drawShadowedText(lMessage.timestamp(), mX + POSITION_OFFSET_TIME, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, shadowOffset, shadowOffset, mTextScaleFactor, 18);
 
 					// Draw TAG
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);
-					mConsoleFont.drawShadowedText(lMessage.tag(), mX + POSITION_OFFSET_TAG, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, shadowOffset, shadowOffset, mTextScaleFactor, 18);
+					mConsoleFont.drawShadowedText(lMessage.tag(), mX + POSITION_OFFSET_TAG, lHudBb.top() - lTextPosition, ZLayers.LAYER_DEBUG + 0.1f, shadowOffset, shadowOffset, mTextScaleFactor, 35);
 
 					// Draw MESSAGE
 					mConsoleFont.setWrapType(WrapType.LETTER_COUNT_TRIM);

@@ -195,19 +195,17 @@ public abstract class Screen implements IInputProcessor {
 
 	public void transitionOn(boolean forceInstance) {
 		if (!forceInstance) {
-			System.out.println("Screen transitionOn() w/ transition : " + getClass().getSimpleName());
-
 			if (mScreenState == ScreenState.NONE) {
 				mScreenState = ScreenState.TRANSITION_STARTING;
 			}
-		} else {
-			System.out.println("Screen transitionOn() w/o transition : " + getClass().getSimpleName());
 
+		} else {
 			mScreenState = ScreenState.ACTIVE;
 			mTransitionOn.applyFinishedEffects(this);
 
 			if (mTransitionOn != null)
 				mTransitionOn.reset();
+
 		}
 
 	}
@@ -221,21 +219,18 @@ public abstract class Screen implements IInputProcessor {
 			return;
 
 		if (!forceInstance) {
-			System.out.println("Screen transitionOff() w/ transition: " + getClass().getSimpleName());
-
 			if (mScreenState == ScreenState.ACTIVE) {
 				mScreenState = ScreenState.TRANSITION_SLEEPING;
 			}
-		} else {
-			System.out.println("Screen transitionOff() w/o transition: " + getClass().getSimpleName());
 
+		} else {
 			mScreenState = ScreenState.HIDDEN;
 			mTransitionOff.applyFinishedEffects(this);
 
 			if (mTransitionOff != null)
 				mTransitionOff.reset();
-		}
 
+		}
 	}
 
 	public void transitionExit() {
@@ -244,15 +239,13 @@ public abstract class Screen implements IInputProcessor {
 
 	public void transitionExit(boolean forceInstant) {
 		if (!forceInstant) {
-			System.out.println("Screen transitionExit() w/ transition: " + getClass().getSimpleName());
-
 			if (mScreenState == ScreenState.ACTIVE) {
 				mScreenState = ScreenState.TRANSITION_EXITING;
 			}
-		} else {
-			System.out.println("Screen transitionExit() w/o transition: " + getClass().getSimpleName());
 
+		} else {
 			screenManager.removeScreen(this);
+
 		}
 
 	}
@@ -264,14 +257,11 @@ public abstract class Screen implements IInputProcessor {
 	public void transitionResume(boolean forceInstant) {
 
 		if (!forceInstant) {
-			System.out.println("Screen transitionResume() w/ transition: " + getClass().getSimpleName());
-
 			if (mScreenState == ScreenState.HIDDEN) {
 				mScreenState = ScreenState.TRANSITION_RESUMING;
 			}
-		} else {
-			System.out.println("Screen transitionResume() w/o transition: " + getClass().getSimpleName());
 
+		} else {
 			mScreenState = ScreenState.ACTIVE;
 			mTransitionResume.applyFinishedEffects(this);
 
@@ -387,8 +377,6 @@ public abstract class Screen implements IInputProcessor {
 
 				if (mTransitionExit != null)
 					mTransitionExit.reset();
-
-				System.out.println("transition EXIT finished : " + getClass().getSimpleName());
 			}
 
 			break;
@@ -398,8 +386,6 @@ public abstract class Screen implements IInputProcessor {
 				mScreenState = ScreenState.HIDDEN;
 				if (mTransitionOff != null)
 					mTransitionOff.reset();
-
-				System.out.println("transition SLEEP finished : " + getClass().getSimpleName());
 			}
 			break;
 
@@ -408,8 +394,6 @@ public abstract class Screen implements IInputProcessor {
 				mScreenState = ScreenState.ACTIVE;
 				if (mTransitionResume != null)
 					mTransitionResume.reset();
-
-				System.out.println("transition RESUME finished : " + getClass().getSimpleName());
 			}
 			break;
 
@@ -418,8 +402,6 @@ public abstract class Screen implements IInputProcessor {
 				mScreenState = ScreenState.ACTIVE;
 				if (mTransitionOn != null)
 					mTransitionOn.reset();
-
-				System.out.println("transition START finished : " + getClass().getSimpleName());
 			}
 			break;
 
