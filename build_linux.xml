@@ -12,7 +12,6 @@
 	<property name="PROJECT_NAME" value="LintfordLib" />
 	<property name="APPLICATION_NAME" value="Core" />
 	<property name="PLATFORM_NAME" value="linux" />
-	
 
 	<property name="client-main-class">net.lintfordlib.LintfordMain</property>
 	<property name="compile-target-version" value="21"/>
