@@ -52,7 +52,7 @@ public class AppStorage {
 		String lDataFolder = null;
 
 		if (useLocalDirectory) {
-			lDataFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + DATA_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
+			lDataFolder = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME) + FileUtils.FILE_SEPERATOR + DATA_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
 			if (lOSName.startsWith("win")) {
@@ -72,7 +72,7 @@ public class AppStorage {
 		String lSaveFolder = null;
 
 		if (useLocalDirectory) {
-			lSaveFolder = System.getProperty("user.dir") + FileUtils.FILE_SEPERATOR + CONFIG_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
+			lSaveFolder = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME) + FileUtils.FILE_SEPERATOR + CONFIG_FOLDER_NAME + FileUtils.FILE_SEPERATOR;
 		} else {
 			final var lOSName = System.getProperty("os.name").toLowerCase();
 			if (lOSName.startsWith("win")) {
