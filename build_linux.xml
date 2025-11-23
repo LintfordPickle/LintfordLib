@@ -1,11 +1,6 @@
 <!-- 
 ====================================================================== 
      Project     :	LintfordLib (linux)
-     
-     Required on environment path:
-      - LINT_LIBS_PATH : 	Defines the location the artefacts will be placed after compilation and bundling of resources.
-      						n.b this is also used by the game projects to locate the latest LintfordLib.
-     
 ====================================================================== 
 -->
 <project name="LintfordLib" basedir="." default="main">
@@ -14,14 +9,11 @@
 	
 	<property environment="env" />
 
-	<property name="PROJECT_NAME" value="FanTac" />
+	<property name="PROJECT_NAME" value="LintfordLib" />
 	<property name="APPLICATION_NAME" value="Core" />
 	<property name="PLATFORM_NAME" value="linux" />
 	
-	<property name="LIBS_PATH" value="${env.LINT_LIBS_PATH}" />
-	<property name="TOOLS_PATH" value="${env.LINT_TOOLS_PATH}" />
-	<property name="DIST_PATH" value="${env.LINT_DIST_PATH}" />
-	
+
 	<property name="client-main-class">net.lintfordlib.LintfordMain</property>
 	<property name="compile-target-version" value="21"/>
 	<property name="compile-source-version" value="21"/>
@@ -30,10 +22,10 @@
 	<property name="input.src.dir" value="src" />
 	<property name="input.lib.dir" value="libs" />
 	<property name="input.res.dir" value="res/res" />
-	<property name="input.lib.natives.dir" value="natives" />
+	<property name="input.lib.natives.dir" value="natives-linux" />
 
 	<!-- Output directories -->
-	<property name="base.output.dir" value="${LIBS_PATH}/LintfordLib" />
+	<property name="base.output.dir" value="${user.home}/dist/LintfordLib" />
 
 	<property name="build.dir" value="${base.output.dir}/build" />
 	<property name="dist.dir" value="${base.output.dir}/${PLATFORM_NAME}" />
@@ -53,6 +45,9 @@
 	<!-- Create the output destination folders -->
 	<target name="init">
 		<echo message="Init" />
+		
+		<echo message="u = ${user.home}" />
+		<echo message="Libs path = ${LIBS_PATH}" />
 		
 		<mkdir dir="${base.output.dir}" />
 		<mkdir dir="${build.dir}/classes" />
@@ -117,12 +112,16 @@
 	<!-- compile source -->
 	<target name="compile">
 		<echo message="Compilation" />
-				
-		<javac srcdir="${input.src.dir}" destdir="${build.dir}/classes" classpathref="build.class.path" includeantruntime="false" />
+
+		<javac 
+			srcdir="${input.src.dir}" 
+			destdir="${build.dir}/classes" 
+			classpathref="build.class.path" 
+			includeantruntime="false">
+			<exclude name="tests/**"/>
+		</javac>
 	</target>
 
-	
-	
 	<!-- We will add this jar files to the manifests classpath -->
 	<pathconvert property="manifest.classpath" pathsep=" ">
 		<path refid="build.class.path" />
