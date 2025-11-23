@@ -12,6 +12,8 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
+import java.nio.file.Path;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -368,15 +370,17 @@ public abstract class LintfordCore {
 
 		Debug.debugManager(lNewLogLevel);
 
-		mMasterConfig = new MasterConfig(mGameInfo);
-
+		// setup the filesystem stuff before referencing anything ..
 		// Set a default workspace property to user.file
 		var defaultWorkspaceLocation = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 		if (defaultWorkspaceLocation == null) {
-			defaultWorkspaceLocation = System.getProperty("user.dir");
+			defaultWorkspaceLocation = getJarDirectory().toString();// System.getProperty("user.dir");
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Setting 'user.dir' to: " + defaultWorkspaceLocation);
 			System.setProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME, defaultWorkspaceLocation);
 		}
+		
+		// Now load the config files
+		mMasterConfig = new MasterConfig(mGameInfo);
 
 		mSharedResources = new SharedResources(ResourceGroupProvider.getRollingEntityNumber());
 
@@ -391,6 +395,24 @@ public abstract class LintfordCore {
 		printSystemInformationToConsole();
 
 		mShowLogoTimer = System.currentTimeMillis();
+	}
+	
+	// TODO move this suff into the AppStorage class or something
+	
+	public abstract Class<?> getMainClass();
+	
+	public Path getJarDirectory() {
+	    try {
+	        return Path.of(
+	        		getMainClass()
+	                .getProtectionDomain()
+	                .getCodeSource()
+	                .getLocation()
+	                .toURI()
+	        ).getParent();
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    }
 	}
 
 	private void printSystemInformationToConsole() {

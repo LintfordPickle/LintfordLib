@@ -64,6 +64,11 @@ public class LintfordMain extends LintfordCore {
 		var lClient = new LintfordMain(lGameInfo, args);
 		lClient.createWindow();
 	}
+	
+	@Override
+	public Class<?> getMainClass() {
+		return LintfordMain.class;
+	}
 
 	// ---------------------------------------------
 	// Variables
