@@ -14,6 +14,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
 import net.lintfordlib.core.maths.Matrix4f;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class PointBatch {
 
@@ -42,8 +43,8 @@ public class PointBatch {
 	public static final int MAX_POINTS = 2000;
 	public static final int NUM_VERTS_PER_POINT = 1;
 
-	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
-	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_pc.frag";
+	private static final String VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.vert";
+	private static final String FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.frag";
 
 	// --------------------------------------
 	// Variables

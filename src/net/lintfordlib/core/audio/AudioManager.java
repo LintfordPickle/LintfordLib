@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.lwjgl.openal.ALUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.audio.data.AudioDataBase;
 import net.lintfordlib.core.audio.data.OGGAudioData;
@@ -94,7 +96,7 @@ public class AudioManager {
 	// Constants
 	// --------------------------------------
 
-	public static final String META_FILE_LOCATION = "/res/audio/meta.json";
+	public static final String META_FILE_LOCATION = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/audio/meta.json";
 
 	public static final int AUDIO_SOURCE_TYPE_SOUNDFX = 0;
 	public static final int AUDIO_SOURCE_TYPE_MUSIC = 1;
@@ -257,25 +259,25 @@ public class AudioManager {
 	}
 
 	private void updateKillOfSources(AudioNubble audioNubble) {
-		final int lAudioSourceType = audioNubble.audioType;
+		final int audioSourceType = audioNubble.audioType;
 
-		final int lNumberOfAudioSources = mAudioSources.size();
-		for (int i = 0; i < lNumberOfAudioSources; i++) {
-			final var lAudioSource = mAudioSources.get(i);
-			if (lAudioSource.audioSourceType() == lAudioSourceType) {
-				lAudioSource.stop();
+		final int numberOfAudioSources = mAudioSources.size();
+		for (int i = 0; i < numberOfAudioSources; i++) {
+			final var audioSource = mAudioSources.get(i);
+			if (audioSource.audioSourceType() == audioSourceType) {
+				audioSource.stop();
 			}
 		}
 	}
 
 	private void updateVolumeOfAllSources(AudioNubble audioNubble) {
-		final int lAudioSourceType = audioNubble.audioType;
+		final int audioSourceType = audioNubble.audioType;
 
-		final int lNumberOfAudioSources = mAudioSources.size();
-		for (int i = 0; i < lNumberOfAudioSources; i++) {
-			final var lAudioSource = mAudioSources.get(i);
-			if (lAudioSource.audioSourceType() == lAudioSourceType) {
-				lAudioSource.updateGain();
+		final int numberOfAudioSources = mAudioSources.size();
+		for (int i = 0; i < numberOfAudioSources; i++) {
+			final var audioSource = mAudioSources.get(i);
+			if (audioSource.audioSourceType() == audioSourceType) {
+				audioSource.updateGain();
 			}
 		}
 	}
@@ -285,7 +287,7 @@ public class AudioManager {
 		if (err == AL10.AL_NO_ERROR)
 			return;
 
-		String message = "Open AL error: ";
+		var message = "Open AL error: ";
 		switch (err) {
 		case AL10.AL_INVALID_NAME:
 			message += "AL10.AL_INVALID_NAME";
@@ -384,14 +386,14 @@ public class AudioManager {
 	public void unloadResources() {
 		musicManager().unloadALContent();
 
-		for (final var lAudioData : mAudioDataBuffers.values()) {
-			lAudioData.unloadAudioData();
+		for (final var audioData : mAudioDataBuffers.values()) {
+			audioData.unloadAudioData();
 		}
 
 		mAudioDataBuffers.clear();
 
-		for (final var lAudioSource : mAudioSources) {
-			lAudioSource.dispose();
+		for (final var audioSource : mAudioSources) {
+			audioSource.dispose();
 		}
 
 		alcMakeContextCurrent(NULL);
@@ -436,32 +438,32 @@ public class AudioManager {
 
 	/** Returns an OpenAL {@link AudioSource} object which can be used to play an OpenAL AudioBuffer. */
 	public AudioSource getAudioSource(int ownerHash, int audioSourceType) {
-		final int lNumberSourcesInPool = mAudioSources.size();
+		final int numberSourcesInPool = mAudioSources.size();
 
-		for (int i = 0; i < lNumberSourcesInPool; i++) {
+		for (int i = 0; i < numberSourcesInPool; i++) {
 			if (mAudioSources.get(i).isFree()) {
-				final var lAudioSource = mAudioSources.get(i);
+				final var audioSource = mAudioSources.get(i);
 
-				if (lAudioSource.assign(ownerHash, getAudioSourceNubbleBasedOnType(audioSourceType))) {
-					return lAudioSource;
+				if (audioSource.assign(ownerHash, getAudioSourceNubbleBasedOnType(audioSourceType))) {
+					return audioSource;
 				}
 			}
 		}
 
-		final AudioSource lNewAudioSource = increaseAudioSourcePool(8);
-		if (lNewAudioSource == null)
+		final var newAudioSource = increaseAudioSourcePool(8);
+		if (newAudioSource == null)
 			return null;
 
-		lNewAudioSource.assign(ownerHash, getAudioSourceNubbleBasedOnType(audioSourceType));
-		return lNewAudioSource;
+		newAudioSource.assign(ownerHash, getAudioSourceNubbleBasedOnType(audioSourceType));
+		return newAudioSource;
 	}
 
 	private AudioSource increaseAudioSourcePool(int enlargeByAmount) {
-		final int lNumberFreeSourceSpaces = mMaxMonoSourceCount - mNumberAssignedSources;
-		if (lNumberFreeSourceSpaces <= 0)
+		final int numberFreeSourceSpaces = mMaxMonoSourceCount - mNumberAssignedSources;
+		if (numberFreeSourceSpaces <= 0)
 			return null;
 
-		enlargeByAmount = Math.min(enlargeByAmount, lNumberFreeSourceSpaces);
+		enlargeByAmount = Math.min(enlargeByAmount, numberFreeSourceSpaces);
 
 		for (int i = 0; i < enlargeByAmount - 1; i++) {
 			createNewAudioSource();
@@ -490,28 +492,47 @@ public class AudioManager {
 	public void loadAudioFilesFromMetafile(String metaFileLocation) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading audio from meta-file %s", metaFileLocation));
 
-		final Gson GSON = new GsonBuilder().create();
+		final var isFromResource = FileUtils.getIsFilePathAResource(metaFileLocation);
 
-		String lMetaFileContentsString = null;
-		AudioMetaData lAudioMetaObject = null;
+		final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+		if (!isFromResource && !metaFileLocation.startsWith(workspacePath)) {
+			metaFileLocation = Paths.get(workspacePath, metaFileLocation).toString();
+		}
 
-		lMetaFileContentsString = FileUtils.loadString(metaFileLocation);
-		lAudioMetaObject = GSON.fromJson(lMetaFileContentsString, AudioMetaData.class);
+		final Gson gson = new GsonBuilder().create();
 
-		if (lAudioMetaObject == null || lAudioMetaObject.AudioMetaDefinitions == null || lAudioMetaObject.AudioMetaDefinitions.length == 0) {
+		String metaFileContentsString = null;
+		AudioMetaData audioMetaObject = null;
+
+		metaFileContentsString = FileUtils.loadString(metaFileLocation);
+		audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);
+
+		if (audioMetaObject == null || audioMetaObject.AudioMetaDefinitions == null || audioMetaObject.AudioMetaDefinitions.length == 0) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the audio meta file");
 			return;
 		}
 
-		final int lNumberOfAudioFileDefinitions = lAudioMetaObject.AudioMetaDefinitions.length;
+		final int lNumberOfAudioFileDefinitions = audioMetaObject.AudioMetaDefinitions.length;
 		for (int i = 0; i < lNumberOfAudioFileDefinitions; i++) {
-			final var lAudioDataDefinition = lAudioMetaObject.AudioMetaDefinitions[i];
+			final var audioDataDefinition = audioMetaObject.AudioMetaDefinitions[i];
 
-			final var lSoundName = lAudioDataDefinition.soundname;
-			final var lFilepath = lAudioDataDefinition.filepath;
-			final var lReload = lAudioDataDefinition.reload;
+			final var soundName = audioDataDefinition.soundname;
+			final var reload = audioDataDefinition.reload;
+			var filePath = audioDataDefinition.filepath;
 
-			loadAudioFile(lSoundName, lFilepath, lReload);
+			// TODO: This needs to be a general prepass - all resources get RES// and all files get made absolute before loading.
+			if (isFromResource) {
+
+				if (!filePath.startsWith(FileUtils.RESOURCE_LOCATION_PREFIX))
+					filePath = FileUtils.RESOURCE_LOCATION_PREFIX + filePath;
+
+			} else {
+
+				filePath = Paths.get(workspacePath, filePath).toString();
+
+			}
+
+			loadAudioFile(soundName, filePath, reload);
 		}
 	}
 
@@ -527,49 +548,48 @@ public class AudioManager {
 		if (!reload && mAudioDataBuffers.containsKey(soundName))
 			return mAudioDataBuffers.get(soundName);
 
-		final var lSoundName = soundName;
-		final var lSoundData = loadAudioFile(lSoundName, filepath);
+		final var soundData = loadAudioFile(soundName, filepath);
 
-		if (lSoundData != null) {
+		if (soundData != null) {
 			if (reload) {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Re-Loaded AudioData file '" + filepath + "' as " + lSoundName);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Re-Loaded AudioData file '" + filepath + "' as " + soundName);
 			} else {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded AudioData file '" + filepath + "' as " + lSoundName);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded AudioData file '" + filepath + "' as " + soundName);
 			}
 
-			mAudioDataBuffers.put(lSoundName, lSoundData);
+			mAudioDataBuffers.put(soundName, soundData);
 		}
 
-		return lSoundData;
+		return soundData;
 	}
 
 	private AudioDataBase loadAudioFile(String name, String filepath) {
 		if (filepath == null || filepath.length() == 0)
 			return null;
 
-		InputStream lInputStream = null;
-		if (filepath.charAt(0) == '/') {
-			lInputStream = loadAudioDataFromResource(filepath);
+		InputStream inputStream = null;
+		if (FileUtils.getIsFilePathAResource(filepath)) {
+			inputStream = loadAudioDataFromResource(FileUtils.getResourceUrl(filepath));
 		} else {
-			lInputStream = loadAudioDataFromFile(filepath);
+			inputStream = loadAudioDataFromFile(filepath);
 		}
 
-		if (lInputStream == null) {
+		if (inputStream == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't open the audio file: " + filepath);
 			return null;
 		}
 
-		final var lFileExtension = FileUtils.getFileExtension(filepath);
-		switch (lFileExtension) {
+		final var fileExtension = FileUtils.getFileExtension(filepath);
+		switch (fileExtension) {
 		case ".wav":
-			final var lNewWavData = new WaveAudioData();
-			lNewWavData.loadAudioFromInputStream(name, lInputStream);
-			return lNewWavData;
+			final var newWavData = new WaveAudioData();
+			newWavData.loadAudioFromInputStream(name, inputStream);
+			return newWavData;
 
 		case ".ogg":
-			final var lNewOggAudioData = new OGGAudioData();
-			lNewOggAudioData.loadAudioFromInputStream(name, lInputStream);
-			return lNewOggAudioData;
+			final var newOggAudioData = new OGGAudioData();
+			newOggAudioData.loadAudioFromInputStream(name, inputStream);
+			return newOggAudioData;
 
 		default:
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Failed to recognize the audio file extension.");
@@ -587,23 +607,32 @@ public class AudioManager {
 	}
 
 	private InputStream loadAudioDataFromResource(String resourcename) {
-		final var lInputStream = FileUtils.class.getResourceAsStream(resourcename);
-		if (lInputStream == null)
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Load InputStream from embedded resource: " + resourcename);
+
+		final var inputStream = FileUtils.class.getResourceAsStream(resourcename);
+		if (inputStream == null)
 			return null;
 
-		return new BufferedInputStream(lInputStream);
+		return new BufferedInputStream(inputStream);
 	}
 
 	private InputStream loadAudioDataFromFile(String filename) {
-		final var lNewFile = new File(filename);
+		final var resourceFile = new File(filename);
 
-		if (!lNewFile.exists())
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Load InputStream from file: " + resourceFile);
+
+		// TODO: Need consistant handling of errors in all managaers (Audio/Texture/Spritesheet and Music).
+		if (!resourceFile.exists()) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "  File doesn't exist!");
 			return null;
+		}
 
 		try {
-			return new BufferedInputStream(new FileInputStream(lNewFile));
+			return new BufferedInputStream(new FileInputStream(resourceFile));
+
 		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Couldn't load audio data file '" + lNewFile + "' - file doesn't exist!");
+			Debug.debugManager().logger().e(AudioManager.class.getSimpleName(), "Couldn't load audio data file '" + resourceFile + "' - file doesn't exist!");
 		}
 
 		return null;
@@ -614,10 +643,10 @@ public class AudioManager {
 	// --------------------------------------
 
 	public AudioFireAndForgetManager getFireAndForgetManager(int numberSources) {
-		final var lNewFireAndForgetManager = getFreeAudioFireAndForgetManager();
-		lNewFireAndForgetManager.acquireAudioSources(numberSources);
+		final var newFireAndForgetManager = getFreeAudioFireAndForgetManager();
+		newFireAndForgetManager.acquireAudioSources(numberSources);
 
-		return lNewFireAndForgetManager;
+		return newFireAndForgetManager;
 	}
 
 	public void releaseFireAndForgetManager(AudioFireAndForgetManager audioFireAndForgetManager) {
@@ -627,9 +656,9 @@ public class AudioManager {
 	}
 
 	private AudioFireAndForgetManager getFreeAudioFireAndForgetManager() {
-		final int lNumberOfmAudioFireAndForgetManagers = mAudioFireAndForgetManagers.size();
+		final int numberOfmAudioFireAndForgetManagers = mAudioFireAndForgetManagers.size();
 
-		for (int i = 0; i < lNumberOfmAudioFireAndForgetManagers; i++) {
+		for (int i = 0; i < numberOfmAudioFireAndForgetManagers; i++) {
 			if (!mAudioFireAndForgetManagers.get(i).isInUse()) {
 				return mAudioFireAndForgetManagers.get(i);
 			}
@@ -639,15 +668,15 @@ public class AudioManager {
 	}
 
 	private AudioFireAndForgetManager createAudioFireAndForgetManager() {
-		final var lNewFireAndForgetManagear = new AudioFireAndForgetManager(this);
-		mAudioFireAndForgetManagers.add(lNewFireAndForgetManagear);
+		final var newFireAndForgetManagear = new AudioFireAndForgetManager(this);
+		mAudioFireAndForgetManagers.add(newFireAndForgetManagear);
 
-		return lNewFireAndForgetManagear;
+		return newFireAndForgetManagear;
 	}
 
 	public void applySettings(AudioSettings audioSettings) {
-		 mAudioConfig.applySettings(audioSettings);
-		 updateSettings();
-		
+		mAudioConfig.applySettings(audioSettings);
+		updateSettings();
+
 	}
 }

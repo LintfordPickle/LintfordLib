@@ -11,6 +11,7 @@ import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.graphics.shaders.BlurShader;
 import net.lintfordlib.core.graphics.shaders.Shader;
 import net.lintfordlib.core.maths.Matrix4f;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class BlurEffect {
 
@@ -18,8 +19,8 @@ public class BlurEffect {
 	// Constants
 	// --------------------------------------
 
-	private static final String BLUR_EFFECT_VERT_SHADER = "/res/shaders/shader_basic_pt.vert";
-	private static final String BLUR_EFFECT_FRAG_SHADER = "/res/shaders/shaderBlur.frag";
+	private static final String BLUR_EFFECT_VERT_SHADER = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pt.vert";
+	private static final String BLUR_EFFECT_FRAG_SHADER = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shaderBlur.frag";
 
 	public enum BLUR_DIRECTION {
 		horizontal, vertical,

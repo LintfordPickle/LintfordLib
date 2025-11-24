@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class ShaderManager {
 
@@ -13,8 +14,8 @@ public class ShaderManager {
 	// --------------------------------------
 
 	public static final String SYSTEM_SHADER_PCT_NAME = "SHADER_SYSTEM_PCT";
-	public static final String SYSTEM_VERT_FILENAME = "/res/shaders/shader_basic_pct.vert";
-	public static final String SYSTEM_FRAG_FILENAME = "/res/shaders/shader_basic_pct.frag";
+	public static final String SYSTEM_VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pct.vert";
+	public static final String SYSTEM_FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pct.frag";
 
 	// --------------------------------------
 	// Variables

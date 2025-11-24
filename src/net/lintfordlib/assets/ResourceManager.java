@@ -157,8 +157,9 @@ public class ResourceManager {
 		if (mResourceMap == null)
 			return;
 
-		final var lBaseDirectory = filepath.getParent();
-		mResourceMap.loadResourcesIntoManager(this, lBaseDirectory, entityGroupUid);
+		// TODO: Need to check this is this called, and if so, how does it work together with the new RES// / Absolute pathing ?
+		final var baseDirectory = filepath.getParent();
+		mResourceMap.loadResourcesIntoManager(this, baseDirectory, entityGroupUid);
 
 	}
 
@@ -249,9 +250,9 @@ public class ResourceManager {
 
 			try {
 
-				Path lSpriteSheetDirectory = Paths.get("res//spritesheets//");
-				mSpriteSheetPathWatcher = lSpriteSheetDirectory.getFileSystem().newWatchService();
-				Files.walkFileTree(lSpriteSheetDirectory, new SimpleFileVisitor<Path>() {
+				final var spriteSheetDirectory = Paths.get("res//spritesheets//");
+				mSpriteSheetPathWatcher = spriteSheetDirectory.getFileSystem().newWatchService();
+				Files.walkFileTree(spriteSheetDirectory, new SimpleFileVisitor<Path>() {
 					@Override
 					public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 						dir.register(mSpriteSheetPathWatcher, StandardWatchEventKinds.ENTRY_MODIFY);

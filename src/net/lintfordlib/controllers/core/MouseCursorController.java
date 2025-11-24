@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.core.LintfordCore;

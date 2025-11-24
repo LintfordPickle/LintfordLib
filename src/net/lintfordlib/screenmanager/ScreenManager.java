@@ -11,6 +11,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.input.IInputClickedFocusTracker;
 import net.lintfordlib.core.rendering.SharedResources;
+import net.lintfordlib.core.storage.FileUtils;
 import net.lintfordlib.options.IResizeListener;
 import net.lintfordlib.screenmanager.Screen.ScreenState;
 import net.lintfordlib.screenmanager.screens.LoadingScreen;
@@ -123,10 +124,10 @@ public class ScreenManager implements IInputClickedFocusManager {
 		mIsinitialized = false;
 		mResourcesLoaded = false;
 
-		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TITLE_NAME, "/res/fonts/fontCoreTitle.json");
-		ScreenManagerFonts.AddIfNotExists(FONT_MENU_ENTRY_NAME, "/res/fonts/fontCoreText.json");
-		ScreenManagerFonts.AddIfNotExists(FONT_MENU_BOLD_ENTRY_NAME, "/res/fonts/fontCoreText.json");
-		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TOOLTIP_NAME, "/res/fonts/fontCoreText.json");
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TITLE_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreTitle.json");
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_ENTRY_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_BOLD_ENTRY_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
+		ScreenManagerFonts.AddIfNotExists(FONT_MENU_TOOLTIP_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
 
 		mSharedResources = core.sharedResources();
 	}

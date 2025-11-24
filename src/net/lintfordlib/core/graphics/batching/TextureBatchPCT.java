@@ -23,6 +23,7 @@ import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.core.graphics.textures.TextureManager;
 import net.lintfordlib.core.maths.Matrix4f;
 import net.lintfordlib.core.maths.Vector2f;
+import net.lintfordlib.core.storage.FileUtils;
 
 // Note - we use half pixel correction to attempt to sample the correct texels when applying the Uvs.
 // https://learn.microsoft.com/en-us/windows/win32/direct3d9/directly-mapping-texels-to-pixels?redirectedfrom=MSDN
@@ -64,8 +65,8 @@ public class TextureBatchPCT {
 	protected static final int MAX_VERTEX_COUNT = MAX_SPRITES * NUM_VERTICES_PER_SPRITE;
 	protected static final int MAX_INDEX_COUNT = MAX_SPRITES * NUM_INDICES_PER_SPRITE;
 
-	protected static final String VERT_FILENAME = "/res/shaders/shader_batch_pct.vert";
-	protected static final String FRAG_FILENAME = "/res/shaders/shader_batch_pct.frag";
+	protected static final String VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_batch_pct.vert";
+	protected static final String FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_batch_pct.frag";
 
 	private static IntBuffer mIndexBuffer;
 

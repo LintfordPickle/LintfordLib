@@ -63,6 +63,26 @@ public class Debug {
 			logLevel = pV;
 		};
 
+		public static String getLogLevel(int level) {
+			switch (level) {
+			default:
+			case LOG_LEVEL_OFF:
+				return null;
+			case LOG_LEVEL_VERBOSE:
+				return "VERBOSE ";
+			case LOG_LEVEL_INFO:
+				return "INFO    ";
+			case LOG_LEVEL_WARNING:
+				return "WARN    ";
+			case LOG_LEVEL_ERROR:
+				return "ERROR   ";
+			case LOG_LEVEL_USER:
+				return "USER    ";
+			case LOG_LEVEL_SYSTEM:
+				return "SYS     ";
+			}
+		}
+
 	}
 
 	// --------------------------------------

@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL20;
 
 import net.lintfordlib.core.maths.MathUtil;
 import net.lintfordlib.core.maths.Matrix4f;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class ShaderSubPixel extends ShaderMVP_PCT {
 
@@ -14,8 +15,8 @@ public class ShaderSubPixel extends ShaderMVP_PCT {
 
 	public final static String SHADER_NAME = "Sub Pixel Shader";
 
-	public static final String VERT_FILENAME = "/res/shaders/shader_batch_pct.vert";
-	public static final String FRAG_FILENAME = "/res/shaders/shader_subpixel_pct.frag";
+	public static final String VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_batch_pct.vert";
+	public static final String FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_subpixel_pct.frag";
 
 	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
 	public final static String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";

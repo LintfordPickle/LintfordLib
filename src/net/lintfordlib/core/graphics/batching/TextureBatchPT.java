@@ -19,6 +19,7 @@ import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
 import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.core.graphics.textures.TextureManager;
 import net.lintfordlib.core.maths.Matrix4f;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class TextureBatchPT {
 
@@ -54,8 +55,8 @@ public class TextureBatchPT {
 	protected static final int MAX_VERTEX_COUNT = MAX_SPRITES * NUM_VERTICES_PER_SPRITE;
 	protected static final int MAX_INDEX_COUNT = MAX_SPRITES * NUM_INDICES_PER_SPRITE;
 
-	protected static final String VERT_FILENAME = "/res/shaders/shader_batch_pt.vert";
-	protected static final String FRAG_FILENAME = "/res/shaders/shader_batch_pt.frag";
+	protected static final String VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_batch_pt.vert";
+	protected static final String FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_batch_pt.frag";
 
 	private static IntBuffer mIndexBuffer;
 

@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL20;
 
 import net.lintfordlib.core.maths.MathUtil;
 import net.lintfordlib.core.maths.Matrix4f;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class ShaderMVP_PC extends Shader {
 
@@ -13,8 +14,8 @@ public class ShaderMVP_PC extends Shader {
 
 	public final static String SHADER_NAME = "ShaderMVP_PC";
 
-	public final static String SHADER_DEFAULT_VERT = "/res/shaders/shader_basic_pc.vert";
-	public final static String SHADER_DEFAULT_FRAG = "/res/shaders/shader_basic_pc.frag";
+	public final static String SHADER_DEFAULT_VERT = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.vert";
+	public final static String SHADER_DEFAULT_FRAG = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.frag";
 
 	public final static String SHADER_UNIFORM_PROJECTION_NAME = "projectionMatrix";
 	public final static String SHADER_UNIFORM_VIEW_NAME = "viewMatrix";

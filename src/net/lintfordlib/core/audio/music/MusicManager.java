@@ -1,10 +1,12 @@
 package net.lintfordlib.core.audio.music;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
 
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.audio.AudioManager;
 import net.lintfordlib.core.audio.AudioSource;
@@ -101,8 +103,8 @@ public class MusicManager {
 		if (bufferName == null || bufferName.length() == 0)
 			return NO_MUSIC_INDEX;
 
-		final var lNumberAudioDataBuffers = mAudioDataBuffers.size();
-		for (int i = 0; i < lNumberAudioDataBuffers; i++) {
+		final var numberAudioDataBuffers = mAudioDataBuffers.size();
+		for (int i = 0; i < numberAudioDataBuffers; i++) {
 			if (mAudioDataBuffers.get(i).name().equals(bufferName)) {
 				return i;
 			}
@@ -115,8 +117,8 @@ public class MusicManager {
 		if (bufferName == null || bufferName.length() == 0)
 			return null;
 
-		final var lNumberAudioDataBuffers = mAudioDataBuffers.size();
-		for (int i = 0; i < lNumberAudioDataBuffers; i++) {
+		final var numberAudioDataBuffers = mAudioDataBuffers.size();
+		for (int i = 0; i < numberAudioDataBuffers; i++) {
 			if (mAudioDataBuffers.get(i).name().equals(bufferName)) {
 				return mAudioDataBuffers.get(i);
 			}
@@ -134,8 +136,8 @@ public class MusicManager {
 	}
 
 	public int getMusicGroupIndexByName(String name) {
-		final int lNumGroups = mMusicGroups.size();
-		for (int i = 0; i < lNumGroups; i++) {
+		final int numGroups = mMusicGroups.size();
+		for (int i = 0; i < numGroups; i++) {
 			if (mMusicGroups.get(i).name.equals(name)) {
 				return i;
 			}
@@ -145,8 +147,8 @@ public class MusicManager {
 	}
 
 	public MusicGroup getMusicGroupByName(String name) {
-		final int lNumGroups = mMusicGroups.size();
-		for (int i = 0; i < lNumGroups; i++) {
+		final int numGroups = mMusicGroups.size();
+		for (int i = 0; i < numGroups; i++) {
 			if (mMusicGroups.get(i).name.equals(name)) {
 				return mMusicGroups.get(i);
 			}
@@ -156,23 +158,23 @@ public class MusicManager {
 	}
 
 	public MusicGroup getOrCreateMusicGroup(String newGroupName) {
-		final var lGroupExists = getMusicGroupByName(newGroupName);
-		if (lGroupExists != null) {
+		final var groupExists = getMusicGroupByName(newGroupName);
+		if (groupExists != null) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Requested new music group denied - group name already exists");
-			return lGroupExists;
+			return groupExists;
 		}
 
-		final var lNewMusicGroup = new MusicGroup(newGroupName);
-		mMusicGroups.add(lNewMusicGroup);
-		return lNewMusicGroup;
+		final var newMusicGroup = new MusicGroup(newGroupName);
+		mMusicGroups.add(newMusicGroup);
+		return newMusicGroup;
 	}
 
 	public void removeMusicGroup(String groupNameToRemove) {
-		final var lFoundMusicGroup = getMusicGroupByName(groupNameToRemove);
-		if (lFoundMusicGroup != null) {
-			lFoundMusicGroup.removeAllSongIndices();
+		final var foundMusicGroup = getMusicGroupByName(groupNameToRemove);
+		if (foundMusicGroup != null) {
+			foundMusicGroup.removeAllSongIndices();
 
-			mMusicGroups.remove(lFoundMusicGroup);
+			mMusicGroups.remove(foundMusicGroup);
 		}
 	}
 
@@ -203,40 +205,47 @@ public class MusicManager {
 	public void loadMusicFromMetaFile(String metaFileLocation) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading music files from meta-file %s", metaFileLocation));
 
-		final var lGson = new GsonBuilder().create();
+		final var isFromResource = FileUtils.getIsFilePathAResource(metaFileLocation);
 
-		String lMetaFileContentsString = null;
-		AudioMetaData lAudioMetaObject = null;
+		final var gson = new GsonBuilder().create();
 
-		lMetaFileContentsString = FileUtils.loadString(metaFileLocation);
-		lAudioMetaObject = lGson.fromJson(lMetaFileContentsString, AudioMetaData.class);
+		String metaFileContentsString = null;
+		AudioMetaData audioMetaObject = null;
 
-		if (lAudioMetaObject == null || lAudioMetaObject.AudioMetaDefinitions == null || lAudioMetaObject.AudioMetaDefinitions.length == 0) {
+		final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+		if (!isFromResource && !metaFileLocation.startsWith(workspacePath)) {
+			metaFileLocation = Paths.get(workspacePath, metaFileLocation).toString();
+		}
+
+		metaFileContentsString = FileUtils.loadString(metaFileLocation);
+		audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);
+
+		if (audioMetaObject == null || audioMetaObject.AudioMetaDefinitions == null || audioMetaObject.AudioMetaDefinitions.length == 0) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the music meta file");
 			return;
 		}
 
-		final int lNumberOfFontUnitDefinitions = lAudioMetaObject.AudioMetaDefinitions.length;
-		for (int i = 0; i < lNumberOfFontUnitDefinitions; i++) {
-			final var lAudioDataDefinition = lAudioMetaObject.AudioMetaDefinitions[i];
+		final int numberOfFontUnitDefinitions = audioMetaObject.AudioMetaDefinitions.length;
+		for (int i = 0; i < numberOfFontUnitDefinitions; i++) {
+			final var audioDataDefinition = audioMetaObject.AudioMetaDefinitions[i];
 
-			final var lSoundName = lAudioDataDefinition.soundname;
-			final var lFilepath = lAudioDataDefinition.filepath;
-			final var lReload = lAudioDataDefinition.reload;
-			final var lGroupName = lAudioDataDefinition.group;
+			final var soundName = audioDataDefinition.soundname;
+			final var filepath = audioDataDefinition.filepath;
+			final var reload = audioDataDefinition.reload;
+			final var groupName = audioDataDefinition.group;
 
-			var lAudioDataBuffer = getMusicDataByName(lSoundName);
-			if (lReload || lAudioDataBuffer == null) {
-				lAudioDataBuffer = mAudioManager.loadAudioFile(lSoundName, lFilepath, lReload);
-				mAudioDataBuffers.add(lAudioDataBuffer);
+			var audioDataBuffer = getMusicDataByName(soundName);
+			if (reload || audioDataBuffer == null) {
+				audioDataBuffer = mAudioManager.loadAudioFile(soundName, filepath, reload);
+				mAudioDataBuffers.add(audioDataBuffer);
 
-				if (lGroupName != null && lGroupName.length() > 0) {
-					final var lMusicGroup = getOrCreateMusicGroup(lGroupName);
+				if (groupName != null && groupName.length() > 0) {
+					final var lMusicGroup = getOrCreateMusicGroup(groupName);
 
 					lMusicGroup.addSongIndex(mAudioDataBuffers.size() - 1);
 				}
 
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Added AudioData file to music playlist: " + lSoundName);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Added AudioData file to music playlist: " + soundName);
 			}
 		}
 	}

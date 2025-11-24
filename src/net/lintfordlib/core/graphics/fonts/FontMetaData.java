@@ -15,6 +15,7 @@ public class FontMetaData {
 	// Variables
 	// --------------------------------------
 
+	// TODO: protect this 
 	public List<BitmapFontDataDefinition> items = new ArrayList<>();
 
 	// --------------------------------------

@@ -68,9 +68,9 @@ public class BitmapFontManager {
 	public BitmapFontManager() {
 		mFontUnits = new HashMap<>();
 
-		CoreFonts.AddIfNotExists(SYSTEM_FONT_CORE_TEXT_NAME, "/res/fonts/fontCoreText.json");
-		CoreFonts.AddIfNotExists(SYSTEM_FONT_CORE_TITLE_NAME, "/res/fonts/fontCoreTitle.json");
-		CoreFonts.AddIfNotExists(SYSTEM_FONT_CONSOLE_NAME, "/res/fonts/fontConsole.json");
+		CoreFonts.AddIfNotExists(SYSTEM_FONT_CORE_TEXT_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
+		CoreFonts.AddIfNotExists(SYSTEM_FONT_CORE_TITLE_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreTitle.json");
+		CoreFonts.AddIfNotExists(SYSTEM_FONT_CONSOLE_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontConsole.json");
 	}
 
 	// --------------------------------------
@@ -84,32 +84,32 @@ public class BitmapFontManager {
 	// --------------------------------------
 
 	public void loadBitmapFontDefinitionsFromMetaData(FontMetaData fontMetaData) {
-		final int lSpriteCount = fontMetaData.items.size();
-		for (int i = 0; i < lSpriteCount; i++) {
-			var lFontDataDefinition = fontMetaData.items.get(i);
+		final int fontCount = fontMetaData.items.size();
+		for (int i = 0; i < fontCount; i++) {
+			var fontDataDefinition = fontMetaData.items.get(i);
 
-			if (lFontDataDefinition == null)
+			if (fontDataDefinition == null)
 				continue;
 
-			loadBitmapFont(lFontDataDefinition.fontName, lFontDataDefinition.filepath);
+			loadBitmapFont(fontDataDefinition.fontName, fontDataDefinition.filepath);
 		}
 	}
 
-	public void loadBitmapFontDefinitionFromMetaFile(final String metaFileLocation) {
+	public void loadBitmapFontDefinitionFromMetaFile(String metaFileLocation) {
 		if (metaFileLocation == null || metaFileLocation.length() == 0) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteSheetManager meta file cannot be null or empty when loading SpriteSheets.");
 			return;
 		}
 
-		final var lGson = new GsonBuilder().create();
+		final var gson = new GsonBuilder().create();
 
-		String lMetaFileContentsString = null;
-		BitmapFontMetaData lSpriteMetaObject = null;
+		String metaFileContentsString = null;
+		BitmapFontMetaData bitmapFontMetaObject = null;
 		try {
-			lMetaFileContentsString = new String(Files.readAllBytes(Paths.get(metaFileLocation)));
-			lSpriteMetaObject = lGson.fromJson(lMetaFileContentsString, BitmapFontMetaData.class);
+			metaFileContentsString = new String(Files.readAllBytes(Paths.get(metaFileLocation)));
+			bitmapFontMetaObject = gson.fromJson(metaFileContentsString, BitmapFontMetaData.class);
 
-			if (lSpriteMetaObject == null || lSpriteMetaObject.bitmapFontLocations == null || lSpriteMetaObject.bitmapFontLocations.length == 0) {
+			if (bitmapFontMetaObject == null || bitmapFontMetaObject.bitmapFontLocations == null || bitmapFontMetaObject.bitmapFontLocations.length == 0) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load bitmap font definitions from meta file");
 				return;
 			}
@@ -117,14 +117,14 @@ public class BitmapFontManager {
 			ex.printStackTrace();
 		}
 
-		final int lSpriteCount = lSpriteMetaObject.bitmapFontLocations.length;
-		for (int i = 0; i < lSpriteCount; i++) {
-			final var lFontDataDefinition = lSpriteMetaObject.bitmapFontLocations[i];
+		final int fontCount = bitmapFontMetaObject.bitmapFontLocations.length;
+		for (int i = 0; i < fontCount; i++) {
+			final var fontDataDefinition = bitmapFontMetaObject.bitmapFontLocations[i];
 
-			if (lFontDataDefinition == null)
+			if (fontDataDefinition == null)
 				continue;
 
-			loadBitmapFont(lFontDataDefinition.fontName, lFontDataDefinition.filepath);
+			loadBitmapFont(fontDataDefinition.fontName, fontDataDefinition.filepath);
 		}
 	}
 
@@ -138,8 +138,8 @@ public class BitmapFontManager {
 			return null;
 		}
 
-		if (filepath.charAt(0) == '/') {
-			return loadBitmapFontDefinitionFromResource(fontName, filepath);
+		if (FileUtils.getIsFilePathAResource(filepath)) {
+			return loadBitmapFontDefinitionFromResource(fontName, FileUtils.getResourceUrl(filepath));
 		} else {
 			return loadBitmapFontDefinitionFromFile(fontName, filepath);
 		}
@@ -200,6 +200,11 @@ public class BitmapFontManager {
 			if (lBitmapFontDefinition == null) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading spritesheet " + filepath);
 				return null;
+			}
+
+			// Bitmapfonts loaded from an embedded resource should pull the textures from a resource too (if the texture needs to be loaded too).
+			if (!FileUtils.getIsFilePathAResource(lBitmapFontDefinition.mTextureFilepath)) {
+				lBitmapFontDefinition.mTextureFilepath = FileUtils.RESOURCE_LOCATION_PREFIX + lBitmapFontDefinition.mTextureFilepath;
 			}
 
 			return createFontUnit(fontname, lBitmapFontDefinition);

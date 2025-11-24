@@ -121,7 +121,7 @@ public class FullScreenBuffer {
 			return;
 
 		mFullScreenQuad.loadResources(resourceManager);
-		mShader.loadResources(resourceManager);
+		mShader.loadResources(resourceManager); // <---
 
 		mARGBColorData = MemoryUtil.memAllocInt(mResolutionW * mResolutionH);
 

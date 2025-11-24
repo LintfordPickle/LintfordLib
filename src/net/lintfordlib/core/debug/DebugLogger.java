@@ -78,24 +78,6 @@ public class DebugLogger {
 		mFlashMessagesEnabled = newValue;
 	}
 
-	public void addFlashMessage(DebugLogLevel logLevel, String tag, String message) {
-//		mFlashMessagesEnabled = true;
-//		if (mFlashMessagesEnabled == false)
-//			return;
-//
-//		final var lLogMessage = mLogLinePool.remove(0);
-//
-//		if (lLogMessage == null) {
-//			System.err.println("DebugLogger: Unable to write to flash message queue (pool empty)?");
-//			return;
-//		}
-//		_date.setTime(System.currentTimeMillis());
-//		var lTimeStamp = SIMPLE_DATE_FORMAT.format(_date);
-//		lLogMessage.setMessage(message, message, lTimeStamp, logLevel.logLevel);
-//
-//		mFlashMessageQueue.add(lLogMessage);
-	}
-
 	/** Returns all the messages currently in the log. */
 	public List<Message> logLines() {
 		return mLogLines;
@@ -224,40 +206,41 @@ public class DebugLogger {
 		}
 
 		if (logLevel.logLevel >= mDebugManager.getLogLevel().logLevel) {
-			Message lLogMessage = null;
+			Message lgMessage = null;
 			if (!mLogLinePool.isEmpty()) {
 				// Remove from the pool until empty
-				lLogMessage = mLogLinePool.remove(0);
+				lgMessage = mLogLinePool.remove(0);
 
 			} else {
 				// Non free, get the first from the linked list
-				lLogMessage = mLogLines.remove(0);
+				lgMessage = mLogLines.remove(0);
 			}
 
-			if (lLogMessage == null) {
+			if (lgMessage == null) {
 				System.err.println("DebugLogger: Unable to write to Debug log");
 				return;
 			}
 
 			if (DEBUG_LOG_THREAD_NAMES) {
-				final var lThreadName = Thread.currentThread().getName();
-				message = "[" + lThreadName + "] " + message;
+				final var threadName = Thread.currentThread().getName();
+				message = "[" + threadName + "] " + message;
 			}
 
 			_date.setTime(System.currentTimeMillis());
-			var lTimeStamp = SIMPLE_DATE_FORMAT.format(_date);
-			lLogMessage.setMessage(tag, message, lTimeStamp, logLevel.logLevel);
+			var timeStamp = SIMPLE_DATE_FORMAT.format(_date);
+			lgMessage.setMessage(tag, message, timeStamp, logLevel.logLevel);
 
-			if (logLevel.logLevel >= mMinimumFlashLevel)
-				addFlashMessage(logLevel, tag, message);
+			if (DEBUG_LOG_DEBUG_TO_FILE) {
+				
+				final var paddedTag = String.format("%-" + 25 + "s", lgMessage.tag());
+				
+				writeDebugMessageToFile(DebugLogLevel.getLogLevel(logLevel.logLevel), paddedTag, lgMessage.timestamp(), lgMessage.message());
+			}
 
-			if (DEBUG_LOG_DEBUG_TO_FILE)
-				writeDebugMessageToFile(lLogMessage.tag(), lLogMessage.timestamp(), lLogMessage.message());
-
-			mLogLines.add(lLogMessage);
+			mLogLines.add(lgMessage);
 
 			if (mMirrorLogToConsole)
-				System.out.printf("[%s] %s: %s\n", padRight(lLogMessage.timestamp(), 12), padRight(lLogMessage.tag(), 25), lLogMessage.message());
+				System.out.printf("[%s] %s: %s\n", padRight(lgMessage.timestamp(), 12), padRight(lgMessage.tag(), 25), lgMessage.message());
 		}
 	}
 
@@ -343,7 +326,7 @@ public class DebugLogger {
 	}
 
 	/** Appends the given message into a file at the given location. */
-	public boolean writeDebugMessageToFile(String tag, String timestamp, String message) {
+	public boolean writeDebugMessageToFile(String loglevel, String tag, String timestamp, String message) {
 		if (!mDebugManager.debugManagerEnabled())
 			return false;
 
@@ -352,6 +335,8 @@ public class DebugLogger {
 
 		try {
 			mDebugLogBufferedOutputStream.write(timestamp.getBytes());
+			mDebugLogBufferedOutputStream.write(": ".getBytes());
+			mDebugLogBufferedOutputStream.write(loglevel.getBytes());
 			mDebugLogBufferedOutputStream.write(": ".getBytes());
 			mDebugLogBufferedOutputStream.write(tag.getBytes());
 			mDebugLogBufferedOutputStream.write(": ".getBytes());

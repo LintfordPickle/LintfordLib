@@ -8,6 +8,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
 import net.lintfordlib.core.graphics.fonts.FontMetaData;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
+import net.lintfordlib.core.storage.FileUtils;
 import net.lintfordlib.options.DisplayManager;
 
 public class ToastManager {
@@ -62,7 +63,7 @@ public class ToastManager {
 
 		allocateNewMesssages(8);
 
-		FONTS_META.AddIfNotExists(FONT_TOAST_NAME, "/res/fonts/fontCore.json");
+		FONTS_META.AddIfNotExists(FONT_TOAST_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCore.json");
 	}
 
 	// --------------------------------------

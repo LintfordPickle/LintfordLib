@@ -108,60 +108,64 @@ public abstract class Shader {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  " + mVertPathname);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  " + mFragPathname);
 
-		String lVertexSource = FileUtils.loadString(mVertPathname);
-		String lFragmentSource = FileUtils.loadString(mFragPathname);
+		final var vertexSource = FileUtils.loadString(mVertPathname);
+		final var fragmentSource = FileUtils.loadString(mFragPathname);
 
-		mShaderID = create(lVertexSource, lFragmentSource);
+		mShaderID = create(vertexSource, fragmentSource);
 
 		glUseProgram(mShaderID);
 		getUniformLocations();
 	}
 
 	public int create(String vertexSource, String fragSource) {
-		int lProgramID = glCreateProgram();
+		final var programID = glCreateProgram();
 
-		int lVertID = glCreateShader(GL_VERTEX_SHADER);
-		int lFragID = glCreateShader(GL_FRAGMENT_SHADER);
+		final var vertID = glCreateShader(GL_VERTEX_SHADER);
+		final var fragID = glCreateShader(GL_FRAGMENT_SHADER);
 
-		glShaderSource(lVertID, vertexSource);
-		glShaderSource(lFragID, fragSource);
+		glShaderSource(vertID, vertexSource);
+		glShaderSource(fragID, fragSource);
 
-		glCompileShader(lVertID);
-		if (glGetShaderi(lVertID, GL_COMPILE_STATUS) == GL_FALSE) {
+		glCompileShader(vertID);
+		if (glGetShaderi(vertID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, "Failed to compile vertex shader!" + mVertPathname);
-			final int logSize = glGetShaderi(lFragID, GL_INFO_LOG_LENGTH);
-			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, glGetShaderInfoLog(lVertID, logSize));
-			throw new RuntimeException("Failed to compile vertex shader (" + GL_VERTEX_SHADER + ")");
+			final int logSize = glGetShaderi(fragID, GL_INFO_LOG_LENGTH);
+
+			final var shaderLogText = glGetShaderInfoLog(vertID, logSize);
+			Debug.debugManager().logger().e(DEBUG_TAG_VERT_NAME, shaderLogText);
+			throw new RuntimeException("Failed to compile vertex shader (" + GL_VERTEX_SHADER + "): " + shaderLogText);
 		}
 
-		glCompileShader(lFragID);
-		if (glGetShaderi(lFragID, GL_COMPILE_STATUS) == GL_FALSE) {
+		glCompileShader(fragID);
+		if (glGetShaderi(fragID, GL_COMPILE_STATUS) == GL_FALSE) {
 			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, "Failed to compile fragment shader!" + mFragPathname);
-			final int logSize = glGetShaderi(lFragID, GL_INFO_LOG_LENGTH);
-			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, glGetShaderInfoLog(lFragID, logSize));
+			final int logSize = glGetShaderi(fragID, GL_INFO_LOG_LENGTH);
 
-			throw new RuntimeException("Failed to compile fragment shader (" + GL_FRAGMENT_SHADER + ")");
+			final var shaderInfoLog = glGetShaderInfoLog(fragID, logSize);
+			Debug.debugManager().logger().e(DEBUG_TAG_FRAG_NAME, shaderInfoLog);
+
+			throw new RuntimeException("Failed to compile fragment shader (" + GL_FRAGMENT_SHADER + "): " + shaderInfoLog);
 		}
 
-		glAttachShader(lProgramID, lVertID);
-		glAttachShader(lProgramID, lFragID);
+		glAttachShader(programID, vertID);
+		glAttachShader(programID, fragID);
 
-		bindAtrributeLocations(lProgramID);
+		bindAtrributeLocations(programID);
 
-		glLinkProgram(lProgramID);
-		if (glGetProgrami(lProgramID, GL_LINK_STATUS) == 0) {
-			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(lProgramID, 1024));
+		glLinkProgram(programID);
+		if (glGetProgrami(programID, GL_LINK_STATUS) == 0) {
+			throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(programID, 1024));
 		}
 
-		if (lProgramID != 0)
-			glDetachShader(lProgramID, lVertID);
+		if (programID != 0)
+			glDetachShader(programID, vertID);
 
-		if (lProgramID != 0)
-			glDetachShader(lProgramID, lFragID);
+		if (programID != 0)
+			glDetachShader(programID, fragID);
 
-		glValidateProgram(lProgramID);
+		glValidateProgram(programID);
 
-		return lProgramID;
+		return programID;
 	}
 
 	public void bind() {

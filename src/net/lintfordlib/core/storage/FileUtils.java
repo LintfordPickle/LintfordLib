@@ -32,6 +32,8 @@ public class FileUtils {
 	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
 	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
 
+	public static final String RESOURCE_LOCATION_PREFIX = "res://";
+
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
@@ -43,6 +45,15 @@ public class FileUtils {
 	// --------------------------------------
 	// Helper-Methods
 	// --------------------------------------
+
+	public static boolean getIsFilePathAResource(String resourceFilePath) {
+		return resourceFilePath != null && resourceFilePath.startsWith(RESOURCE_LOCATION_PREFIX);
+	}
+
+	public static String getResourceUrl(String resourceFilePath) {
+		return (resourceFilePath != null && resourceFilePath.startsWith(RESOURCE_LOCATION_PREFIX)) ? resourceFilePath.substring(6) : resourceFilePath;
+
+	}
 
 	private static void clearStringBuilder() {
 		if (mStringBuilder.length() == 0)
@@ -73,13 +84,15 @@ public class FileUtils {
 			return null;
 		}
 
-		if (resourcepath.charAt(0) == '/') {
-			return loadStringFromResource(resourcepath);
+		if (getIsFilePathAResource(resourcepath)) {
+
+			Debug.debugManager().logger().i(FileUtils.class.getSimpleName(), "loadStringFromResource: " + resourcepath);
+			return loadStringFromResource(getResourceUrl(resourcepath));
 		} else {
-			final var lFile = new File(resourcepath);
-			if (!lFile.exists()) {
+			final var file = new File(resourcepath);
+			if (!file.exists()) {
 				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Could not load string from file '" + resourcepath + "'. The file does not exist!");
-				return null;
+				throw new RuntimeException("Unable to resolve a string resource file location!");
 			}
 
 			return loadStringFromFile(resourcepath);
@@ -91,10 +104,10 @@ public class FileUtils {
 		clearStringBuilder();
 
 		try (final var reader = new BufferedReader(new FileReader(filepath))) {
-			var lBuffer = "";
+			var buffer = "";
 
-			while ((lBuffer = reader.readLine()) != null) {
-				mStringBuilder.append(lBuffer);
+			while ((buffer = reader.readLine()) != null) {
+				mStringBuilder.append(buffer);
 				mStringBuilder.append(LINE_SEPERATOR);
 			}
 
@@ -185,7 +198,7 @@ public class FileUtils {
 				e.printStackTrace();
 			}
 		}
-		
+
 		try (var in = new BufferedInputStream(new FileInputStream(oldAssetFile)); var out = new BufferedOutputStream(new FileOutputStream(newAssetFile))) {
 			final var buffer = new byte[1024];
 			int lengthRead;

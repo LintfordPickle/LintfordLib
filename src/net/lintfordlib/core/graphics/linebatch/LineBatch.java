@@ -17,6 +17,7 @@ import net.lintfordlib.core.graphics.GraphicsCompatibility;
 import net.lintfordlib.core.graphics.common.VertexDataStructurePC;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
 import net.lintfordlib.core.maths.Matrix4f;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class LineBatch {
 
@@ -28,8 +29,8 @@ public class LineBatch {
 
 	public static final int NUM_VERTS_PER_LINE = 2;
 
-	private static final String VERT_FILENAME = "/res/shaders/shader_basic_pc.vert";
-	private static final String FRAG_FILENAME = "/res/shaders/shader_basic_pc.frag";
+	private static final String VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.vert";
+	private static final String FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.frag";
 
 	// --------------------------------------
 	// Variables

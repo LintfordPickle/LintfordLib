@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug.DebugLogLevel;
 import net.lintfordlib.core.graphics.batching.TextureBatchPCT;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class LintfordMain extends LintfordCore {
 
@@ -106,7 +107,7 @@ public class LintfordMain extends LintfordCore {
 	protected void showStartUpLogo(long windowHandle) {
 		super.showStartUpLogo(windowHandle);
 
-		final var lTexture = mResourceManager.textureManager().loadTexture("LOGO", "/res/textures/core/textureLogo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
+		final var lTexture = mResourceManager.textureManager().loadTexture("LOGO", FileUtils.RESOURCE_LOCATION_PREFIX + "/res/textures/core/textureLogo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);

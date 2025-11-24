@@ -15,6 +15,7 @@ import net.lintfordlib.core.graphics.pointbatch.PointBatch;
 import net.lintfordlib.core.graphics.polybatch.PolyBatchPCT;
 import net.lintfordlib.core.graphics.rendertarget.RenderTarget;
 import net.lintfordlib.core.graphics.shaders.ShaderMVP_PT;
+import net.lintfordlib.core.storage.FileUtils;
 
 public final class SharedResources {
 
@@ -142,12 +143,12 @@ public final class SharedResources {
 			}
 		};
 
-		RendererManagerFonts.AddIfNotExists(HUD_FONT_TEXT_BOLD_SMALL_NAME, "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(HUD_FONT_TEXT_BOLD_SMALL_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
 
-		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_NAME, "/res/fonts/fontCoreText.json");
-		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_BOLD_NAME, "/res/fonts/fontCoreText.json");
-		RendererManagerFonts.AddIfNotExists(UI_FONT_HEADER_NAME, "/res/fonts/fontCoreText.json");
-		RendererManagerFonts.AddIfNotExists(UI_FONT_TITLE_NAME, "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(UI_FONT_TEXT_BOLD_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(UI_FONT_HEADER_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
+		RendererManagerFonts.AddIfNotExists(UI_FONT_TITLE_NAME, FileUtils.RESOURCE_LOCATION_PREFIX + "/res/fonts/fontCoreText.json");
 	}
 
 	// --------------------------------------
