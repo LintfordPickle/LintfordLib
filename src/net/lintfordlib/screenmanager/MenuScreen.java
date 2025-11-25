@@ -745,8 +745,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	protected void onNavigationUp(LintfordCore core, InputType inputType) {
-		System.out.println("nav up");
-
 		if (mActiveEntry != null)
 			return;
 
@@ -770,8 +768,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	protected void onNavigationDown(LintfordCore core, InputType inputType) {
-		System.out.println("nav down");
-
 		if (mActiveEntry != null)
 			return;
 
@@ -795,8 +791,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	public void onNavigationLeft(LintfordCore core, InputType inputType) {
-		System.out.println("nav left");
-
 		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
 
 		final var selectedEntry = mLayouts.get(mSelectedLayoutIndex).entries().get(mSelectedEntryIndex);
@@ -808,8 +802,6 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 	}
 
 	public void onNavigationRight(LintfordCore core, InputType inputType) {
-		System.out.println("nav right");
-
 		// different from vertical navigation, left/right navigation can be used to switch between items within container entries (like horizontal button groups).
 
 		final var selectedEntry = mLayouts.get(mSelectedLayoutIndex).entries().get(mSelectedEntryIndex);
