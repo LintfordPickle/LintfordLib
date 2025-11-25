@@ -124,18 +124,20 @@ public class Texture {
 			return null;
 		}
 
-		final var lCleanFilename = FileUtils.cleanFilename(filename);
-
 		try {
 			final var lWorkspaceFile = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 
 			// NOTE: loading a texture from an absolue path that is not within the games subdirectories (res/) will not work.
 			// is this an issue?
 			File textureFile;
-			if (lCleanFilename.startsWith(lWorkspaceFile)) {
-				textureFile = new File(lCleanFilename);
+			if (filename.startsWith(lWorkspaceFile)) {
+
+				textureFile = new File(filename);
 			} else {
-				textureFile = new File(lWorkspaceFile, lCleanFilename);
+
+				final var cleanFilename = FileUtils.cleanFilename(filename);
+
+				textureFile = new File(lWorkspaceFile, cleanFilename);
 			}
 
 			final var lFileSize = textureFile.length();
@@ -151,10 +153,13 @@ public class Texture {
 
 		} catch (FileNotFoundException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), e.getMessage());
 		} catch (IIOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IIOException: Error loading texture from file (" + filename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), e.getMessage());
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IOException: Error loading texture from file (" + filename + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), e.getMessage());
 		}
 
 		return null;
