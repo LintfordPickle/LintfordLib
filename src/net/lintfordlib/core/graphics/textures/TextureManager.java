@@ -92,7 +92,7 @@ public class TextureManager extends EntityGroupManager {
 	public static final boolean USE_DEBUG_MISSING_TEXTURES = true;
 
 	/*
-	 * These three texture names are loaded when the tTextureManager is instantiated. They are potentially shared between many resource groups, and are therefore protected so they are not inadvertently unloaded when, for example, changing scenes.
+	 * These three texture names are loaded when the TextureManager is instantiated. They are potentially shared between many resource groups, and are therefore protected so they are not inadvertently unloaded when, for example, changing scenes.
 	 */
 
 	public static final String TEXTURE_WHITE_NAME = "TEXTURE_WHITE";
@@ -299,6 +299,13 @@ public class TextureManager extends EntityGroupManager {
 		return textureGroup.mReferenceCount;
 	}
 
+	private TextureGroup getTextureGroup(int entityGroupUid) {
+		return mTextureGroupMap.computeIfAbsent(entityGroupUid, v -> {
+			Debug.debugManager().logger().i(getClass().getSimpleName(), "EntityGroupID does not exist! Creating a new one");
+			return new TextureGroup(entityGroupUid);
+		});
+	}
+
 	public Texture loadTexture(String textureName, String textureLocation, int entityGroupUid) {
 		return loadTexture(textureName, textureLocation, GL11.GL_NEAREST, entityGroupUid);
 	}
@@ -316,13 +323,10 @@ public class TextureManager extends EntityGroupManager {
 	}
 
 	public Texture loadTexture(String textureName, String textureLocation, int filter, int wrapModeS, int wrapModeT, boolean reload, int entityGroupUid) {
-		if (textureLocation == null || textureLocation.length() == 0) {
+		if (textureLocation == null || textureLocation.length() == 0)
 			return null;
-		}
 
 		final var textureGroup = getTextureGroup(entityGroupUid);
-
-		// TODO: Do I not need to be making the resource / file absolute here already ? !
 
 		Texture texture = null;
 		if (textureGroup.mTextureMap.containsKey(textureName)) {
@@ -335,31 +339,33 @@ public class TextureManager extends EntityGroupManager {
 			unloadTexture(texture, entityGroupUid);
 		}
 
-		// Create new texture
 		if (FileUtils.getIsFilePathAResource(textureLocation)) {
-			texture = Texture.loadTextureFromResource(textureName, FileUtils.getResourceUrl(textureLocation), filter);
+
+			final var embeddedResourceLocation = FileUtils.getResourceUrl(textureLocation);
+			texture = Texture.loadTextureFromResource(textureName, embeddedResourceLocation, filter);
+
 		} else {
+
+			final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+			final var cleanedResourceFileName = FileUtils.cleanFilename(textureLocation);
+			
+			if (!textureLocation.startsWith(workspacePath)) {
+				textureLocation = Paths.get(workspacePath, cleanedResourceFileName).toString();
+			}
+
 			texture = Texture.loadTextureFromFile(textureName, textureLocation, filter, wrapModeS, wrapModeT);
+
 		}
 
-		if (texture != null) {
+		if (texture != null)
 			textureGroup.mTextureMap.put(textureName, texture);
-		}
 
-		if (texture == null) {
+		if (texture == null)
 			return mTextureNotFound;
-		}
 
 		Debug.debugManager().stats().incTag(DebugStats.TAG_ID_TEXTURES, 1);
 
 		return texture;
-	}
-
-	private TextureGroup getTextureGroup(int entityGroupUid) {
-		return mTextureGroupMap.computeIfAbsent(entityGroupUid, v -> {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "EntityGroupID does not exist! Creating a new one");
-			return new TextureGroup(entityGroupUid);
-		});
 	}
 
 	public Texture loadTexture(String textureName, int[] colorDataARGB, int width, int height, int entityGroupUid) {
@@ -377,6 +383,7 @@ public class TextureManager extends EntityGroupManager {
 		if (returnTexture != null && returnTexture.getTextureID() != -1) {
 			returnTexture.updateGLTextureData(colorDataARGB, width, height);
 			return returnTexture;
+
 		} else {
 
 			final var newTexture = Texture.createTexture(name, name, colorDataARGB, width, height, filter, wrapSMode, wrapTMode);
@@ -488,22 +495,21 @@ public class TextureManager extends EntityGroupManager {
 		loadTexturesFromMetafile(metaFileLocation, null, entityGroupUid);
 	}
 
-	/** Batch load textures */
+	/***
+	 * Batch loads texture files as given in a 'meta' file.
+	 * 
+	 * @param metaFileLocation The location of the meta file (either a relative/abolsute file path or an embedded resource location).
+	 * @param baseDirectory    An optional base directory that will be prepended to each item. Can be a file path or resource location.
+	 * @param entityGroupUid   The entity group uid to which each loaded texture resource will be added.
+	 */
 	public void loadTexturesFromMetafile(String metaFileLocation, String baseDirectory, int entityGroupUid) {
-
-		final var isFromResource = FileUtils.getIsFilePathAResource(metaFileLocation);
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading textures from meta-file %s", metaFileLocation));
 
 		final var gson = new GsonBuilder().create();
 
-		String metaFileContentsString = null;
-		TextureMetaData textureMetaData = null;
-
-		final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
-		if (!isFromResource && !metaFileLocation.startsWith(workspacePath)) {
-			metaFileLocation = Paths.get(workspacePath, metaFileLocation).toString();
-		}
+		var metaFileContentsString = (String) null;
+		var textureMetaData = (TextureMetaData) null;
 
 		metaFileContentsString = FileUtils.loadString(metaFileLocation);
 
@@ -523,20 +529,9 @@ public class TextureManager extends EntityGroupManager {
 
 				final var textureName = textureDataDefinition.textureName;
 				var filePath = textureDataDefinition.filepath;
-				if (baseDirectory != null) {
-					filePath = Paths.get(baseDirectory, textureDataDefinition.filepath).toString();
-				}
 
-				// TODO: This needs to be a general prepass - all resources get RES// and all files get made absolute before loading.
-				if (isFromResource) {
-					if (!filePath.startsWith(FileUtils.RESOURCE_LOCATION_PREFIX))
-						filePath = FileUtils.RESOURCE_LOCATION_PREFIX + filePath;
-
-				} else {
-
-					if (!filePath.startsWith(workspacePath))
-						filePath = Paths.get(workspacePath, textureDataDefinition.filepath).toString();
-				}
+				if (baseDirectory != null)
+					filePath = baseDirectory + filePath;
 
 				Debug.debugManager().logger().i(getClass().getSimpleName(), "  Loading texture from: " + filePath);
 

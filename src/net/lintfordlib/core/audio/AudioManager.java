@@ -37,7 +37,6 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALUtil;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.lintfordlib.ConstantsApp;
@@ -490,19 +489,16 @@ public class AudioManager {
 	// --------------------------------------
 
 	public void loadAudioFilesFromMetafile(String metaFileLocation) {
+		loadAudioFilesFromMetafile(metaFileLocation, null);
+	}
+
+	public void loadAudioFilesFromMetafile(String metaFileLocation, String baseDirectory) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading audio from meta-file %s", metaFileLocation));
 
-		final var isFromResource = FileUtils.getIsFilePathAResource(metaFileLocation);
+		final var gson = new GsonBuilder().create();
 
-		final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
-		if (!isFromResource && !metaFileLocation.startsWith(workspacePath)) {
-			metaFileLocation = Paths.get(workspacePath, metaFileLocation).toString();
-		}
-
-		final Gson gson = new GsonBuilder().create();
-
-		String metaFileContentsString = null;
-		AudioMetaData audioMetaObject = null;
+		var metaFileContentsString = (String) null;
+		var audioMetaObject = (AudioMetaData) null;
 
 		metaFileContentsString = FileUtils.loadString(metaFileLocation);
 		audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);
@@ -512,31 +508,22 @@ public class AudioManager {
 			return;
 		}
 
-		final int lNumberOfAudioFileDefinitions = audioMetaObject.AudioMetaDefinitions.length;
-		for (int i = 0; i < lNumberOfAudioFileDefinitions; i++) {
+		final var numAudioFileDefinitions = audioMetaObject.AudioMetaDefinitions.length;
+		for (var i = 0; i < numAudioFileDefinitions; i++) {
 			final var audioDataDefinition = audioMetaObject.AudioMetaDefinitions[i];
 
 			final var soundName = audioDataDefinition.soundname;
 			final var reload = audioDataDefinition.reload;
 			var filePath = audioDataDefinition.filepath;
 
-			// TODO: This needs to be a general prepass - all resources get RES// and all files get made absolute before loading.
-			if (isFromResource) {
-
-				if (!filePath.startsWith(FileUtils.RESOURCE_LOCATION_PREFIX))
-					filePath = FileUtils.RESOURCE_LOCATION_PREFIX + filePath;
-
-			} else {
-
-				filePath = Paths.get(workspacePath, filePath).toString();
-
-			}
+			if (baseDirectory != null)
+				filePath = baseDirectory + filePath;
 
 			loadAudioFile(soundName, filePath, reload);
 		}
 	}
 
-	public AudioDataBase loadAudioFile(String soundName, String filepath, boolean reload) {
+	public AudioDataBase loadAudioFile(String soundName, String audioLocation, boolean reload) {
 		if (!mOpenALInitialized) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot load AudioData files until the AudioManager has been loaded");
 			return null;
@@ -548,13 +535,13 @@ public class AudioManager {
 		if (!reload && mAudioDataBuffers.containsKey(soundName))
 			return mAudioDataBuffers.get(soundName);
 
-		final var soundData = loadAudioFile(soundName, filepath);
+		final var soundData = loadAudioData(soundName, audioLocation);
 
 		if (soundData != null) {
 			if (reload) {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Re-Loaded AudioData file '" + filepath + "' as " + soundName);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Re-Loaded AudioData file '" + audioLocation + "' as " + soundName);
 			} else {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded AudioData file '" + filepath + "' as " + soundName);
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded AudioData file '" + audioLocation + "' as " + soundName);
 			}
 
 			mAudioDataBuffers.put(soundName, soundData);
@@ -563,23 +550,32 @@ public class AudioManager {
 		return soundData;
 	}
 
-	private AudioDataBase loadAudioFile(String name, String filepath) {
-		if (filepath == null || filepath.length() == 0)
+	private AudioDataBase loadAudioData(String name, String audioLocation) {
+		if (audioLocation == null || audioLocation.length() == 0)
 			return null;
 
 		InputStream inputStream = null;
-		if (FileUtils.getIsFilePathAResource(filepath)) {
-			inputStream = loadAudioDataFromResource(FileUtils.getResourceUrl(filepath));
+		if (FileUtils.getIsFilePathAResource(audioLocation)) {
+			final var embeddedResourcePath = FileUtils.getResourceUrl(audioLocation);
+			inputStream = loadAudioDataFromResource(embeddedResourcePath);
 		} else {
-			inputStream = loadAudioDataFromFile(filepath);
+			
+			final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+			final var cleanedResourceFileName = FileUtils.cleanFilename(audioLocation);
+
+			if (!audioLocation.startsWith(workspacePath)) {
+				audioLocation = Paths.get(workspacePath, cleanedResourceFileName).toString();
+			}
+			
+			inputStream = loadAudioDataFromFile(audioLocation);
 		}
 
 		if (inputStream == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't open the audio file: " + filepath);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't open the audio file from location: " + audioLocation);
 			return null;
 		}
 
-		final var fileExtension = FileUtils.getFileExtension(filepath);
+		final var fileExtension = FileUtils.getFileExtension(audioLocation);
 		switch (fileExtension) {
 		case ".wav":
 			final var newWavData = new WaveAudioData();
@@ -598,7 +594,7 @@ public class AudioManager {
 	}
 
 	/**
-	 * Allows us to registered audio data loaded elsewhere.
+	 * Allows us to register audio data which has been loaded elsewhere.
 	 */
 	public void registerAudioData(String name, AudioDataBase audioData) {
 		if (audioData != null && audioData.isLoaded()) {
@@ -617,12 +613,13 @@ public class AudioManager {
 		return new BufferedInputStream(inputStream);
 	}
 
-	private InputStream loadAudioDataFromFile(String filename) {
-		final var resourceFile = new File(filename);
+	/** Loads AudioData from an absolute filePath. */
+	private InputStream loadAudioDataFromFile(String filePath) {
 
-		Debug.debugManager().logger().i(getClass().getSimpleName(), "Load InputStream from file: " + resourceFile);
+		final var resourceFile = new File(filePath);
 
-		// TODO: Need consistant handling of errors in all managaers (Audio/Texture/Spritesheet and Music).
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Load AudioData from file: " + resourceFile);
+
 		if (!resourceFile.exists()) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "  File doesn't exist!");
 			return null;

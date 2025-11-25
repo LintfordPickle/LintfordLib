@@ -1,16 +1,14 @@
 package net.lintfordlib.core.audio.music;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.GsonBuilder;
 
-import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.audio.AudioManager;
-import net.lintfordlib.core.audio.AudioSource;
 import net.lintfordlib.core.audio.AudioManager.AudioMetaData;
+import net.lintfordlib.core.audio.AudioSource;
 import net.lintfordlib.core.audio.data.AudioDataBase;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.storage.FileUtils;
@@ -205,17 +203,10 @@ public class MusicManager {
 	public void loadMusicFromMetaFile(String metaFileLocation) {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), String.format("Loading music files from meta-file %s", metaFileLocation));
 
-		final var isFromResource = FileUtils.getIsFilePathAResource(metaFileLocation);
-
 		final var gson = new GsonBuilder().create();
 
-		String metaFileContentsString = null;
-		AudioMetaData audioMetaObject = null;
-
-		final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
-		if (!isFromResource && !metaFileLocation.startsWith(workspacePath)) {
-			metaFileLocation = Paths.get(workspacePath, metaFileLocation).toString();
-		}
+		var metaFileContentsString = (String) null;
+		var audioMetaObject = (AudioMetaData) null;
 
 		metaFileContentsString = FileUtils.loadString(metaFileLocation);
 		audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);

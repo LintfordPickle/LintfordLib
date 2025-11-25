@@ -3,7 +3,7 @@
 	
 		{
 			"soundname":"SOUND_MUSIC_SONG1",
-			"filepath":"/res/audio/soundMenuChange.wav"
+			"filepath":"RES///res/audio/soundMenuChange.wav"
 		}
 		
 	]

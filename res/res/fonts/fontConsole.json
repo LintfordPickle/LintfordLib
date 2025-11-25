@@ -1,6 +1,6 @@
 {
   "textureName": "TEXTURE_FONT_CONSOLE",
-  "textureFilepath": "/res/textures/fonts/textureFontConsole.png",
+  "textureFilepath": "RES///res/textures/fonts/textureFontConsole.png",
   "fontHeight": 11,
   "glyphMap": {
     "104": {

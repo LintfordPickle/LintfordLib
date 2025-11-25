@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
@@ -111,47 +110,59 @@ public class SpriteSheetManager {
 	/**
 	 * Attempts to retrieve the {@link SpriteSheetDefinition} with the given name. If no spritesheet definition can be found, then it is automatically loaded using the given {@link filepath} parameter.
 	 * 
-	 * @param spritesheetName The name of the Spritesheet to attempt to load.
-	 * @param filepath        The filepath of the Spritesheet to load, should it not yet have been.
-	 * @param entityGroupUid  The entityGroupUid to use when loading the resource.
+	 * @param spriteSheetName     The name of the Spritesheet to attempt to load.
+	 * @param spriteSheetLocation The filepath of the Spritesheet to load, should it not yet have been.
+	 * @param entityGroupUid      The entityGroupUid to use when loading the resource.
 	 * 
 	 * @implNote If no SpritesheetDefinition with the given name can be found, then it will be loaded from the filepath provided. The new SpritesheetDefinition will be assigned the name in the definition file, and *not* the parameter.
 	 */
 
-	public SpriteSheetDefinition loadSpriteSheet(String spritesheetName, String filepath, int entityGroupUid) {
-		final var spriteSheetExists = getSpriteSheet(spritesheetName, entityGroupUid);
+	public SpriteSheetDefinition loadSpriteSheet(String spriteSheetName, String spriteSheetLocation, int entityGroupUid) {
+		final var spriteSheetExists = getSpriteSheet(spriteSheetName, entityGroupUid);
 		if (spriteSheetExists != null)
 			return spriteSheetExists;
 
-		return loadSpriteSheet(filepath, entityGroupUid);
+		// TODO: This method isn't quite correct - if no spritesheet is found, then after it is loaded (and assuming it loads successfully), then we should put this in the entityGroup with the given name.
+
+		return loadSpriteSheet(spriteSheetLocation, entityGroupUid);
 	}
 
-	public SpriteSheetDefinition loadSpriteSheet(String filepath, int entityGroupUid) {
-		if (filepath == null || filepath.length() == 0) {
+	public SpriteSheetDefinition loadSpriteSheet(String spriteSheetLocation, int entityGroupUid) {
+		if (spriteSheetLocation == null || spriteSheetLocation.length() == 0) {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "Error loading spritesheet. Pathname is null! ");
 			return null;
 		}
 
-		if (FileUtils.getIsFilePathAResource(filepath)) {
-			return loadSpriteSheetFromResource(FileUtils.getResourceUrl(filepath), entityGroupUid);
+		if (FileUtils.getIsFilePathAResource(spriteSheetLocation)) {
+			final var embeddedResourceLocation = FileUtils.getResourceUrl(spriteSheetLocation);
+			return loadSpriteSheetFromResource(embeddedResourceLocation, entityGroupUid);
+
 		} else {
-			return loadSpriteSheetFromFile(filepath, entityGroupUid);
+
+			final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+			final var cleanedResourceFileName = FileUtils.cleanFilename(spriteSheetLocation);
+
+			if (!spriteSheetLocation.startsWith(workspacePath)) {
+				spriteSheetLocation = Paths.get(workspacePath, cleanedResourceFileName).toString();
+			}
+
+			return loadSpriteSheetFromFile(spriteSheetLocation, entityGroupUid);
 		}
 	}
 
-	private SpriteSheetDefinition loadSpriteSheetFromFile(String filepath, int entityGroupUid) {
-		if (filepath == null || filepath.length() == 0)
+	/** Loads SpriteSheetDefinition from an absolute filePath. */
+	private SpriteSheetDefinition loadSpriteSheetFromFile(String filePath, int entityGroupUid) {
+		if (filePath == null || filePath.length() == 0)
 			return null;
 
-		final var cleanFilename = FileUtils.cleanFilename(filepath);
-		final var file = new File(System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME), cleanFilename);
+		final var file = new File(filePath);
 
 		if (!file.exists()) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), "Error: Spritesheet file " + filepath + " doesn't exist!");
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Error: Spritesheet file " + filePath + " doesn't exist!");
 			return null;
 		}
 
-		final Gson gson = new GsonBuilder().create();
+		final var gson = new GsonBuilder().create();
 
 		try {
 			final var fileContents = new String(Files.readAllBytes(file.toPath()));
@@ -203,23 +214,21 @@ public class SpriteSheetManager {
 		return null;
 	}
 
-	private SpriteSheetDefinition loadSpriteSheetFromResource(String filepath, int entityGroupUid) {
-		if (filepath == null || filepath.length() == 0)
+	private SpriteSheetDefinition loadSpriteSheetFromResource(String filePath, int entityGroupUid) {
+		if (filePath == null || filePath.length() == 0)
 			return null;
 
-		// TODO: add the 'remov' RES// code to within this method - its being called from a few locations, and different in each place.
-
-		final Gson gson = new GsonBuilder().create();
+		final var gson = new GsonBuilder().create();
 
 		try {
 
-			final var inputStream = FileUtils.class.getResourceAsStream(filepath);
+			final var inputStream = FileUtils.class.getResourceAsStream(filePath);
 			final var gsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
 
-			final SpriteSheetDefinition spriteSheet = gson.fromJson(gsonReader, SpriteSheetDefinition.class);
+			final var spriteSheet = (SpriteSheetDefinition) gson.fromJson(gsonReader, SpriteSheetDefinition.class);
 
 			if (spriteSheet == null) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading spritesheet " + filepath);
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error loading spritesheet " + filePath);
 				return null;
 			}
 
@@ -234,17 +243,17 @@ public class SpriteSheetManager {
 
 			spriteSheetGroup.put(spriteSheet.mSpriteSheetName, spriteSheet);
 
-			Debug.debugManager().logger().v(getClass().getSimpleName(), String.format("Loaded SpriteSheet '%s' loaded from %s", spriteSheet.mSpriteSheetName, filepath));
+			Debug.debugManager().logger().v(getClass().getSimpleName(), String.format("Loaded SpriteSheet '%s' loaded from %s", spriteSheet.mSpriteSheetName, filePath));
 
 			notifyListenersOfChange();
 
 			return spriteSheet;
 
 		} catch (JsonSyntaxException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + filepath);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (Syntax): " + filePath);
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + filepath);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse JSON SpriteSheet (IO): " + filePath);
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 		}
 
@@ -258,98 +267,33 @@ public class SpriteSheetManager {
 			return;
 		}
 
-		final var isFromResource = FileUtils.getIsFilePathAResource(metaFileLocation);
-
-		final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
-		if (!isFromResource && !metaFileLocation.startsWith(workspacePath)) {
-			metaFileLocation = Paths.get(workspacePath, metaFileLocation).toString();
-		}
-
 		final var metaFile = new File(metaFileLocation);
 		if (metaFile.exists() == false) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "SpriteSheetManager meta file doesn't exist - skipping");
 			return;
 		}
 
-		final Gson gson = new GsonBuilder().create();
+		final var gson = new GsonBuilder().create();
 
-		// Load the Sprite meta data
-		String metaFileContentsString = null;
-		SpriteSheetMetaData spriteMetaObject = null;
-		try {
-			metaFileContentsString = new String(Files.readAllBytes(Paths.get(metaFileLocation)));
-			spriteMetaObject = gson.fromJson(metaFileContentsString, SpriteSheetMetaData.class);
+		var metaFileContentsString = (String) null;
+		var spriteSheetMetaObject = (SpriteSheetMetaData) null;
 
-			if (spriteMetaObject == null || spriteMetaObject.spriteSheetLocations == null || spriteMetaObject.spriteSheetLocations.length == 0) {
-				Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't load sprites from sprite meta file");
-				return;
-			}
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
+		metaFileContentsString = FileUtils.loadString(metaFileLocation);
+		spriteSheetMetaObject = gson.fromJson(metaFileContentsString, SpriteSheetMetaData.class);
+
+		if (spriteSheetMetaObject == null || spriteSheetMetaObject.spriteSheetLocations == null || spriteSheetMetaObject.spriteSheetLocations.length == 0) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the sprite sheet meta file");
+			return;
 		}
 
 		// Iterate through the sprite files, and load the individual sprites
-		final var spriteSheetCount = spriteMetaObject.spriteSheetLocations.length;
+		final var spriteSheetCount = spriteSheetMetaObject.spriteSheetLocations.length;
 		for (int i = 0; i < spriteSheetCount; i++) {
-			var filePath = FileUtils.cleanFilename(spriteMetaObject.spriteSheetLocations[i]);
 
-			// TODO: This needs to be a general prepass - all resources get RES// and all files get made absolute before loading.
-			if (isFromResource) {
+			final var spriteSheetLocation = spriteSheetMetaObject.spriteSheetLocations[i];
 
-				if (!filePath.startsWith(FileUtils.RESOURCE_LOCATION_PREFIX))
-					filePath = FileUtils.RESOURCE_LOCATION_PREFIX + filePath;
+			loadSpriteSheet(spriteSheetLocation, entityGroupUid);
 
-			} else {
-
-				if (!filePath.startsWith(metaFileContentsString))
-					filePath = Paths.get(workspacePath, filePath).toString();
-
-			}
-
-			// TODO: Need to check this, preiviously was appending the WORKSPACE_LOCATION to it
-			final var spriteSheetFile = new File(filePath);
-
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "  Loading spritesheet from: " + spriteSheetFile.toString());
-
-			if (!spriteSheetFile.exists()) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Sprtiesheet file doesn't exist: " + spriteSheetFile.getPath());
-				continue;
-			}
-
-			try {
-				final var spriteSheetFileContents = new String(Files.readAllBytes(spriteSheetFile.toPath()));
-				final var spriteSheet = gson.fromJson(spriteSheetFileContents, SpriteSheetDefinition.class);
-
-				if (spriteSheet == null) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), "Error loading spritesheet " + spriteSheetFile.getPath());
-					continue;
-				}
-
-				spriteSheet.fileSizeOnLoad(spriteSheetFile.length());
-				spriteSheet.mSpriteSheetFilename = spriteSheetFile.getPath();
-				spriteSheet.loadResources(mResourceManager, entityGroupUid);
-
-				if (spriteSheet.mAnimationFramesMap == null || spriteSheet.mAnimationFramesMap.size() == 0) {
-					Debug.debugManager().logger().e(getClass().getSimpleName(), "Loaded SpriteSheetDefinition which has neither sprites nor frames defined within: " + spriteSheetFile.getPath());
-				}
-
-				var spriteSheetGroup = mSpriteSheetGroups.get(entityGroupUid);
-				if (spriteSheetGroup == null) {
-					spriteSheetGroup = new HashMap<>();
-					mSpriteSheetGroups.put(entityGroupUid, spriteSheetGroup);
-				}
-
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Loaded spritesheet " + spriteSheet.mSpriteSheetName);
-
-				spriteSheetGroup.put(spriteSheet.mSpriteSheetName, spriteSheet);
-
-			} catch (JsonSyntaxException e) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse SpriteSheet (Syntax): " + spriteSheetFile.getPath());
-				Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-			} catch (IOException e) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to parse SpriteSheet (IO): " + spriteSheetFile.getPath());
-				Debug.debugManager().logger().e(getClass().getSimpleName(), e.getMessage());
-			}
 		}
 
 		notifyListenersOfChange();

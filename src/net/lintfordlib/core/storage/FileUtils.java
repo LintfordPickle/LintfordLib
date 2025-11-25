@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 
 public class FileUtils {
@@ -32,7 +33,7 @@ public class FileUtils {
 	public static final String FILE_SEPERATOR = System.getProperty("file.separator");
 	public static final String LINE_SEPERATOR = System.getProperty("line.separator");
 
-	public static final String RESOURCE_LOCATION_PREFIX = "res://";
+	public static final String RESOURCE_LOCATION_PREFIX = "RES//";
 
 	// --------------------------------------
 	// Constructor
@@ -51,7 +52,7 @@ public class FileUtils {
 	}
 
 	public static String getResourceUrl(String resourceFilePath) {
-		return (resourceFilePath != null && resourceFilePath.startsWith(RESOURCE_LOCATION_PREFIX)) ? resourceFilePath.substring(6) : resourceFilePath;
+		return (resourceFilePath != null && resourceFilePath.startsWith(RESOURCE_LOCATION_PREFIX)) ? resourceFilePath.substring(RESOURCE_LOCATION_PREFIX.length()) : resourceFilePath;
 
 	}
 
@@ -79,23 +80,36 @@ public class FileUtils {
 		return mStringBuilder.toString();
 	}
 
-	public static String loadString(String resourcepath) {
-		if (resourcepath == null || resourcepath.length() == 0) {
+	public static String loadString(String resourceLocation) {
+		if (resourceLocation == null || resourceLocation.length() == 0) {
 			return null;
 		}
 
-		if (getIsFilePathAResource(resourcepath)) {
+		final var isEmbeddedResource = getIsFilePathAResource(resourceLocation);
 
-			Debug.debugManager().logger().i(FileUtils.class.getSimpleName(), "loadStringFromResource: " + resourcepath);
-			return loadStringFromResource(getResourceUrl(resourcepath));
+		if (isEmbeddedResource) {
+			Debug.debugManager().logger().i(FileUtils.class.getSimpleName(), "loading string from resource: " + resourceLocation);
+			final var embeddedResourceLocation = getResourceUrl(resourceLocation); 
+			return loadStringFromResource(embeddedResourceLocation);
+
 		} else {
-			final var file = new File(resourcepath);
+			
+			final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+
+			if (!resourceLocation.startsWith(workspacePath)) {
+				resourceLocation = Paths.get(workspacePath, resourceLocation).toString();
+				Debug.debugManager().logger().i(FileUtils.class.getSimpleName(), "resource location expanded to include the workspace path: " + resourceLocation);
+			}
+			
+			Debug.debugManager().logger().i(FileUtils.class.getSimpleName(), "loading string from file: " + resourceLocation);
+			
+			final var file = new File(resourceLocation);
 			if (!file.exists()) {
-				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Could not load string from file '" + resourcepath + "'. The file does not exist!");
+				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Could not load string from file '" + resourceLocation + "'. The file does not exist!");
 				throw new RuntimeException("Unable to resolve a string resource file location!");
 			}
 
-			return loadStringFromFile(resourcepath);
+			return loadStringFromFile(resourceLocation);
 		}
 	}
 
