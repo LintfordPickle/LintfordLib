@@ -378,7 +378,7 @@ public abstract class LintfordCore {
 			Debug.debugManager().logger().i(getClass().getSimpleName(), "Setting 'user.dir' to: " + defaultWorkspaceLocation);
 			System.setProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME, defaultWorkspaceLocation);
 		}
-		
+
 		// Now load the config files
 		mMasterConfig = new MasterConfig(mGameInfo);
 
@@ -396,23 +396,17 @@ public abstract class LintfordCore {
 
 		mShowLogoTimer = System.currentTimeMillis();
 	}
-	
+
 	// TODO move this suff into the AppStorage class or something
-	
+
 	public abstract Class<?> getMainClass();
-	
+
 	public Path getJarDirectory() {
-	    try {
-	        return Path.of(
-	        		getMainClass()
-	                .getProtectionDomain()
-	                .getCodeSource()
-	                .getLocation()
-	                .toURI()
-	        ).getParent();
-	    } catch (Exception e) {
-	        throw new RuntimeException(e);
-	    }
+		try {
+			return Path.of(getMainClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void printSystemInformationToConsole() {
@@ -570,7 +564,10 @@ public abstract class LintfordCore {
 	 * Called after the app initialization and resource have been loaded. This is a good time to instantiate any screens or game components that relie on core resources.
 	 */
 	protected void finializeAppSetup() {
+		warmupJVM();
 
+		// Reset timing after asset loading to prevent large delta spike
+		mCoreTime.getDelta();
 	}
 
 	/**
@@ -584,6 +581,28 @@ public abstract class LintfordCore {
 		Debug.debugManager().unloadResources();
 
 		mResourceManager.unloadContent();
+	}
+
+	private void warmupJVM() {
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Warming up JVM...");
+
+		// Run a few dummy iterations of the game loop logic, otherwise there is a ~1 second lag spike
+		// within the first few seconds as the JIT kicks in within onRunGameLoop().
+		for (int i = 0; i < 100; i++) {
+			mCoreTime.getDelta();
+			mInputState.update(this);
+			mHUD.update(this);
+			mControllerManager.update(this, CORE_ENTITY_GROUP_ID);
+
+			// Small sleep to simulate frame timing
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "JVM warmup complete");
 	}
 
 	/** The main game loop. */
