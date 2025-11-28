@@ -432,8 +432,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 		}
 	}
 
-	// TODO: rename this method, it isn't creating the loadingScreen, it kicking it off
-	public void createLoadingScreen(LoadingScreen loadingScreen) {
+	public void initiateLoadingScreen(LoadingScreen loadingScreen) {
 		exitAllScreens();
 
 		Debug.debugManager().logger().v(getClass().getSimpleName(), "=== Loading Screen ===");
