@@ -1,16 +1,16 @@
 package net.lintfordlib.core.graphics.textures;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.stb.STBImageWrite;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import net.lintfordlib.core.debug.Debug;
@@ -45,7 +45,8 @@ public class Texture {
 	private long mFileSizeOnLoad;
 
 	/**
-	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on this texture.
+	 * Some textures, like textures generated from system fonts, do not need to be reloaded when checking for 
+	 * changes to textures on the harddisk. Setting this Boolean to false will skip the texture reload requests on this texture.
 	 */
 	private boolean mReloadable;
 
@@ -116,35 +117,73 @@ public class Texture {
 	// Methods
 	// --------------------------------------
 
-	// package access (textures should be loaded using the texture manager.
 	static Texture loadTextureFromFile(String textureName, String filePath, int filter, int wrapModeS, int wrapModeT) {
 		if (filePath == null || filePath.length() == 0) {
 			return null;
 		}
 
 		final var textureFile = new File(filePath);
+		if (!textureFile.exists()) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "File not found: " + filePath);
+			return null;
+		}
+
+		Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loading texture from file: " + filePath);
 
 		try {
-
 			final var fileSize = textureFile.length();
-			final var image = createFlipped(ImageIO.read(textureFile));
 
-			final var lNewTexture = createTexture(textureName, filePath, image, filter, wrapModeS, wrapModeT);
-			lNewTexture.fileSizeOnLoad(fileSize);
-			lNewTexture.reloadable(true);
+			STBImage.stbi_set_flip_vertically_on_load(true);
 
-			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filePath);
+			ByteBuffer imageData = null;
+			try (final var stack = MemoryStack.stackPush()) {
 
-			return lNewTexture;
+				final var w = stack.mallocInt(1);
+				final var h = stack.mallocInt(1);
+				final var comp = stack.mallocInt(1);
 
-		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filePath + ")");
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), e.getMessage());
-		} catch (IIOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IIOException: Error loading texture from file (" + filePath + ")");
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), e.getMessage());
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IOException: Error loading texture from file (" + filePath + ")");
+				imageData = STBImage.stbi_load(filePath, w, h, comp, 4);
+
+				if (imageData == null) {
+					Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Failed to load texture: " + STBImage.stbi_failure_reason());
+					return null;
+				}
+
+				int width = w.get(0);
+				int height = h.get(0);
+
+				final int texID = GL11.glGenTextures();
+
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
+				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
+				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
+				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapModeS);
+				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapModeT);
+				GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+				GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageData);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+				final var newTexture = new Texture(textureName, texID, filePath, width, height, filter);
+
+				newTexture.mARGBColorData = byteBufferToIntArray(imageData, width, height);
+				newTexture.mTextureFilterMode = filter;
+				newTexture.mWrapModeS = wrapModeS;
+				newTexture.mWrapModeT = wrapModeT;
+
+				if (newTexture != null) {
+					newTexture.fileSizeOnLoad(fileSize);
+					newTexture.reloadable(true);
+					Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filePath);
+				}
+
+				return newTexture;
+
+			} finally {
+				STBImage.stbi_image_free(imageData);
+			}
+
+		} catch (Exception e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + filePath + ")");
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), e.getMessage());
 		}
 
@@ -153,37 +192,90 @@ public class Texture {
 
 	static Texture loadTextureFromResource(String textureName, String filename, int filter) {
 		if (filename == null || filename.length() == 0) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Couldn't load texture from resource. Filename is invalid!");
+			return null;
+		}
+
+		final var inputStream = Texture.class.getResourceAsStream(filename);
+		if (inputStream == null) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Couldn't open InputStream: " + filename);
 			return null;
 		}
 
 		try {
-			final var inputStream = Texture.class.getResourceAsStream(filename);
-			if (inputStream == null) {
-				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Couldn't open InputStream: " + filename);
+
+			ByteBuffer imageBuffer = readInputStreamToBuffer(inputStream);
+
+			if (imageBuffer == null) {
+				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Failed to read resource stream: " + filename);
 				return null;
 			}
 
-			filename = filename.replace("//", "/");
+			// Enable vertical flipping for OpenGL coordinate system
+			STBImage.stbi_set_flip_vertically_on_load(true);
 
-			final var image = createFlipped(ImageIO.read(inputStream));
-			final var newTexture = createTexture(textureName, filename, image, filter);
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				IntBuffer w = stack.mallocInt(1);
+				IntBuffer h = stack.mallocInt(1);
+				IntBuffer comp = stack.mallocInt(1);
 
-			newTexture.fileSizeOnLoad(0);
-			newTexture.reloadable(false);
+				ByteBuffer imageData = null;
+				try {
+					imageData = STBImage.stbi_load_from_memory(imageBuffer, w, h, comp, 4);
 
-			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from resource: " + filename);
+					if (imageData == null) {
+						Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Failed to load texture from resource: " + STBImage.stbi_failure_reason());
+						return null;
+					}
 
-			return newTexture;
+					int width = w.get(0);
+					int height = h.get(0);
+
+					final int texID = GL11.glGenTextures();
+
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
+					GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
+					GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
+					GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+					GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+					GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+					GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageData);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+					final var newTexture = new Texture(textureName, texID, filename, width, height, filter);
+
+					newTexture.mARGBColorData = byteBufferToIntArray(imageData, width, height);
+					newTexture.mTextureFilterMode = filter;
+					newTexture.mWrapModeS = GL11.GL_REPEAT;
+					newTexture.mWrapModeT = GL11.GL_REPEAT;
+
+					if (newTexture != null) {
+						newTexture.reloadable(false);
+						Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from resource: " + filename);
+					}
+
+					return newTexture;
+
+				} finally {
+					MemoryUtil.memFree(imageBuffer);
+					if (imageData != null) {
+						STBImage.stbi_image_free(imageData);
+					}
+				}
+
+			}
 
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from resource (" + filename + " )");
-			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+
 		}
 
 		return null;
 	}
 
-	public void saveTextureToFile(String pPathname) {
+	public void saveTextureToFile(String fileName) {
 		final var width = mTextureWidth;
 		final var height = mTextureHeight;
 
@@ -195,32 +287,45 @@ public class Texture {
 		final var convertedRGB = changeBGRAtoARGB(colorRGB, width, height);
 
 		// needs ARGB
-		saveTextureToFile(width, height, convertedRGB, pPathname);
+		saveTextureToFile(width, height, convertedRGB, fileName);
 	}
 
 	public static boolean saveTextureToFile(int width, int height, int[] argbData, String fileLocation) {
-		final var image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-		final var textureData = new int[width * height];
-		for (int i = 0; i < width * height; i++) {
-			final var a = (argbData[i] & 0xff000000) >> 24;
-			final var r = (argbData[i] & 0xff0000) >> 16;
-			final var g = (argbData[i] & 0xff00) >> 8;
-			final var b = (argbData[i] & 0xff);
-
-			textureData[i] = a << 24 | b << 16 | g << 8 | r;
-		}
-
-		image.setRGB(0, 0, width, height, textureData, 0, width);
+		ByteBuffer buffer = MemoryUtil.memAlloc(width * height * 4);
 
 		try {
-			ImageIO.write(image, "png", new File(fileLocation));
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error saving png to disk : " + fileLocation);
-			return false;
-		}
+			// Convert ARGB to RGBA for STB
+			for (int i = 0; i < width * height; i++) {
+				int a = (argbData[i] & 0xff000000) >>> 24;
+				int r = (argbData[i] & 0xff0000) >> 16;
+				int g = (argbData[i] & 0xff00) >> 8;
+				int b = (argbData[i] & 0xff);
 
-		return true;
+				buffer.put((byte) r);
+				buffer.put((byte) g);
+				buffer.put((byte) b);
+				buffer.put((byte) a);
+			}
+
+			buffer.flip();
+
+			// Flip the image vertically for correct orientation
+			ByteBuffer flippedBuffer = flipImageVertically(buffer, width, height, 4);
+
+			boolean success = STBImageWrite.stbi_write_png(fileLocation, width, height, 4, flippedBuffer, width * 4);
+
+			MemoryUtil.memFree(flippedBuffer);
+
+			if (!success) {
+				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error saving png to disk : " + fileLocation);
+				return false;
+			}
+
+			return true;
+
+		} finally {
+			MemoryUtil.memFree(buffer);
+		}
 	}
 
 	static void unloadTexture(Texture texture) {
@@ -238,45 +343,70 @@ public class Texture {
 	}
 
 	/**
-	 * Creates an OpenGL {@link Texture} from a {@link BufferedImage}.
+	 * Creates an OpenGL {@link Texture} from pixel data.
 	 */
-	static Texture createTexture(String textureName, String textureLocation, BufferedImage image, int filter) {
-		return createTexture(textureName, textureLocation, image, filter, GL11.GL_REPEAT, GL11.GL_REPEAT);
-	}
-
-	/**
-	 * Creates an OpenGL {@link Texture} from a {@link BufferedImage}.
-	 */
-	static Texture createTexture(String textureName, String textureLocation, BufferedImage image, int filter, int wrapModeS, int wrapModeT) {
-		final int lWidth = image.getWidth();
-		final int lHeight = image.getHeight();
-
-		final var lPixelsARGB = image.getRGB(0, 0, lWidth, lHeight, null, 0, lWidth);
-
-		return createTexture(textureName, textureLocation, lPixelsARGB, lWidth, lHeight, filter, wrapModeS, wrapModeT);
+	static Texture createTexture(String textureName, String textureLocation, int[] pixelsARGB, int width, int height, int filter) {
+		return createTexture(textureName, textureLocation, pixelsARGB, width, height, filter, GL11.GL_REPEAT, GL11.GL_REPEAT);
 	}
 
 	/**
 	 * Creates an OpenGL Texture from RGB data.
 	 */
 	static Texture createTexture(String textureName, String textureLocation, int[] pixelsARGB, int width, int height, int filter, int wrapModeS, int wrapModeT) {
+		// Safety check
+		if (pixelsARGB == null || pixelsARGB.length != width * height) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Invalid pixel data for texture: " + textureName);
+			return null;
+		}
+
 		final int texID = GL11.glGenTextures();
 
-		final var intBuffer = MemoryUtil.memAllocInt(pixelsARGB.length);
-		intBuffer.put(pixelsARGB);
-		intBuffer.flip();
+		IntBuffer intBuffer = null;
+		try {
+			// Allocate native memory
+			intBuffer = MemoryUtil.memAllocInt(pixelsARGB.length);
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
+			// Check if allocation succeeded
+			if (intBuffer == null) {
+				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Failed to allocate native memory for texture: " + textureName);
+				return null;
+			}
 
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapModeS);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapModeT);
+			// Verify buffer capacity
+			if (intBuffer.capacity() < pixelsARGB.length) {
+				Debug.debugManager().logger().e(Texture.class.getSimpleName(), String.format("Buffer capacity mismatch: allocated %d, need %d", intBuffer.capacity(), pixelsARGB.length));
+				return null;
+			}
 
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, intBuffer);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+			// Put data into buffer
+			// intBuffer.put(pixelsARGB);
 
-		MemoryUtil.memFree(intBuffer);
+			for (int i = 0; i < pixelsARGB.length; i++) {
+				intBuffer.put(i, pixelsARGB[i]);
+			}
+
+			intBuffer.flip();
+
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
+
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapModeS);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapModeT);
+
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, intBuffer);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+		} catch (Exception e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Exception during texture creation: " + e.getMessage());
+			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
+			return null;
+		} finally {
+			// Always free native memory
+			if (intBuffer != null) {
+				MemoryUtil.memFree(intBuffer);
+			}
+		}
 
 		final var newTexture = new Texture(textureName, texID, textureLocation, width, height, filter);
 
@@ -305,24 +435,41 @@ public class Texture {
 			final var lTextureFile = new File(cleanFilename);
 			final var lFileSize = lTextureFile.length();
 
-			final var lImage = createFlipped(ImageIO.read(lTextureFile));
+			// Enable vertical flipping for OpenGL coordinate system
+			STBImage.stbi_set_flip_vertically_on_load(true);
 
-			final int lWidth = lImage.getWidth();
-			final int lHeight = lImage.getHeight();
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				final var w = stack.mallocInt(1);
+				final var h = stack.mallocInt(1);
+				final var comp = stack.mallocInt(1);
 
-			final int[] lPixels = new int[lWidth * lHeight];
-			lImage.getRGB(0, 0, lWidth, lHeight, lPixels, 0, lWidth);
-			updateGLTextureData(lPixels, lWidth, lHeight);
+				final var imageData = STBImage.stbi_load(cleanFilename, w, h, comp, 4);
 
-			mTextureWidth = lWidth;
-			mTextureHeight = lHeight;
+				if (imageData == null) {
+					Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Failed to reload texture: " + STBImage.stbi_failure_reason());
+					return;
+				}
 
-			mTextureLocation = cleanFilename;
-			fileSizeOnLoad(lFileSize);
-			reloadable(true);
+				final var lWidth = w.get(0);
+				final var lHeight = h.get(0);
 
-			Debug.debugManager().logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
-		} catch (IOException e) {
+				// Convert ByteBuffer (RGBA) to int[] (ARGB)
+				final var lPixels = byteBufferToIntArray(imageData, lWidth, lHeight);
+
+				STBImage.stbi_image_free(imageData);
+
+				updateGLTextureData(lPixels, lWidth, lHeight);
+
+				mTextureWidth = lWidth;
+				mTextureHeight = lHeight;
+
+				mTextureLocation = cleanFilename;
+				fileSizeOnLoad(lFileSize);
+				reloadable(true);
+
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Reloaded texture: " + mTextureLocation);
+			}
+		} catch (Exception e) {
 			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + textureFilename + ") from location: " + mTextureLocation);
 			Debug.debugManager().logger().printException(Texture.class.getSimpleName(), e);
 		}
@@ -365,6 +512,65 @@ public class Texture {
 	// --------------------------------------
 	// Helpers
 	// --------------------------------------
+
+	/**
+	 * Converts STB's RGBA ByteBuffer to ARGB int array
+	 */
+	private static int[] byteBufferToIntArray(ByteBuffer buffer, int width, int height) {
+		int pixelCount = width * height;
+		int expectedBytes = pixelCount * 4;
+
+		// Make sure position/limit are correct
+		buffer.rewind();
+		int available = buffer.remaining();
+		if (available < expectedBytes) {
+			throw new IllegalStateException("Image buffer underflow: available=" + available + ", expected=" + expectedBytes);
+		}
+
+		byte[] raw = new byte[expectedBytes];
+		buffer.get(raw, 0, expectedBytes); // copies exactly expectedBytes into Java heap
+
+		int[] pixels = new int[pixelCount];
+		int idx = 0;
+		for (int i = 0; i < pixelCount; i++) {
+			int r = raw[idx++] & 0xFF;
+			int g = raw[idx++] & 0xFF;
+			int b = raw[idx++] & 0xFF;
+			int a = raw[idx++] & 0xFF;
+			pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
+		}
+		return pixels;
+	}
+
+	/**
+	 * Reads an InputStream into a native ByteBuffer for STB
+	 */
+	private static ByteBuffer readInputStreamToBuffer(InputStream inputStream) throws IOException {
+		byte[] bytes = inputStream.readAllBytes();
+		ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
+		buffer.put(bytes);
+		buffer.flip();
+		return buffer;
+	}
+
+	/**
+	 * Flips an image vertically in a ByteBuffer
+	 */
+	private static ByteBuffer flipImageVertically(ByteBuffer image, int width, int height, int channels) {
+		ByteBuffer flipped = MemoryUtil.memAlloc(image.capacity());
+		int stride = width * channels;
+
+		for (int y = 0; y < height; y++) {
+			int srcPos = (height - 1 - y) * stride;
+			int dstPos = y * stride;
+
+			for (int x = 0; x < stride; x++) {
+				flipped.put(dstPos + x, image.get(srcPos + x));
+			}
+		}
+
+		return flipped;
+	}
 
 	public static int[] changeARGBtoABGR(int[] input, int width, int height) {
 		int[] lReturnData = new int[width * height];
@@ -434,21 +640,5 @@ public class Texture {
 		}
 
 		return lReturnData;
-	}
-
-	private static BufferedImage createFlipped(BufferedImage image) {
-		AffineTransform at = new AffineTransform();
-		at.concatenate(AffineTransform.getScaleInstance(1, -1));
-		at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
-		return createTransformed(image, at);
-	}
-
-	private static BufferedImage createTransformed(BufferedImage image, AffineTransform at) {
-		final var newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		final var g = newImage.createGraphics();
-		g.transform(at);
-		g.drawImage(image, 0, 0, null);
-		g.dispose();
-		return newImage;
 	}
 }

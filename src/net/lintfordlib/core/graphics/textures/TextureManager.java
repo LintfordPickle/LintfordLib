@@ -348,7 +348,7 @@ public class TextureManager extends EntityGroupManager {
 
 			final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 			final var cleanedResourceFileName = FileUtils.cleanFilename(textureLocation);
-			
+
 			if (!textureLocation.startsWith(workspacePath)) {
 				textureLocation = Paths.get(workspacePath, cleanedResourceFileName).toString();
 			}
@@ -421,28 +421,6 @@ public class TextureManager extends EntityGroupManager {
 
 		return true;
 
-	}
-
-	public Texture createFontTexture(String textureName, BufferedImage image, int entityGroupUid) {
-		return createFontTexture(textureName, image, GL11.GL_NEAREST, entityGroupUid);
-	}
-
-	public Texture createFontTexture(String textureName, BufferedImage image, int filter, int entityGroupUid) {
-		final var textureGroup = mTextureGroupMap.get(entityGroupUid);
-		if (textureGroup == null) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Cannot load texture %s for EntityGroupID %d: EntityGroupID does not exist!", (textureName + " (Font)"), entityGroupUid));
-			return null;
-
-		} else if (textureGroup.mTextureMap.containsKey(textureName)) {
-			return textureGroup.mTextureMap.get(textureName);
-		}
-
-		final var newTexture = Texture.createTexture(textureName, textureName, image, filter);
-		newTexture.reloadable(false); // no need to reload font textures (on-the-fly)
-
-		textureGroup.mTextureMap.put(textureName, newTexture);
-
-		return newTexture;
 	}
 
 	public void reloadAllTextures() {
