@@ -73,8 +73,15 @@ public class ActionManager extends IniFile {
 		return getActionState(actionUid, PLAYER_INDEX_ALL);
 	}
 
-	public InputActionState getActionState(int actionUid, int actionSetUid) {
-		final var actionSet = getInputActionSet(actionSetUid);
+	/***
+	 * 
+	 * @param actionUid The uid of the action to query. See BindableActionMap.
+	 * @param actionSetIndex The index of the action set to use. Typically this will be a player index. Although it could alos be PLAYER_INDEX_ALL.
+	 * @return The InputActionState with the given actionUid within the requested actionSet.
+	 */
+	public InputActionState getActionState(int actionUid, int actionSetIndex) {
+
+		final var actionSet = getInputActionSet(actionSetIndex);
 
 		if (actionSet == null)
 			return null;
