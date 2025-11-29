@@ -165,9 +165,16 @@ public class RenderTarget {
 		mHeight = height;
 		mSharedDepthBufferId = sharedDepthBufferId;
 
-		final var lIntBuffer = MemoryUtil.memAlloc(mWidth * mHeight * 4);
+		final var colorIntBuffer = MemoryUtil.memAlloc(mWidth * mHeight * 4);
+		try {
+			initializeGl(colorIntBuffer);
 
-		initializeGl(lIntBuffer);
+		} finally {
+			if (colorIntBuffer != null) {
+				MemoryUtil.memFree(colorIntBuffer);
+			}
+		}
+
 	}
 
 	public void loadResourcesFromImage(String filePath) {
@@ -183,16 +190,15 @@ public class RenderTarget {
 
 		Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loading render texture from file: " + filePath);
 
-		try {
-			final var fileSize = textureFile.length();
+		try (final var stack = MemoryStack.stackPush()) {
 
-			STBImage.stbi_set_flip_vertically_on_load(true);
 			ByteBuffer imageData = null;
-			try (final var stack = MemoryStack.stackPush()) {
-
+			try {
 				final var w = stack.mallocInt(1);
 				final var h = stack.mallocInt(1);
 				final var comp = stack.mallocInt(1);
+
+				STBImage.stbi_set_flip_vertically_on_load(true);
 
 				imageData = STBImage.stbi_load(filePath, w, h, comp, 4);
 
@@ -207,7 +213,9 @@ public class RenderTarget {
 				initializeGl(imageData);
 
 			} finally {
-				STBImage.stbi_image_free(imageData);
+				if (imageData != null) {
+					STBImage.stbi_image_free(imageData);
+				}
 			}
 
 		} catch (Exception e) {
@@ -225,7 +233,7 @@ public class RenderTarget {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Loading RenderTarget: " + mTargetName);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  GL texture filter mode enum: " + mTextureFilter);
 
-		mFramebufferID = GL30.glGenFramebuffers(); // gen container for texture and optional depth buffer
+		mFramebufferID = GL30.glGenFramebuffers(); // gen container for texture and optional depth buffer*
 		mColorTextureID = GL11.glGenTextures(); // gen texture to hold RGB data
 
 		// Create and bind framebuffer
