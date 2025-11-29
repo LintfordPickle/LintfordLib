@@ -155,10 +155,12 @@ public class Texture {
 				final int texID = GL11.glGenTextures();
 
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
+
 				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, filter);
 				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, filter);
 				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, wrapModeS);
 				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, wrapModeT);
+
 				GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 				GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageData);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);

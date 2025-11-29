@@ -2,26 +2,22 @@ package net.lintfordlib.core.graphics.rendertarget;
 
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.stb.STBImageWrite;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.debug.stats.DebugStats;
 import net.lintfordlib.core.graphics.textures.Texture;
-import net.lintfordlib.core.storage.FileUtils;
 
 public class RenderTarget {
 
@@ -169,33 +165,59 @@ public class RenderTarget {
 		mHeight = height;
 		mSharedDepthBufferId = sharedDepthBufferId;
 
-		final var lIntBuffer = MemoryUtil.memAllocInt(mWidth * mHeight * 4);
+		final var lIntBuffer = MemoryUtil.memAlloc(mWidth * mHeight * 4);
 
 		initializeGl(lIntBuffer);
 	}
 
-	public void loadResourcesFromImage(String fileName) {
-		var lBufferedImage = loadBufferedImage(fileName);
-
-		if (lBufferedImage == null)
+	public void loadResourcesFromImage(String filePath) {
+		if (filePath == null || filePath.length() == 0) {
 			return;
+		}
 
-		mScale = 1.f;
-		mWidth = lBufferedImage.getWidth();
-		mHeight = lBufferedImage.getHeight();
+		final var textureFile = new File(filePath);
+		if (!textureFile.exists()) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "File not found: " + filePath);
+			return;
+		}
 
-		final var lPixelsARGB = lBufferedImage.getRGB(0, 0, mWidth, mHeight, null, 0, mWidth);
+		Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loading render texture from file: " + filePath);
 
-		final var lIntBuffer = MemoryUtil.memAllocInt(lPixelsARGB.length);
-		lIntBuffer.put(lPixelsARGB);
-		lIntBuffer.flip();
+		try {
+			final var fileSize = textureFile.length();
 
-		initializeGl(lIntBuffer);
+			STBImage.stbi_set_flip_vertically_on_load(true);
+			ByteBuffer imageData = null;
+			try (final var stack = MemoryStack.stackPush()) {
 
-		MemoryUtil.memFree(lIntBuffer);
+				final var w = stack.mallocInt(1);
+				final var h = stack.mallocInt(1);
+				final var comp = stack.mallocInt(1);
+
+				imageData = STBImage.stbi_load(filePath, w, h, comp, 4);
+
+				if (imageData == null) {
+					Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Failed to load texture: " + STBImage.stbi_failure_reason());
+					return;
+				}
+
+				mWidth = w.get(0);
+				mHeight = h.get(0);
+
+				initializeGl(imageData);
+
+			} finally {
+				STBImage.stbi_image_free(imageData);
+			}
+
+		} catch (Exception e) {
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error loading texture from file (" + filePath + ")");
+			Debug.debugManager().logger().e(Texture.class.getSimpleName(), e.getMessage());
+		}
+
 	}
 
-	private void initializeGl(IntBuffer buffer) {
+	private void initializeGl(ByteBuffer buffer) {
 
 		if (mResourcesLoaded)
 			return;
@@ -368,95 +390,41 @@ public class RenderTarget {
 		return lIntBuffer;
 	}
 
-	private BufferedImage loadBufferedImage(String filePath) {
-		final var lBufferedImage = loadImageFromFile(filePath);
-		if (lBufferedImage == null) {
-			return null;
-		}
+	public void saveTextureToPngFile(String filepath) {
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			// Allocate buffer for pixel data (RGBA format)
+			ByteBuffer imageBuffer = stack.malloc(mWidth * mHeight * 4);
 
-		return lBufferedImage;
+			// Bind the texture and read its contents
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
+			GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, imageBuffer);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
-	}
+			// Flip the image vertically (OpenGL uses bottom-left origin, images use top-left)
+			ByteBuffer flippedBuffer = flipImageVertically(imageBuffer, mWidth, mHeight, 4);
 
-	private BufferedImage loadImageFromFile(String filename) {
-		final var lCleanFilename = FileUtils.cleanFilename(filename);
-
-		try {
-			final var lImageFile = new File(lCleanFilename);
-
-			if (!lImageFile.exists()) {
-				Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + "). File doesn't exist.");
-				return null;
+			// Write to PNG file using STB
+			if (!STBImageWrite.stbi_write_png(filepath, mWidth, mHeight, 4, flippedBuffer, mWidth * 4)) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to write texture to file: " + filepath);
+			} else {
+				Debug.debugManager().logger().i(getClass().getSimpleName(), "Successfully saved texture to: " + filepath);
 			}
+		}
+	}
 
-			final var lImage = createFlipped(ImageIO.read(lImageFile));
+	private ByteBuffer flipImageVertically(ByteBuffer image, int width, int height, int channels) {
+		int stride = width * channels;
+		ByteBuffer flipped = MemoryUtil.memAlloc(width * height * channels);
 
-			Debug.debugManager().logger().v(Texture.class.getSimpleName(), "Loaded texture from file: " + filename);
+		for (int y = 0; y < height; y++) {
+			int srcPos = (height - 1 - y) * stride;
+			int dstPos = y * stride;
 
-			return lImage;
-
-		} catch (FileNotFoundException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "FileNotFoundException: Error loading texture from file (" + filename + ").");
-		} catch (IIOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IIOException: Error loading texture from file (" + filename + ").");
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "IOException: Error loading texture from file (" + filename + ").");
+			for (int x = 0; x < stride; x++) {
+				flipped.put(dstPos + x, image.get(srcPos + x));
+			}
 		}
 
-		return null;
+		return flipped;
 	}
-
-	public void saveTextureToFile(String pPathname) {
-		int lWidth = mWidth;
-		int lHeight = mHeight;
-
-		final var lColorARGB = new int[lWidth * lHeight];
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mColorTextureID);
-		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, lColorARGB);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-
-		saveTextureToPngFile(lWidth, lHeight, lColorARGB, pPathname);
-	}
-
-	public static boolean saveTextureToPngFile(int width, int height, int[] argbData, String fileLocation) {
-		final var lImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-		int[] lTextureData = new int[width * height];
-		for (int i = 0; i < width * height; i++) {
-			int a = (argbData[i] & 0xff000000) >> 24;
-			int r = (argbData[i] & 0xff0000) >> 16;
-			int g = (argbData[i] & 0xff00) >> 8;
-			int b = (argbData[i] & 0xff);
-
-			lTextureData[i] = a << 24 | b << 16 | g << 8 | r;
-		}
-
-		lImage.setRGB(0, 0, width, height, lTextureData, 0, width);
-
-		try {
-			ImageIO.write(createFlipped(lImage), "png", new File(fileLocation));
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(Texture.class.getSimpleName(), "Error saving png to disk : " + fileLocation);
-			return false;
-		}
-
-		return true;
-	}
-
-	private static BufferedImage createFlipped(BufferedImage image) {
-		AffineTransform at = new AffineTransform();
-		at.concatenate(AffineTransform.getScaleInstance(1, -1));
-		at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
-		return createTransformed(image, at);
-	}
-
-	private static BufferedImage createTransformed(BufferedImage image, AffineTransform at) {
-		final var newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		final var g = newImage.createGraphics();
-		g.transform(at);
-		g.drawImage(image, 0, 0, null);
-		g.dispose();
-		return newImage;
-	}
-
 }
