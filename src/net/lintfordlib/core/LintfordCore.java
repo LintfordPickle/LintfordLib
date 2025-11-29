@@ -711,8 +711,6 @@ public abstract class LintfordCore {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Closing down");
 
 		onUnloadResources();
-
-		System.exit(0);
 	}
 
 	/**
