@@ -2,7 +2,7 @@ package net.lintfordlib.core.audio;
 
 import org.lwjgl.openal.AL10;
 
-import net.lintfordlib.core.audio.data.AudioDataBase;
+import net.lintfordlib.core.audio.data.AudioFileBase;
 import net.lintfordlib.core.maths.InterpolationHelper;
 
 public class AutoPitchSample {
@@ -12,7 +12,7 @@ public class AutoPitchSample {
 	// ---------------------------------------------
 
 	private AudioSource audioSource;
-	private AudioDataBase audioSample;
+	private AudioFileBase audioSample;
 
 	private float rootPitch; // [0,1]
 	private float minPitch;
@@ -85,7 +85,7 @@ public class AutoPitchSample {
 
 	}
 
-	public void loadSample(AudioSource source, AudioDataBase sample) {
+	public void loadSample(AudioSource source, AudioFileBase sample) {
 		audioSource = source;
 		audioSample = sample;
 

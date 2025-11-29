@@ -1,11 +1,9 @@
 package net.lintfordlib.core.input.mouse;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWImage;
 
@@ -81,7 +79,21 @@ public class MouseCursor {
 	public static MouseCursor loadCursorFromResource(String cursorName, String resourceName, int hotspotX, int hotspotY) {
 		var lNewMouseCursorInstance = new MouseCursor(cursorName, resourceName, hotspotX, hotspotY);
 		try {
-			var glfwImage = GLFWHelper.imageToGLFWImage(ImageIO.read(MouseCursor.class.getResourceAsStream(resourceName)));
+			var inputStream = MouseCursor.class.getResourceAsStream(resourceName);
+			if (inputStream == null) {
+				throw new FileNotFoundException("Cursor resource not found: " + resourceName);
+			}
+
+			// Read all bytes from the input stream
+			final var imageBytes = inputStream.readAllBytes();
+			inputStream.close();
+
+			// We need a native buffer for GLFW data
+			final var imageBuffer = BufferUtils.createByteBuffer(imageBytes.length);
+			imageBuffer.put(imageBytes);
+			imageBuffer.flip();
+
+			var glfwImage = GLFWHelper.imageToGLFWImage(imageBuffer);
 			lNewMouseCursorInstance.loadCursorFromGLFWImage(glfwImage, hotspotX, hotspotY);
 
 			return lNewMouseCursorInstance;
@@ -97,13 +109,11 @@ public class MouseCursor {
 	public static MouseCursor loadCursorFromFile(String cursorName, String filename, int hotspotX, int hotspotY) {
 		var lNewMouseCursorInstance = new MouseCursor(cursorName, filename, hotspotX, hotspotY);
 		try {
-			var glfwImage = GLFWHelper.imageToGLFWImage(ImageIO.read(new File(filename)));
+			var glfwImage = GLFWHelper.imageToGLFWImage(filename);
 			lNewMouseCursorInstance.loadCursorFromGLFWImage(glfwImage, hotspotX, hotspotY);
 
 			return lNewMouseCursorInstance;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 

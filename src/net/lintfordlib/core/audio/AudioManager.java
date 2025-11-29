@@ -41,9 +41,9 @@ import com.google.gson.GsonBuilder;
 
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.assets.ResourceManager;
-import net.lintfordlib.core.audio.data.AudioDataBase;
-import net.lintfordlib.core.audio.data.OGGAudioData;
-import net.lintfordlib.core.audio.data.WaveAudioData;
+import net.lintfordlib.core.audio.data.AudioFileBase;
+import net.lintfordlib.core.audio.data.OGGAudioFile;
+import net.lintfordlib.core.audio.data.WaveAudioFile;
 import net.lintfordlib.core.audio.music.MusicManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.maths.MathHelper;
@@ -106,7 +106,7 @@ public class AudioManager {
 
 	/** A pool of {@link AudioSource}s created for other objects (and can be reused). */
 	private List<AudioSource> mAudioSources;
-	private final Map<String, AudioDataBase> mAudioDataBuffers;
+	private final Map<String, AudioFileBase> mAudioDataBuffers;
 	private AudioListener mAudioListener;
 	private long mContext;
 	private long mDevice;
@@ -176,7 +176,7 @@ public class AudioManager {
 		return mOpenALInitialized;
 	}
 
-	public AudioDataBase getAudioDataBufferByName(String bufferName) {
+	public AudioFileBase getAudioDataBufferByName(String bufferName) {
 		return mAudioDataBuffers.get(bufferName);
 	}
 
@@ -417,8 +417,8 @@ public class AudioManager {
 	// Methods
 	// --------------------------------------
 
-	/** Returns the {@link AudioDataBase} with the given name. */
-	public AudioDataBase getSound(String bufferName) {
+	/** Returns the {@link AudioFileBase} with the given name. */
+	public AudioFileBase getSound(String bufferName) {
 		if (bufferName == null || bufferName.length() == 0)
 			return null;
 
@@ -523,7 +523,7 @@ public class AudioManager {
 		}
 	}
 
-	public AudioDataBase loadAudioFile(String soundName, String audioLocation, boolean reload) {
+	public AudioFileBase loadAudioFile(String soundName, String audioLocation, boolean reload) {
 		if (!mOpenALInitialized) {
 			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot load AudioData files until the AudioManager has been loaded");
 			return null;
@@ -550,7 +550,7 @@ public class AudioManager {
 		return soundData;
 	}
 
-	private AudioDataBase loadAudioData(String name, String audioLocation) {
+	private AudioFileBase loadAudioData(String name, String audioLocation) {
 		if (audioLocation == null || audioLocation.length() == 0)
 			return null;
 
@@ -578,12 +578,12 @@ public class AudioManager {
 		final var fileExtension = FileUtils.getFileExtension(audioLocation);
 		switch (fileExtension) {
 		case ".wav":
-			final var newWavData = new WaveAudioData();
+			final var newWavData = new WaveAudioFile();
 			newWavData.loadAudioFromInputStream(name, inputStream);
 			return newWavData;
 
 		case ".ogg":
-			final var newOggAudioData = new OGGAudioData();
+			final var newOggAudioData = new OGGAudioFile();
 			newOggAudioData.loadAudioFromInputStream(name, inputStream);
 			return newOggAudioData;
 
@@ -596,7 +596,7 @@ public class AudioManager {
 	/**
 	 * Allows us to register audio data which has been loaded elsewhere.
 	 */
-	public void registerAudioData(String name, AudioDataBase audioData) {
+	public void registerAudioData(String name, AudioFileBase audioData) {
 		if (audioData != null && audioData.isLoaded()) {
 			mAudioDataBuffers.put(name, audioData);
 		}

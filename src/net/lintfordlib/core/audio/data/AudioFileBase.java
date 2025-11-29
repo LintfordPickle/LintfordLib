@@ -5,7 +5,7 @@ import java.io.InputStream;
 import org.lwjgl.openal.AL10;
 
 /** A wrapper for OpenAL audio data buffers. */
-public abstract class AudioDataBase {
+public abstract class AudioFileBase {
 
 	// --------------------------------------
 	// Constants
@@ -49,7 +49,7 @@ public abstract class AudioDataBase {
 	// Constructor
 	// --------------------------------------
 
-	public AudioDataBase() {
+	public AudioFileBase() {
 		mBufferID = DATA_NOT_LOADED;
 	}
 
@@ -57,16 +57,16 @@ public abstract class AudioDataBase {
 	// Core-Methods
 	// --------------------------------------
 
-	public abstract boolean loadAudioFromInputStream(final String audioName, final InputStream inputStream);
+	public abstract boolean loadAudioFromInputStream(String audioName, InputStream inputStream);
 
 	/** Unloads the OpenAL data stored in the buffer associated with this object. */
 	public void unloadAudioData() {
-		if (this.mBufferID == AudioDataBase.DATA_NOT_LOADED)
+		if (this.mBufferID == AudioFileBase.DATA_NOT_LOADED)
 			return;
 
 		AL10.alDeleteBuffers(mBufferID);
 
-		this.mBufferID = AudioDataBase.DATA_NOT_LOADED;
+		this.mBufferID = AudioFileBase.DATA_NOT_LOADED;
 		this.mName = "";
 	}
 }

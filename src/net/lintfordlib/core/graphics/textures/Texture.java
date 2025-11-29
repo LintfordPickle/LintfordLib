@@ -288,7 +288,6 @@ public class Texture {
 
 		final var convertedRGB = changeBGRAtoARGB(colorRGB, width, height);
 
-		// needs ARGB
 		saveTextureToFile(width, height, convertedRGB, fileName);
 	}
 

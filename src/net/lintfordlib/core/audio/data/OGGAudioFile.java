@@ -21,7 +21,7 @@ import org.lwjgl.stb.STBVorbisInfo;
 import net.lintfordlib.ConstantsApp;
 import net.lintfordlib.core.debug.Debug;
 
-public class OGGAudioData extends AudioDataBase {
+public class OGGAudioFile extends AudioFileBase {
 
 	// --------------------------------------
 	// Core-Methods
@@ -82,6 +82,7 @@ public class OGGAudioData extends AudioDataBase {
 			}
 
 			return true;
+
 		} catch (Exception e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Exception loading OGG file: " + audioName + " - " + e.getMessage());
 
@@ -101,14 +102,14 @@ public class OGGAudioData extends AudioDataBase {
 		try {
 			vorbis = ioResourceToByteBuffer(pInputStream, bufferSize);
 		} catch (IOException e) {
-			Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Failed to read OGG file data: " + e.getMessage());
+			Debug.debugManager().logger().e(OGGAudioFile.class.getSimpleName(), "Failed to read OGG file data: " + e.getMessage());
 			return null;
 		}
 
 		final var error = BufferUtils.createIntBuffer(1);
 		final var decoder = STBVorbis.stb_vorbis_open_memory(vorbis, error, null);
 		if (decoder == NULL) {
-			Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Failed to open Ogg Vorbis file. STB Error: " + error.get(0));
+			Debug.debugManager().logger().e(OGGAudioFile.class.getSimpleName(), "Failed to open Ogg Vorbis file. STB Error: " + error.get(0));
 			return null;
 		}
 
@@ -117,13 +118,13 @@ public class OGGAudioData extends AudioDataBase {
 
 			final var channels = info.channels();
 			if (channels < 1 || channels > 2) {
-				Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Unsupported channel count: " + channels + ". Only mono and stereo are supported.");
+				Debug.debugManager().logger().e(OGGAudioFile.class.getSimpleName(), "Unsupported channel count: " + channels + ". Only mono and stereo are supported.");
 				return null;
 			}
 
 			final var samples = STBVorbis.stb_vorbis_stream_length_in_samples(decoder);
 			if (samples <= 0) {
-				Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Invalid sample count: " + samples);
+				Debug.debugManager().logger().e(OGGAudioFile.class.getSimpleName(), "Invalid sample count: " + samples);
 				return null;
 			}
 
@@ -132,7 +133,7 @@ public class OGGAudioData extends AudioDataBase {
 
 			final var samplesRead = STBVorbis.stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm);
 			if (samplesRead <= 0) {
-				Debug.debugManager().logger().e(OGGAudioData.class.getSimpleName(), "Failed to decode OGG samples. Samples read: " + samplesRead);
+				Debug.debugManager().logger().e(OGGAudioFile.class.getSimpleName(), "Failed to decode OGG samples. Samples read: " + samplesRead);
 				return null;
 			}
 

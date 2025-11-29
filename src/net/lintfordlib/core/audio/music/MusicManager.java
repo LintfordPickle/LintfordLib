@@ -9,7 +9,7 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.audio.AudioManager;
 import net.lintfordlib.core.audio.AudioManager.AudioMetaData;
 import net.lintfordlib.core.audio.AudioSource;
-import net.lintfordlib.core.audio.data.AudioDataBase;
+import net.lintfordlib.core.audio.data.AudioFileBase;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.storage.FileUtils;
 
@@ -59,7 +59,7 @@ public class MusicManager {
 
 	private AudioManager mAudioManager;
 	private boolean mIsMusicEnabled;
-	private final List<AudioDataBase> mAudioDataBuffers = new ArrayList<>();
+	private final List<AudioFileBase> mAudioDataBuffers = new ArrayList<>();
 	private final List<MusicGroup> mMusicGroups = new ArrayList<>();
 
 	private AudioSource mAudioSourceBank0;
@@ -89,7 +89,7 @@ public class MusicManager {
 		return mAudioDataBuffers.size();
 	}
 
-	public AudioDataBase getAudioDataByIndex(int index) {
+	public AudioFileBase getAudioDataByIndex(int index) {
 		if (index < 0 || index >= getNumberSondsLoaded()) {
 			return null;
 		}
@@ -111,7 +111,7 @@ public class MusicManager {
 		return NO_MUSIC_INDEX;
 	}
 
-	public AudioDataBase getMusicDataByName(String bufferName) {
+	public AudioFileBase getMusicDataByName(String bufferName) {
 		if (bufferName == null || bufferName.length() == 0)
 			return null;
 

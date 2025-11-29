@@ -1,13 +1,8 @@
 package net.lintfordlib.core.graphics.textures;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -394,33 +389,6 @@ public class TextureManager extends EntityGroupManager {
 
 			return newTexture;
 		}
-	}
-
-	public boolean saveTextureToFile(int width, int height, int[] imageData, String fileLocation) {
-		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-		// Convert our ARGB to output ABGR
-		int[] textureData = new int[width * height];
-		for (int i = 0; i < width * height; i++) {
-			int a = (imageData[i] & 0xff000000) >> 24;
-			int r = (imageData[i] & 0xff0000) >> 16;
-			int g = (imageData[i] & 0xff00) >> 8;
-			int b = (imageData[i] & 0xff);
-
-			textureData[i] = a << 24 | b << 16 | g << 8 | r;
-		}
-
-		bufferedImage.setRGB(0, 0, width, height, textureData, 0, width);
-
-		final var outputfile = new File(fileLocation);
-		try {
-			ImageIO.write(bufferedImage, "png", outputfile);
-		} catch (IOException e) {
-			return false;
-		}
-
-		return true;
-
 	}
 
 	public void reloadAllTextures() {
