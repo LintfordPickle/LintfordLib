@@ -11,11 +11,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="libs/commons-collections4-4.4.jar" sourcepath="libs/commons-collections4-4.4-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/LDLibrary/libs/commons-collections4-4.4-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry exported="true" kind="lib" path="libs/mockito-core-5.14.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/objenesis-3.4.jar"/>
@@ -24,34 +19,47 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/gson-2.11.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/lwjgl.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl3-awt-0.1.8.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-assimp.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-freetype.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-glfw.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-javadoc.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-jemalloc.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-openal.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-opengl.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-stb.jar"/>
-	<classpathentry kind="lib" path="libs/lwjgl-stb-javadoc.jar"/>
-	<classpathentry kind="lib" path="libs/lwjglx-debug-1.0.0.jar"/>
-	<classpathentry kind="lib" path="libs/steamworks4j-1.9.0.jar"/>
-	<classpathentry kind="lib" path="natives-win/lwjgl-assimp-natives-windows.jar"/>
-	<classpathentry kind="lib" path="natives-win/lwjgl-freetype-natives-windows.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl-glfw.jar" sourcepath="libs/sources/lwjgl-glfw-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/javadoc/lwjgl-glfw-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/lwjgl-jemalloc.jar" sourcepath="libs/sources/lwjgl-jemalloc-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/javadoc/lwjgl-jemalloc-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/lwjgl-openal.jar" sourcepath="libs/sources/lwjgl-openal-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/javadoc/lwjgl-openal-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/lwjgl-opengl.jar" sourcepath="libs/sources/lwjgl-opengl-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/javadoc/lwjgl-opengl-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/lwjgl-stb.jar" sourcepath="libs/sources/lwjgl-stb-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/javadoc/lwjgl-stb-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="natives-win/lwjgl-glfw-natives-windows.jar"/>
 	<classpathentry kind="lib" path="natives-win/lwjgl-jemalloc-natives-windows.jar"/>
 	<classpathentry kind="lib" path="natives-win/lwjgl-natives-windows.jar"/>
 	<classpathentry kind="lib" path="natives-win/lwjgl-openal-natives-windows.jar"/>
 	<classpathentry kind="lib" path="natives-win/lwjgl-opengl-natives-windows.jar"/>
 	<classpathentry kind="lib" path="natives-win/lwjgl-stb-natives-windows.jar"/>
-	<classpathentry kind="lib" path="natives-linux/lwjgl-assimp-natives-linux.jar"/>
-	<classpathentry kind="lib" path="natives-linux/lwjgl-freetype-natives-linux.jar"/>
 	<classpathentry kind="lib" path="natives-linux/lwjgl-glfw-natives-linux.jar"/>
 	<classpathentry kind="lib" path="natives-linux/lwjgl-jemalloc-natives-linux.jar"/>
 	<classpathentry kind="lib" path="natives-linux/lwjgl-natives-linux.jar"/>
 	<classpathentry kind="lib" path="natives-linux/lwjgl-openal-natives-linux.jar"/>
 	<classpathentry kind="lib" path="natives-linux/lwjgl-opengl-natives-linux.jar"/>
 	<classpathentry kind="lib" path="natives-linux/lwjgl-stb-natives-linux.jar"/>
+	<classpathentry kind="lib" path="libs/lwjgl.jar" sourcepath="libs/sources/lwjgl-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/LintfordLib/libs/javadoc/lwjgl-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/"/>
 </classpath>
