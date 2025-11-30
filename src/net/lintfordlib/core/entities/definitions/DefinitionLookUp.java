@@ -1,7 +1,7 @@
 package net.lintfordlib.core.entities.definitions;
 
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.TreeBidiMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.lintfordlib.core.entities.savedefinitions.BaseSaveDefinition;
 
@@ -55,35 +55,28 @@ public class DefinitionLookUp extends BaseSaveDefinition {
 	// --------------------------------------
 
 	private String mVersion;
-	private BidiMap<Short, String> mDefinitionUidTable;
+	private Map<Short, String> mUidToName;
+	private Map<String, Short> mNameToUid;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
 
 	public boolean containsDefinitionName(String definitionName) {
-		try {
-			return mDefinitionUidTable.containsValue(definitionName);
-		} catch (NullPointerException e) {
-			return false;
-		}
-
+		return mNameToUid.containsKey(definitionName);
 	}
 
 	public boolean containsDefinitionUid(short definitionUid) {
-		return mDefinitionUidTable.containsKey(definitionUid);
+		return mUidToName.containsKey(definitionUid);
 	}
 
 	public short getDefinitionUidByName(String definitionName) {
-		if (mDefinitionUidTable.containsValue(definitionName) == false)
-			return DefinitionManager.NO_DEFINITION;
-		return mDefinitionUidTable.getKey(definitionName);
+		Short uid = mNameToUid.get(definitionName);
+		return uid != null ? uid : DefinitionManager.NO_DEFINITION;
 	}
 
 	public String getDefinitionNameByUid(short definitionUid) {
-		if (mDefinitionUidTable.containsKey(definitionUid) == false)
-			return null;
-		return mDefinitionUidTable.get(definitionUid);
+		return mUidToName.get(definitionUid);
 	}
 
 	public String version() {
@@ -102,10 +95,12 @@ public class DefinitionLookUp extends BaseSaveDefinition {
 	// --------------------------------------
 
 	public DefinitionLookUp() {
-		mDefinitionUidTable = new TreeBidiMap<>();
+		mUidToName = new HashMap<>();
+		mNameToUid = new HashMap<>();
 	}
 
 	public void addNewDefinition(short definitionUid, String definitionName) {
-		mDefinitionUidTable.put(definitionUid, definitionName);
+		mUidToName.put(definitionUid, definitionName);
+		mNameToUid.put(definitionName, definitionUid);
 	}
 }
