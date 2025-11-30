@@ -76,6 +76,10 @@
 		<copy todir="${dist.lib}">
 			<fileset dir="${basedir}/${input.lib.dir}">
 				<include name="**/*.*" />
+				
+				<exclude name="**/*mockito*" />
+				<exclude name="**/*objenesis*" />
+					
 				<exclude name="**/*javadoc*" />
 				<exclude name="**/*sources*" />
 				<exclude name="**/*linux*" />
