@@ -1,6 +1,6 @@
 package net.lintfordlib.screenmanager;
 
-import net.lintfordlib.GameVersion;
+import net.lintfordlib.EngineVersion;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
@@ -172,7 +172,7 @@ public class ContextHintManager {
 		final var lFontUnit = core.sharedResources().uiTextFont();
 
 		final var lHudBounds = core.HUD().boundingRectangle();
-		final var lVersionText = GameVersion.GAME_VERSION;
+		final var lVersionText = EngineVersion.ENGINE_VERSION;
 
 		String text;
 		if (mFooterPreText != null)
