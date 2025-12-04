@@ -495,7 +495,8 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			if (mScrollBar.scrollBarEnabled())
 				mContentArea.restoreRef(layoutStencilRef);
 
-			mMenuEntries.get(i).draw(core, parentScreen, componentDepth + i * .001f);
+			final var entryZDepth = componentDepth - i * .01f;
+			mMenuEntries.get(i).draw(core, parentScreen, entryZDepth);
 		}
 
 		if (mScrollBar.scrollBarEnabled()) {
@@ -505,6 +506,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			mScrollBar.positionOffset.y = screenOffset.y;
 
 			mScrollBar.scrollBarAlpha(parentScreen.screenColor.a);
+
 			mScrollBar.draw(core, spriteBatch, spriteSheetCore, componentDepth + .1f);
 			spriteBatch.end();
 		}
@@ -512,7 +514,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 		// Because some entries 'overlap' outside of the layout (like a dropdown list near the bottom of a layout), we have a post stencil draw section.
 
 		for (int i = lMenuEntryCount - 1; i >= 0; --i) {
-			mMenuEntries.get(i).postStencilDraw(core, parentScreen, componentDepth + i * .001f);
+			mMenuEntries.get(i).postStencilDraw(core, parentScreen, componentDepth);
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
