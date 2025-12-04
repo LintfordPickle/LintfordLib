@@ -5,7 +5,7 @@ import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.rendering.RenderPass;
 import net.lintfordlib.renderers.BaseRenderer;
-import net.lintfordlib.renderers.SimpleRendererManager;
+import net.lintfordlib.renderers.RendererManagerBase;
 
 public class DebugCameraBoundsDrawer extends BaseRenderer {
 
@@ -34,7 +34,7 @@ public class DebugCameraBoundsDrawer extends BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public DebugCameraBoundsDrawer(SimpleRendererManager rendererManager, int entityGroupUid) {
+	public DebugCameraBoundsDrawer(RendererManagerBase rendererManager, int entityGroupUid) {
 		super(rendererManager, RENDERER_NAME, entityGroupUid);
 
 		mIsActive = true;
