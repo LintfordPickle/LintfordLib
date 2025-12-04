@@ -39,4 +39,7 @@ public class EngineVersion {
 		return _engineVersion;
 	}
 
+	public static void main(String[] args) {
+		System.out.println(EngineVersion.ENGINE_VERSION);
+	}
 }
