@@ -6,6 +6,7 @@ import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
 import net.lintfordlib.core.graphics.fonts.FontUnit;
 import net.lintfordlib.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.entries.MenuListBox;
@@ -50,11 +51,17 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 	// Constructor
 	// --------------------------------------
 
-	public LabelValueListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, String label, String value, int entityGroupUid) {
+	public LabelValueListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, int entityGroupUid) {
 		super(screenManager, parentListBox, entityGroupUid);
+	}
+
+	public LabelValueListBoxItem(ScreenManager screenManager, MenuListBox parentListBox, String label, String value, int entityGroupUid) {
+		this(screenManager, parentListBox, entityGroupUid);
 
 		mLabelValue = label;
 		mTextValue = value;
+
+		mH = 25;
 	}
 
 	// --------------------------------------
@@ -62,24 +69,33 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 	// --------------------------------------
 
 	@Override
-	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isSelected, boolean isSelectionActive) {
+	public void draw(LintfordCore core, Screen screen, SpriteBatch spriteBatch, SpriteSheetDefinition coreDef, FontUnit fontUnit, float zDepth, boolean isActiveSelection, boolean isHighlighted) {
+
+		if (isHighlighted) {
+			spriteBatch.setColorWhite();
+			renderHighlight(core, screen, spriteBatch, coreDef, zDepth - .01f);
+		}
+
+		if (isActiveSelection) {
+			spriteBatch.setColorWhite();
+			renderSelectionBar(core, screen, spriteBatch, coreDef, zDepth - .01f);
+		}
+
+		final var transitionOffset = screen.screenPositionOffset();
+
+		spriteBatch.setColor(entryColor);
+		spriteBatch.draw(coreDef, CoreTextureNames.TEXTURE_WHITE, transitionOffset.x + mX, transitionOffset.y + mY, mW, mH, zDepth);
+
 		if (mLabelValue != null && mLabelValue.length() > 0) {
 
-			if (mTextValue == null)
-				mTextValue = "";
+			final var textScale = mScreenManager.UiStructureController().uiTextScaleFactor();
+			final var font = mParentListBox.parentScreen().font();
 
-			final var lTransitionOffset = screen.screenPositionOffset();
-
-			final float lScale = mScreenManager.UiStructureController().uiTextScaleFactor();
-			final var lFont = mParentListBox.parentScreen().font();
-
-			mH = 10;
-
-			lFont.begin(core.HUD());
-			lFont.setTextColor(textColor);
-			lFont.drawText(mLabelValue, lTransitionOffset.x + mX, lTransitionOffset.y + mY, zDepth, lScale, -1);
-			lFont.drawText(mTextValue, lTransitionOffset.x + mX + mW / 2, lTransitionOffset.y + mY, zDepth, lScale, -1);
-			lFont.end();
+			font.begin(core.HUD());
+			font.setTextColor(textColor);
+			font.drawText(mLabelValue, transitionOffset.x + mX, transitionOffset.y + mY, zDepth, textScale, -1);
+			font.drawText(mTextValue, transitionOffset.x + mX + mW / 2, transitionOffset.y + mY, zDepth, textScale, -1);
+			font.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {

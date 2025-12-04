@@ -13,8 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -298,6 +302,7 @@ public class FileUtils {
 
 	// --------------------------------------
 
+	
 	public static List<File> getListOfFilesInDirectory(String directory) {
 		// accepts all files
 		return getListOfFilesInDirectory(directory, (dir, name) -> true);
@@ -347,6 +352,38 @@ public class FileUtils {
 		}
 
 		return lAllHeaderFiles;
+	}
+	
+	public static List<Path> getListOfFilesInSubDirectories(String directory, String extension) {
+	    List<Path> fileList = new ArrayList<>();
+	    Path startPath = Paths.get(directory);
+	    
+	    if (!Files.exists(startPath) || !Files.isDirectory(startPath)) {
+	        return fileList;
+	    }
+	    
+	    try {
+	        Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
+	            @Override
+	            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+	                if (file.toString().endsWith(extension)) {
+	                    fileList.add(file);
+	                }
+	                return FileVisitResult.CONTINUE;
+	            }
+	            
+	            @Override
+	            public FileVisitResult visitFileFailed(Path file, IOException exc) {
+	                // Handle or log the error, but continue walking
+	                return FileVisitResult.CONTINUE;
+	            }
+	        });
+	    } catch (IOException e) {
+	        // Handle the exception appropriately for your use case
+	        e.printStackTrace();
+	    }
+	    
+	    return fileList;
 	}
 
 }
