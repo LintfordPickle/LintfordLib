@@ -4,20 +4,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import net.lintfordlib.core.debug.Debug;
-import net.lintfordlib.options.ResourcePathsConfig;
 
-public abstract class SceneHeader implements Serializable {
+public class SceneHeader implements Serializable {
 
 	// ---------------------------------------------
 	// Constants
@@ -33,104 +29,62 @@ public abstract class SceneHeader implements Serializable {
 	// ---------------------------------------------
 
 	@SerializedName(value = "SceneName")
-	protected String mSceneName;
+	private String mSceneName;
 
-	protected transient String _cmpName;
+	@SerializedName(value = "SceneDataFilePath")
+	private String mSceneDataFilePath;
 
-	protected transient String mSceneDirectory;
+	private transient boolean mDirtyChanges;
+	private transient String mSceneHeaderFilePath;
 
 	@SerializedName(value = "Values")
-	protected Map<String, String> mKeyValues = new HashMap<>();
+	private Map<String, String> mKeyValues = new HashMap<>();
 
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
+
+	public boolean hasDirtyChanges() {
+		return mDirtyChanges;
+	}
+
+	public void resetDirty() {
+		mDirtyChanges = false;
+	}
 
 	public String sceneName() {
 		return mSceneName;
 	}
 
 	public void sceneName(String sceneName) {
-		mSceneName = sceneName;
+		if (sceneName == null || sceneName.length() == 0)
+			return;
 
-		final var lPointOccursAt = mSceneName.lastIndexOf('.');
-		if (lPointOccursAt > -1)
-			mSceneName = mSceneName.substring(0, lPointOccursAt);
-
-		isHeaderValid();
-	}
-
-	/** Returns the name of this scene in upper case, so it can be easily compared to other entities. */
-	public String cmpName() {
-		return _cmpName;
-	}
-
-	public String sceneDirectory() {
-		return mSceneDirectory;
-	}
-
-	public void setSceneDirectory(String newBaseSceneDirectory) {
-		if (newBaseSceneDirectory == null || newBaseSceneDirectory.length() == 0) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Cannot set scene directory name to null or empty.");
+		if (mSceneName.equals(sceneName)) {
 			return;
 		}
 
-		if (!newBaseSceneDirectory.endsWith(File.separator))
-			newBaseSceneDirectory += File.separator;
-
-		mSceneDirectory = newBaseSceneDirectory;
+		mSceneName = sceneName;
+		mDirtyChanges = true;
 	}
 
-	public String sceneHeaderFilepath() {
-		return mSceneDirectory + File.separator + HEADER_FILENAME;
+	public String sceneHeaderFilePath() {
+		return mSceneHeaderFilePath;
 	}
 
-	public String sceneDataFilepath() {
-		return mSceneDirectory + File.separator + DATA_FILENAME;
+	public void sceneHeaderFilePath(String sceneHeaderFilePath) {
+		mSceneHeaderFilePath = sceneHeaderFilePath;
+	}
+
+	public String sceneDataFilePath() {
+		return mSceneDataFilePath;
+	}
+
+	public void sceneDataFilePath(String sceneDataFilePath) {
+		mSceneDataFilePath = sceneDataFilePath;
 	}
 
 	public boolean isSceneValid() {
-		// TODO: validate the integrity of the scene
-
-		return isHeaderValid();
-	}
-
-	public boolean headerExistsOnDisk() {
-		final var lHeaderFile = new File(sceneHeaderFilepath());
-		return lHeaderFile.exists();
-	}
-
-	public boolean dataExistsOnDisk() {
-		final var lDataFile = new File(sceneDataFilepath());
-		return lDataFile.exists();
-	}
-
-	// ---------------------------------------------
-	// Constructor
-	// ---------------------------------------------
-
-	protected SceneHeader() {
-
-	}
-
-	protected SceneHeader(String sceneName) {
-		mSceneName = sceneName;
-
-		isHeaderValid();
-	}
-
-	// ---------------------------------------------
-	// Methods
-	// ---------------------------------------------
-
-	public void initialize(String sceneDirectory, ResourcePathsConfig settings) {
-		setSceneDirectory(sceneDirectory);
-	}
-
-	/**
-	 * Checks if both the header and data files, as specified in the SceneHeader, exist on the disk. This is not the case when, for example, creating new levels in the editor.
-	 */
-	public boolean isHeaderValid() {
 		final var lHeaderExists = headerExistsOnDisk();
 		if (!lHeaderExists)
 			return false;
@@ -138,54 +92,78 @@ public abstract class SceneHeader implements Serializable {
 		return dataExistsOnDisk();
 	}
 
-	public static SceneHeader loadSceneHeaderFileFromFilepath(String filepath) {
-		if (filepath == null || filepath.length() == 0) {
-			Debug.debugManager().logger().e(SceneHeader.class.getSimpleName(), "Filepath for SceneHeader file cannot be null or empty!");
-			return null;
-		}
+	public boolean headerExistsOnDisk() {
+		final var headerFilePath = sceneHeaderFilePath();
+		if (headerFilePath == null || headerFilePath.length() == 0)
+			return false;
 
-		try {
-			final var lGson = new GsonBuilder().create();
-			final var lFileContents = new String(Files.readAllBytes(Paths.get(filepath)));
-			final var lSceneHeader = lGson.fromJson(lFileContents, SceneHeader.class);
+		final var headerFile = new File(headerFilePath);
+		return headerFile.exists();
+	}
 
-			if (lSceneHeader == null) {
-				Debug.debugManager().logger().e(SceneHeader.class.getSimpleName(), "Couldn't deserialize SceneHeader file!");
-				return null;
-			}
+	public boolean dataExistsOnDisk() {
+		final var dataFilePath = sceneDataFilePath();
+		if (dataFilePath == null || dataFilePath.length() == 0)
+			return false;
 
-			lSceneHeader._cmpName = lSceneHeader.sceneName().toUpperCase();
+		final var dataFile = new File(dataFilePath);
+		return dataFile.exists();
+	}
 
-			return lSceneHeader;
-		} catch (IOException e) {
-			Debug.debugManager().logger().e(SceneHeader.class.getSimpleName(), "Error deserializing SceneHeader file.");
-			Debug.debugManager().logger().printException(SceneHeader.class.getSimpleName(), e);
-		}
+	// ---------------------------------------------
+	// Constructor
+	// ---------------------------------------------
 
-		return null;
+	public SceneHeader() {
+
+	}
+
+	public SceneHeader(String sceneName) {
+		this();
+
+		mSceneName = sceneName;
+	}
+
+	// ---------------------------------------------
+	// Methods
+	// ---------------------------------------------
+
+	public static SceneHeader createNewSceneHeader(String sceneName, String scenesDirectoryFilePath) {
+		final var newScene = new SceneHeader(sceneName);
+
+		final var sceneHeaderFilePath = Paths.get(scenesDirectoryFilePath, sceneName, HEADER_FILENAME).toString();
+		newScene.sceneHeaderFilePath(sceneHeaderFilePath);
+
+		final var sceneDataFilePath = Paths.get(scenesDirectoryFilePath, sceneName, DATA_FILENAME).toString();
+		newScene.sceneDataFilePath(sceneDataFilePath);
+
+		return newScene;
+
 	}
 
 	public void saveSceneHeaderFile() {
-		final var lSceneHeaderFile = sceneHeaderFilepath();
+		final var sceneHeaderFile = sceneHeaderFilePath().toString();
 
-		if (lSceneHeaderFile == null || lSceneHeaderFile.length() == 0) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to save the scene header into " + lSceneHeaderFile);
+		if (sceneHeaderFile == null || sceneHeaderFile.length() == 0) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to save the scene header into " + sceneHeaderFile);
 			return;
 		}
 
-		final var lSaveDirectory = new File(lSceneHeaderFile);
-		final var lParentDirectory = lSaveDirectory.getParentFile();
+		final var saveDirectory = new File(sceneHeaderFile);
+		final var parentDirectory = saveDirectory.getParentFile();
 
-		if (!lParentDirectory.exists()) {
-			if (!lParentDirectory.mkdirs()) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to save the scene data into " + lSceneHeaderFile);
+		if (!parentDirectory.exists()) {
+			if (!parentDirectory.mkdirs()) {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), "Unable to save the scene data into " + sceneHeaderFile);
 				return;
 			}
 		}
 
-		try (Writer writer = new FileWriter(lSceneHeaderFile)) {
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		try (final var writer = new FileWriter(sceneHeaderFile)) {
+
+			final var gson = new GsonBuilder().setPrettyPrinting().create();
 			gson.toJson(this, writer);
+
 		} catch (IOException e) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error serializing SceneHeader file.");
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
