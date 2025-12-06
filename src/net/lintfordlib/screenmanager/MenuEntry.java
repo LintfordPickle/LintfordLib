@@ -632,23 +632,23 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		if (!mIsActive || !mAffectParentStructure && !mEnableUpdateDraw)
 			return;
 
-		final var lIntersectsUs = intersectsAA(core.HUD().getMouseCameraSpace());
-		if (!lIntersectsUs)
+		final var intersectsUs = intersectsAA(core.HUD().getMouseCameraSpace());
+		if (!intersectsUs)
 			mIsMouseOver = false;
 
 		mAnimation.update(core);
 
-		final float lParentScreenAlpha = screen.screenColor.a;
-		entryColor.a = lParentScreenAlpha;
-		textColor.a = lParentScreenAlpha;
+		final float parentScreenAlpha = screen.screenColor.a;
+		entryColor.a = parentScreenAlpha;
+		textColor.a = parentScreenAlpha;
 
-		final var lDeltaTime = (float) core.appTime().elapsedTimeMilli();
+		final var deltaTime = (float) core.appTime().elapsedTimeMilli();
 
 		if (mInputTimer >= 0)
-			mInputTimer -= lDeltaTime;
+			mInputTimer -= deltaTime;
 
 		if (mAnimationTimer > 0)
-			mAnimationTimer -= lDeltaTime;
+			mAnimationTimer -= deltaTime;
 
 		if ((mToolTipEnabled && mHasFocus) || mInfoIconDstRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
 			mToolTipTimer += core.gameTime().elapsedTimeMilli();
@@ -668,8 +668,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		mZ = parentZDepth;
 
-		final var lScreenOffset = screen.screenPositionOffset();
-		final var lParentScreenAlpha = screen.screenColor.a;
+		final var screenOffset = screen.screenPositionOffset();
+		final var parentScreenAlpha = screen.screenColor.a;
 		final var isAnimationActive = mAnimationTimer > 0.f;
 
 		if (mEnabled) {
@@ -682,38 +682,38 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 				entryColor.g = .8f;
 				entryColor.b = .8f;
 			} else if (isAnimationActive) {
-				entryColor.setFromColor(ColorConstants.getColorWithAlpha(ColorConstants.SecondaryColor, (mAnimationTimer / 255.f) * lParentScreenAlpha));
+				entryColor.setFromColor(ColorConstants.getColorWithAlpha(ColorConstants.SecondaryColor, (mAnimationTimer / 255.f) * parentScreenAlpha));
 			} else {
 				entryColor.r = .6f;
 				entryColor.g = .6f;
 				entryColor.b = .6f;
 			}
-			entryColor.a = lParentScreenAlpha;
+			entryColor.a = parentScreenAlpha;
 
 		} else {
 			entryColor.setFromColor(ColorConstants.getColorWithAlpha(ColorConstants.SecondaryColor, .35f));
-			entryColor.a = lParentScreenAlpha * .6f;
+			entryColor.a = parentScreenAlpha * .6f;
 		}
 
 		final var spriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
 			boolean use5Steps = mW > 32 * 8;
-			final var lTileSize = 32.f;
-			final var lHalfWidth = mW * .5f;
-			var lLeft = lScreenOffset.x + centerX() - lHalfWidth;
-			final var lInnerWidth = (mW - 32 * (use5Steps ? 4 : 2));
-			entryColor.a = lParentScreenAlpha;
+			final var tileSize = 32.f;
+			final var halfWidth = mW * .5f;
+			var left = screenOffset.x + centerX() - halfWidth;
+			final var innerWidth = (mW - 32 * (use5Steps ? 4 : 2));
+			entryColor.a = parentScreenAlpha;
 
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(entryColor);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, lLeft, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_LEFT, left, screenOffset.y + centerY() - mH / 2, tileSize, mH, mZ);
 			if (use5Steps)
-				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, lLeft += 32.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, lLeft += 32, lScreenOffset.y + centerY() - mH / 2, lInnerWidth, mH, mZ);
+				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDLEFT, left += 32.f, screenOffset.y + centerY() - mH / 2, tileSize, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MID, left += 32, screenOffset.y + centerY() - mH / 2, innerWidth, mH, mZ);
 			if (use5Steps)
-				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (lLeft -= 32) + lHalfWidth * 2.f - 96.f, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, (lLeft -= 32) + lHalfWidth * 2 - 32, lScreenOffset.y + centerY() - mH / 2, lTileSize, mH, mZ);
+				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_MIDRIGHT, (left -= 32) + halfWidth * 2.f - 96.f, screenOffset.y + centerY() - mH / 2, tileSize, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_MENU_BUTTON_HORIZONTAL_RIGHT, (left -= 32) + halfWidth * 2 - 32, screenOffset.y + centerY() - mH / 2, tileSize, mH, mZ);
 			spriteBatch.end();
 		}
 
@@ -722,39 +722,40 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 
 		// Render the MenuEntry label
 		if (mText != null && mText.length() > 0) {
-			final float lUiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor() * mScale;
+			final float uiTextScale = mScreenManager.UiStructureController().uiTextScaleFactor() * mScale;
 
-			final var lMenuFont = mParentScreen.font();
+			final var menuFont = mParentScreen.font();
 
-			if (lMenuFont != null) {
-				lMenuFont.begin(core.HUD());
-				final float lStringWidth = lMenuFont.getStringWidth(mText, lUiTextScale);
-				final var lTextColor = ColorConstants.getTempColorCopy(!mEnabled ? ColorConstants.GREY_DARK() : mHasFocus ? ColorConstants.MenuEntryHighlightColor : ColorConstants.TextHeadingColor);
-				lTextColor.a = lParentScreenAlpha;
+			if (menuFont != null) {
+				menuFont.begin(core.HUD());
+				final var stringWidth = menuFont.getStringWidth(mText, uiTextScale);
+				final var textColor = ColorConstants.getTempColorCopy(!mEnabled ? ColorConstants.GREY_DARK() : mHasFocus ? ColorConstants.MenuEntryHighlightColor : ColorConstants.TextHeadingColor);
+				textColor.a = parentScreenAlpha;
 
 				if (mHasFocus && mEnabled)
-					lMenuFont.setTextColor(ColorConstants.MenuEntrySelectedColor);
+					menuFont.setTextColor(ColorConstants.MenuEntrySelectedColor);
 				else
-					lMenuFont.setTextColor(lTextColor);
-				lMenuFont.setShadowColorRGBA(0.f, 0.f, 0.f, lParentScreenAlpha);
-				lMenuFont.drawShadowedText(mText, lScreenOffset.x + centerX() - lStringWidth * 0.5f, lScreenOffset.y + centerY() - lMenuFont.fontHeight() * .5f, mZ, 1.f, 1.f, lUiTextScale);
+					menuFont.setTextColor(textColor);
 
-				lMenuFont.end();
+				menuFont.setShadowColorRGBA(0.f, 0.f, 0.f, parentScreenAlpha);
+				menuFont.drawShadowedText(mText, screenOffset.x + centerX() - stringWidth * 0.5f, screenOffset.y + centerY() - menuFont.fontHeight() * .5f, mZ, 1.f, 1.f, uiTextScale);
+
+				menuFont.end();
 			}
 		}
 
-		drawGamepadIcon(core, spriteBatch, lScreenOffset.x + mX + mW - 16, lScreenOffset.y + mY + mH - 16, lParentScreenAlpha);
+		drawGamepadIcon(core, spriteBatch, screenOffset.x + mX + mW - 16, screenOffset.y + mY + mH - 16, parentScreenAlpha);
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, parentScreenAlpha);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, parentScreenAlpha);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + mX, lScreenOffset.y + mY, mW, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, screenOffset.x + mX, screenOffset.y + mY, mW, mH, mZ);
 			spriteBatch.end();
 		}
 	}

@@ -219,33 +219,33 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		final var column1X = xoffset + x() + padding() + columnWidth * 1;
 		final var column2X = xoffset + x() + padding() + columnWidth * 2;
 
-		final var textBoldFont = mParentScreen.fontBold();
+		final var textBoldFont = mParentScreen.font();
 
 		entryColor.setRGB(1.f, 1.f, 1.f);
 		textColor.a = mParentScreen.screenColor.a;
 
 		final var lUiTextScale = mParentScreen.uiTextScale();
 		final var lFontHeight = textBoldFont.fontHeight() * lUiTextScale;
-		final var lSpriteBatch = mParentScreen.spriteBatch();
+		final var spriteBatch = mParentScreen.spriteBatch();
 
 		if (mDrawBackground) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(entryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + mX, yoffset + mY, mW, mH, parentZDepth + .15f);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(entryColor);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + mX, yoffset + mY, mW, mH, parentZDepth + .15f);
+			spriteBatch.end();
 
 		} else if (mHasFocus) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-			lSpriteBatch.setColorA(.15f);
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+			spriteBatch.setColorA(.15f);
 
 			final var xx = xoffset + centerX() - mW / 2;
 			final var yy = yoffset + centerY() - mH / 2;
 
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx, yy, 32, mH, parentZDepth + .15f);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx + 32, yy, mW - 64, mH, parentZDepth + .15f);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + centerX() + mW / 2 - 32, yy, 32, mH, parentZDepth + .15f);
-			lSpriteBatch.end();
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx, yy, 32, mH, parentZDepth + .15f);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xx + 32, yy, mW - 64, mH, parentZDepth + .15f);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + centerX() + mW / 2 - 32, yy, 32, mH, parentZDepth + .15f);
+			spriteBatch.end();
 		}
 
 		mCaretFlashTimer += core.appTime().elapsedTimeMilli() * 0.001f;
@@ -261,10 +261,10 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			final float lColorMod = .5f;
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(lColor);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, parentZDepth + .15f);
+			spriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
 				final var boundKeyText = "<ENTER KEY>";
@@ -282,10 +282,10 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 			final float lColorMod = .5f;
 			final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(lColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + mX, yoffset + mY, mW, mH, parentZDepth + .15f);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(lColor);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, xoffset + mX, yoffset + mY, mW, mH, parentZDepth + .15f);
+			spriteBatch.end();
 
 			if (mCaretFlashTimer % 1.f > .5f) {
 				textBoldFont.drawText(lBoundKeyText, column2X, mY + mH / 2f - lFontHeight / 2f, parentZDepth + .15f, lUiTextScale);
@@ -300,63 +300,63 @@ public class MenuBindingKeyEntry extends MenuEntry implements IKeyInputCallback,
 		// Gamepad hints
 		if (mHasFocus) {
 			if (mIsKeyAreaSelected) {
-				drawGamepadIcon(core, lSpriteBatch, xoffset + column1X + columnWidth - 32, yoffset + mY + mH - 16, 1.f);
+				drawGamepadIcon(core, spriteBatch, xoffset + column1X + columnWidth - 32, yoffset + mY + mH - 16, 1.f);
 			} else {
-				drawGamepadIcon(core, lSpriteBatch, xoffset + column2X + columnWidth - 32, yoffset + mY + mH - 16, 1.f);
+				drawGamepadIcon(core, spriteBatch, xoffset + column2X + columnWidth - 32, yoffset + mY + mH - 16, 1.f);
 			}
 		}
 
 		//
 		if (mHasFocus) {
-			lSpriteBatch.begin(core.HUD());
+			spriteBatch.begin(core.HUD());
 			if (mIsKeyAreaSelected) {
-				lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-				lSpriteBatch.setColorA(.15f);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mKeyArea, mZ);
+				spriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+				spriteBatch.setColorA(.15f);
+				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mKeyArea, mZ);
 			} else {
-				lSpriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-				lSpriteBatch.setColorA(.15f);
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mGamepadArea, mZ);
+				spriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
+				spriteBatch.setColorA(.15f);
+				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mGamepadArea, mZ);
 			}
-			lSpriteBatch.end();
+			spriteBatch.end();
 
-			renderHighlight(core, screen, false, lSpriteBatch);
+			renderHighlight(core, screen, false, spriteBatch);
 		}
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, mParentScreen.screenColor.a);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, mParentScreen.screenColor.a);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, mParentScreen.screenColor.a);
 
 		// TODO: Move this into the base MenuEntry type (so all MenuEntries can be valid/invalid and highlighted).
 		if (!mIsStateValid) {
-			final var lLineBatch = mParentScreen.lineBatch();
-			lLineBatch.begin(core.HUD());
-			lLineBatch.changeColorNormalized(.7f, .04f, .02f, 1.f);
-			lLineBatch.lineType(GL11.GL_LINES);
-			lLineBatch.drawRect(this, .1f);
-			lLineBatch.end();
+			final var lineBatch = mParentScreen.lineBatch();
+			lineBatch.begin(core.HUD());
+			lineBatch.changeColorNormalized(.7f, .04f, .02f, 1.f);
+			lineBatch.lineType(GL11.GL_LINES);
+			lineBatch.drawRect(this, .1f);
+			lineBatch.end();
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ);
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, mH, mZ);
 
 			if (mHasFocus) {
 				if (mIsKeyAreaSelected) {
-					lSpriteBatch.setColor(ColorConstants.RED());
-					lSpriteBatch.setColorA(.25f);
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mKeyArea, mZ);
+					spriteBatch.setColor(ColorConstants.RED());
+					spriteBatch.setColorA(.25f);
+					spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mKeyArea, mZ);
 				} else {
-					lSpriteBatch.setColor(ColorConstants.GREEN());
-					lSpriteBatch.setColorA(.25f);
-					lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mGamepadArea, mZ);
+					spriteBatch.setColor(ColorConstants.GREEN());
+					spriteBatch.setColorA(.25f);
+					spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mGamepadArea, mZ);
 				}
 			}
 
-			lSpriteBatch.end();
+			spriteBatch.end();
 		}
 	}
 

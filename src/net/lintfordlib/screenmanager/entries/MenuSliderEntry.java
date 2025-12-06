@@ -198,49 +198,49 @@ public class MenuSliderEntry extends MenuEntry {
 
 	@Override
 	public void draw(LintfordCore core, Screen screen, float parentZDepth) {
-		final var lTextBoldFont = mParentScreen.fontBold();
-		final var lSpriteBatch = mParentScreen.spriteBatch();
-		final var lUiTextScale = mParentScreen.uiTextScale();
+		final var textFont = mParentScreen.font();
+		final var spriteBatch = mParentScreen.spriteBatch();
+		final var uiTextScale = mParentScreen.uiTextScale();
 
-		final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
-		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(SEPARATOR_STRING, lUiTextScale) * 0.5f;
-		final var lLabelHeight = lTextBoldFont.getStringHeight(mLabel, lUiTextScale);
+		final var labelWidth = textFont.getStringWidth(mLabel, uiTextScale);
+		final var separatorHalfWidth = textFont.getStringWidth(SEPARATOR_STRING, uiTextScale) * 0.5f;
+		final var labelHeight = textFont.getStringHeight(mLabel, uiTextScale);
 
-		final var lScreenOffset = screen.screenPositionOffset();
-		final var lParentScreenAlpha = screen.screenColor.a;
+		final var screenOffset = screen.screenPositionOffset();
+		final var parentScreenAlpha = screen.screenColor.a;
 
 		if (mHasFocus && mEnabled)
-			renderHighlight(core, screen, true, lSpriteBatch);
+			renderHighlight(core, screen, true, spriteBatch);
 
 		final var tileSize = Math.min(32, mH);
 		mButtonsEnabled = true;
 		if (mButtonsEnabled) {
-			lSpriteBatch.begin(core.HUD());
+			spriteBatch.begin(core.HUD());
 			final float lArrowButtonSize = tileSize;
 
-			lSpriteBatch.setColor(entryColor);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, lScreenOffset.x + mLeftButton.x(), lScreenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, lScreenOffset.x + mRightButton.x(), lScreenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
+			spriteBatch.setColor(entryColor);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_LEFT, screenOffset.x + mLeftButton.x(), screenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_RIGHT, screenOffset.x + mRightButton.x(), screenOffset.y + mY, lArrowButtonSize, lArrowButtonSize, mZ);
 
-			lSpriteBatch.end();
+			spriteBatch.end();
 		}
 
 		final var lCaretPos = MathHelper.scaleToRange(mValue, mLowerBound, mUpperBound, 0, mBarWidth - 32 - 32);
 		// Draw the slider bar and caret
-		lSpriteBatch.begin(core.HUD());
-		lSpriteBatch.setColor(entryColor);
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(entryColor);
 
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_LEFT, lScreenOffset.x + mBarPosX, lScreenOffset.y + mY, tileSize, tileSize, mZ);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_MID, lScreenOffset.x + mBarPosX + tileSize, lScreenOffset.y + mY, mBarWidth - 64 - tileSize, tileSize, mZ);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_RIGHT, lScreenOffset.x + mBarPosX + mBarWidth - 64, lScreenOffset.y + mY, tileSize, tileSize, mZ);
-		lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_NUBBLE, lScreenOffset.x + mBarPosX + lCaretPos, lScreenOffset.y + mY, tileSize, tileSize, mZ);
-		lSpriteBatch.end();
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_LEFT, screenOffset.x + mBarPosX, screenOffset.y + mY, tileSize, tileSize, mZ);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_MID, screenOffset.x + mBarPosX + tileSize, screenOffset.y + mY, mBarWidth - 64 - tileSize, tileSize, mZ);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_RIGHT, screenOffset.x + mBarPosX + mBarWidth - 64, screenOffset.y + mY, tileSize, tileSize, mZ);
+		spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_SLIDER_HORIZONTAL_NUBBLE, screenOffset.x + mBarPosX + lCaretPos, screenOffset.y + mY, tileSize, tileSize, mZ);
+		spriteBatch.end();
 
 		// draw the label to the left and the value //
-		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.setTextColorRGBA(1.f, 1.f, 1.f, lParentScreenAlpha);
-		lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX + mW / 2 - lLabelWidth - 10 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2f - lLabelHeight / 2f, mZ, lUiTextScale, -1);
-		lTextBoldFont.drawText(SEPARATOR_STRING, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2f - lLabelHeight / 2f, mZ, lUiTextScale, -1);
+		textFont.begin(core.HUD());
+		textFont.setTextColorRGBA(1.f, 1.f, 1.f, parentScreenAlpha);
+		textFont.drawText(mLabel, screenOffset.x + mX + mW / 2 - labelWidth - 10 - separatorHalfWidth, screenOffset.y + mY + mH / 2f - labelHeight / 2f, mZ, uiTextScale, -1);
+		textFont.drawText(SEPARATOR_STRING, screenOffset.x + mX + mW / 2 - separatorHalfWidth, screenOffset.y + mY + mH / 2f - labelHeight / 2f, mZ, uiTextScale, -1);
 
 		if (mShowValueEnabled) {
 			var lValueString = String.valueOf(mValue);
@@ -248,35 +248,35 @@ public class MenuSliderEntry extends MenuEntry {
 				lValueString += mUnit;
 			}
 
-			final var lValueStringWidth = lTextBoldFont.getStringWidth(lValueString, lUiTextScale);
+			final var lValueStringWidth = textFont.getStringWidth(lValueString, uiTextScale);
 
 			if (mShowGuideValuesEnabled) {
-				lTextBoldFont.setTextColorRGBA(1.f, 1.f, 1.f, lParentScreenAlpha * .5f);
-				lTextBoldFont.drawText(Integer.toString(mLowerBound), lScreenOffset.x + mBarPosX + 24, lScreenOffset.y + mY + mH * .5f - lTextBoldFont.fontHeight() * .5f, mZ, 1f);
+				textFont.setTextColorRGBA(1.f, 1.f, 1.f, parentScreenAlpha * .5f);
+				textFont.drawText(Integer.toString(mLowerBound), screenOffset.x + mBarPosX + 24, screenOffset.y + mY + mH * .5f - textFont.fontHeight() * .5f, mZ, 1f);
 			}
 
-			lTextBoldFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-			lTextBoldFont.drawText(lValueString, lScreenOffset.x + mBarPosX + mBarWidth * .5f - lValueStringWidth * .5f, lScreenOffset.y + mY + mH * .5f - lTextBoldFont.fontHeight() * .5f, mZ, lUiTextScale);
+			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
+			textFont.drawText(lValueString, screenOffset.x + mBarPosX + mBarWidth * .5f - lValueStringWidth * .5f, screenOffset.y + mY + mH * .5f - textFont.fontHeight() * .5f, mZ, uiTextScale);
 
 			if (mShowGuideValuesEnabled) {
-				final float lUpperBoundStringWidth = lTextBoldFont.getStringWidth(Integer.toString(mUpperBound));
-				lTextBoldFont.setTextColorRGBA(1.f, 1.f, 1.f, lParentScreenAlpha * .5f);
-				lTextBoldFont.drawText(Integer.toString(mUpperBound), lScreenOffset.x + mBarPosX + mBarWidth - lUpperBoundStringWidth - 48, lScreenOffset.y + mY + mH * .5f - lTextBoldFont.fontHeight() * .5f, mZ, 1f);
+				final float lUpperBoundStringWidth = textFont.getStringWidth(Integer.toString(mUpperBound));
+				textFont.setTextColorRGBA(1.f, 1.f, 1.f, parentScreenAlpha * .5f);
+				textFont.drawText(Integer.toString(mUpperBound), screenOffset.x + mBarPosX + mBarWidth - lUpperBoundStringWidth - 48, screenOffset.y + mY + mH * .5f - textFont.fontHeight() * .5f, mZ, 1f);
 			}
 		}
 
-		lTextBoldFont.end();
+		textFont.end();
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, lSpriteBatch, mInfoIconDstRectangle, entryColor.a);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, entryColor.a);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, lSpriteBatch, mWarnIconDstRectangle, entryColor.a);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, entryColor.a);
 
 		if (!mEnabled)
-			drawdisabledBlackOverbar(core, lSpriteBatch, entryColor.a);
+			drawdisabledBlackOverbar(core, spriteBatch, entryColor.a);
 
-		drawDebugCollidableBounds(core, lSpriteBatch);
+		drawDebugCollidableBounds(core, spriteBatch);
 	}
 
 	// --------------------------------------

@@ -184,24 +184,24 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		if (!mEnableUpdateDraw || !mIsActive)
 			return;
 
-		final var lTextBoldFont = mParentScreen.fontBold();
-		final var lUiTextScale = mParentScreen.uiTextScale();
+		final var textBoldFont = mParentScreen.font();
+		final var uiTextScale = mParentScreen.uiTextScale();
 		final var spriteBatch = mParentScreen.spriteBatch();
 
-		final var lScreenOffset = screen.screenPositionOffset();
+		final var screenOffset = screen.screenPositionOffset();
 
 		mZ = parentZDepth;
 
-		if (lTextBoldFont == null)
+		if (textBoldFont == null)
 			return;
 
 		entryColor.setRGB(1.f, 1.f, 1.f);
 		if (mIsInputActive) {
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(ColorConstants.MenuEntrySelectedColor);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() - mW / 2 + 32, lScreenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, lScreenOffset.x + centerX() + mW / 2 - 32, lScreenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, screenOffset.x + centerX() - mW / 2, screenOffset.y + centerY() - mH / 2, 32, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, screenOffset.x + centerX() - mW / 2 + 32, screenOffset.y + centerY() - mH / 2, mW - 64, mH, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, screenOffset.x + centerX() + mW / 2 - 32, screenOffset.y + centerY() - mH / 2, 32, mH, mZ);
 			spriteBatch.end();
 
 		}
@@ -220,18 +220,18 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 		final int lCancelRectSize = 16;
 
 		final var firstPartOfString = mCursorPos > 0 ? mInputField.subSequence(0, mCursorPos) : "";
-		final var caretPositionX = lTextBoldFont.getStringWidth(firstPartOfString.toString(), 1.f) + lTextBoldFont.getStringWidth(" ");
+		final var caretPositionX = textBoldFont.getStringWidth(firstPartOfString.toString(), 1.f) + textBoldFont.getStringWidth(" ");
 
-		float lCutoffWidth;
+		float cutoffWidth;
 		if (mSingleLine) {
-			lCutoffWidth = mW / 2 - 8 - 32;
+			cutoffWidth = mW / 2 - 8 - 32;
 		} else {
-			lCutoffWidth = mLabel == null ? mW - 32 : mInputAreaRectangle.width() - lCancelRectSize;
+			cutoffWidth = mLabel == null ? mW - 32 : mInputAreaRectangle.width() - lCancelRectSize;
 		}
 
-		final var lIsTextTooLong = caretPositionX > lCutoffWidth;
-		final var lInputTextWidth = lTextBoldFont.getStringWidth(mInputField.toString(), lUiTextScale);
-		final var lTextOverlapWithBox = lInputTextWidth - lCutoffWidth;
+		final var lIsTextTooLong = caretPositionX > cutoffWidth;
+		final var lInputTextWidth = textBoldFont.getStringWidth(mInputField.toString(), uiTextScale);
+		final var lTextOverlapWithBox = lInputTextWidth - cutoffWidth;
 
 		float lTextPosX;
 		if (mSingleLine) {
@@ -241,9 +241,9 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			lTextPosX = lIsTextTooLong ? mInputAreaRectangle.x() - lTextOverlapWithBox : mInputAreaRectangle.x();
 		}
 
-		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.setTextColor(textColor);
-		final float lTextHeight = lTextBoldFont.fontHeight();
+		textBoldFont.begin(core.HUD());
+		textBoldFont.setTextColor(textColor);
+		final float lTextHeight = textBoldFont.fontHeight();
 
 		final var lSingleLineTextOffsetX = (mSingleLine ? mSeparatorOffsetX : 0.f);
 
@@ -252,8 +252,8 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			final var mSeparator = " : ";
 			final var lCenterX = mX + mW / 2.f + mSeparatorOffsetX;
 			final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
-			final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(mSeparator, lUiTextScale) * 0.5f;
-			lTextBoldFont.drawText(mSeparator, lScreenOffset.x + lCenterX - lSeparatorHalfWidth, lScreenOffset.y + lLabelTextPositionY, mZ, 1.f);
+			final var lSeparatorHalfWidth = textBoldFont.getStringWidth(mSeparator, uiTextScale) * 0.5f;
+			textBoldFont.drawText(mSeparator, screenOffset.x + lCenterX - lSeparatorHalfWidth, screenOffset.y + lLabelTextPositionY, mZ, 1.f);
 		}
 
 		if (mLabel != null) {
@@ -261,29 +261,29 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 				final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
 
 				final var lCenterX = mX + mW / 2.f + mSeparatorOffsetX;
-				final var lLabelWidth = lTextBoldFont.getStringWidth(mLabel, lUiTextScale);
-				lTextBoldFont.drawText(mLabel, lScreenOffset.x + lCenterX - lLabelWidth - 32, lScreenOffset.y + lLabelTextPositionY, mZ, 1.f);
+				final var lLabelWidth = textBoldFont.getStringWidth(mLabel, uiTextScale);
+				textBoldFont.drawText(mLabel, screenOffset.x + lCenterX - lLabelWidth - 32, screenOffset.y + lLabelTextPositionY, mZ, 1.f);
 			} else {
 				final var lLabelTextPositionY = mY + ENTRY_DEFAULT_HEIGHT / 2.f - lTextHeight * .5f;
-				lTextBoldFont.drawText(mLabel, lScreenOffset.x + mX, lScreenOffset.y + lLabelTextPositionY, mZ, 1.f);
+				textBoldFont.drawText(mLabel, screenOffset.x + mX, screenOffset.y + lLabelTextPositionY, mZ, 1.f);
 			}
 		}
 
-		lTextBoldFont.end();
+		textBoldFont.end();
 
-		StencilHelper.preDraw(core, spriteBatch, lScreenOffset.x + mInputAreaRectangle.x() + 2.f, mY, lScreenOffset.y + mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 2);
+		StencilHelper.preDraw(core, spriteBatch, screenOffset.x + mInputAreaRectangle.x() + 2.f, mY, screenOffset.y + mInputAreaRectangle.width() - lCancelRectSize - 5.f, mH, -0, 2);
 
-		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.setTextColor(textColor);
-		lTextBoldFont.drawText(mInputField.toString(), lScreenOffset.x + lTextPosX + 8 + lSingleLineTextOffsetX, lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, 1.f);
-		lTextBoldFont.end();
+		textBoldFont.begin(core.HUD());
+		textBoldFont.setTextColor(textColor);
+		textBoldFont.drawText(mInputField.toString(), screenOffset.x + lTextPosX + 8 + lSingleLineTextOffsetX, screenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f, mZ, 1.f);
+		textBoldFont.end();
 
 		StencilHelper.postDraw(core);
 
 		if (mShowCaret && mHasFocus) {
 			final var lCaretWidth = 0.f;
-			final var lCaretPositionX = lScreenOffset.x + lTextPosX + caretPositionX + lCaretWidth + lSingleLineTextOffsetX;
-			final var lCaretPositionY = lScreenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f;
+			final var lCaretPositionX = screenOffset.x + lTextPosX + caretPositionX + lCaretWidth + lSingleLineTextOffsetX;
+			final var lCaretPositionY = screenOffset.y + mInputAreaRectangle.y() + mInputAreaRectangle.height() * .5f - lTextHeight * .5f;
 
 			spriteBatch.begin(core.HUD());
 			spriteBatch.setColor(entryColor);
@@ -291,7 +291,7 @@ public class MenuInputEntry extends MenuEntry implements IBufferedTextInputCallb
 			spriteBatch.end();
 		}
 
-		lTextBoldFont.end();
+		textBoldFont.end();
 
 		if (!mEnabled)
 			drawdisabledBlackOverbar(core, spriteBatch, entryColor.a);

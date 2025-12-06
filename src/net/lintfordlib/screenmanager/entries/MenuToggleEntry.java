@@ -152,22 +152,22 @@ public class MenuToggleEntry extends MenuEntry {
 		if (!mEnableUpdateDraw)
 			return;
 
-		final var lTextBoldFont = mParentScreen.fontBold();
-		final var lUiTextScale = mParentScreen.uiTextScale();
+		final var textFont = mParentScreen.font();
+		final var uiTextScale = mParentScreen.uiTextScale();
 
-		final var lLabelWidth = lTextBoldFont.getStringWidth(mText, lUiTextScale);
-		final var lTextHeight = lTextBoldFont.fontHeight() * lUiTextScale;
-		final var lSeparatorHalfWidth = lTextBoldFont.getStringWidth(SEPARATOR_STRING, lUiTextScale) * 0.5f;
+		final var labelWidth = textFont.getStringWidth(mText, uiTextScale);
+		final var textHeight = textFont.fontHeight() * uiTextScale;
+		final var separatorHalfWidth = textFont.getStringWidth(SEPARATOR_STRING, uiTextScale) * 0.5f;
 
 		final var spriteBatch = mParentScreen.spriteBatch();
 
-		final var lTileSize = Math.min(32, mH);
+		final var tileSize = Math.min(32, mH);
 
-		final var lScreenOffset = screen.screenPositionOffset();
-		final var lParentScreenAlpha = screen.screenColor.a;
+		final var screenOffset = screen.screenPositionOffset();
+		final var parentScreenAlpha = screen.screenColor.a;
 
 		entryColor.setFromColor(mParentScreen.screenColor);
-		textColor.a = lParentScreenAlpha;
+		textColor.a = parentScreenAlpha;
 
 		mZ = parentZDepth;
 
@@ -178,33 +178,33 @@ public class MenuToggleEntry extends MenuEntry {
 		spriteBatch.setColor(entryColor);
 
 		if (mIsChecked)
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, lScreenOffset.x + centerX() + 8, lScreenOffset.y + mY, lTileSize, lTileSize, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_TICK, screenOffset.x + centerX() + 8, screenOffset.y + mY, tileSize, tileSize, mZ);
 		else
-			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, lScreenOffset.x + centerX() + 8, lScreenOffset.y + mY + mH / 2 - lTileSize / 2, lTileSize, lTileSize, mZ);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_CONTROL_EMPTY, screenOffset.x + centerX() + 8, screenOffset.y + mY + mH / 2 - tileSize / 2, tileSize, tileSize, mZ);
 
 		spriteBatch.end();
 
-		lTextBoldFont.begin(core.HUD());
-		lTextBoldFont.setTextColor(textColor);
-		lTextBoldFont.drawText(mText, lScreenOffset.x + mX + mW / 2 - lLabelWidth - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2.f - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
-		lTextBoldFont.drawText(SEPARATOR_STRING, lScreenOffset.x + mX + mW / 2 - lSeparatorHalfWidth, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
+		textFont.begin(core.HUD());
+		textFont.setTextColor(textColor);
+		textFont.drawText(mText, screenOffset.x + mX + mW / 2 - labelWidth - separatorHalfWidth, screenOffset.y + mY + mH / 2.f - textHeight * 0.5f, mZ, uiTextScale, -1);
+		textFont.drawText(SEPARATOR_STRING, screenOffset.x + mX + mW / 2 - separatorHalfWidth, screenOffset.y + mY + mH / 2 - textHeight * 0.5f, mZ, uiTextScale, -1);
 
 		if (mShowCheckedText) {
 			if (mIsChecked)
-				lTextBoldFont.drawText(mEnabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
+				textFont.drawText(mEnabledText, screenOffset.x + mX + mW / 2 + separatorHalfWidth + tileSize * 2, screenOffset.y + mY + mH / 2 - textHeight * 0.5f, mZ, uiTextScale, -1);
 			else
-				lTextBoldFont.drawText(mDisabledText, lScreenOffset.x + mX + mW / 2 + lSeparatorHalfWidth + lTileSize * 2, lScreenOffset.y + mY + mH / 2 - lTextHeight * 0.5f, mZ, lUiTextScale, -1);
+				textFont.drawText(mDisabledText, screenOffset.x + mX + mW / 2 + separatorHalfWidth + tileSize * 2, screenOffset.y + mY + mH / 2 - textHeight * 0.5f, mZ, uiTextScale, -1);
 		}
 
-		lTextBoldFont.end();
+		textFont.end();
 
-		drawGamepadIcon(core, spriteBatch, lScreenOffset.x + mX + mW - 16, lScreenOffset.y + mY + mH - 16, lParentScreenAlpha);
+		drawGamepadIcon(core, spriteBatch, screenOffset.x + mX + mW - 16, screenOffset.y + mY + mH - 16, parentScreenAlpha);
 
 		if (mShowInfoIcon)
-			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, lParentScreenAlpha);
+			drawInfoIcon(core, spriteBatch, mInfoIconDstRectangle, parentScreenAlpha);
 
 		if (mShowWarnIcon)
-			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, lParentScreenAlpha);
+			drawWarningIcon(core, spriteBatch, mWarnIconDstRectangle, parentScreenAlpha);
 
 		drawDebugCollidableBounds(core, spriteBatch);
 	}
