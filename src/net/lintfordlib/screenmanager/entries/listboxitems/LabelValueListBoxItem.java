@@ -24,8 +24,8 @@ public class LabelValueListBoxItem extends MenuListBoxItem {
 	// Variables
 	// --------------------------------------
 
-	private String mLabelValue;
-	private String mTextValue;
+	protected String mLabelValue;
+	protected String mTextValue;
 
 	// --------------------------------------
 	// Properties
