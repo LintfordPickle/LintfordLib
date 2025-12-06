@@ -2,7 +2,6 @@ package net.lintfordlib.renderers.windows.components;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
 
@@ -82,18 +81,14 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	}
 
 	public void numDecimalPlaces(int numDecimalPlaces) {
-		if (numDecimalPlaces < 1)
-			numDecimalPlaces = 1;
+		if (numDecimalPlaces < 0)
+			numDecimalPlaces = 0;
 
 		if (numDecimalPlaces > 5)
 			numDecimalPlaces = 5;
 
 		if (mNumDecimalPlaces == numDecimalPlaces)
 			return;
-
-		final var decimalFormatSymbols = new DecimalFormatSymbols();
-		decimalFormatSymbols.setDecimalSeparator('.');
-		decimalFormatSymbols.setGroupingSeparator(',');
 
 		mNumDecimalPlaces = numDecimalPlaces;
 	}
@@ -271,7 +266,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		mValue = 0.f;
 		mInputField.append(mValue);
 
-		numDecimalPlaces(3);
+		numDecimalPlaces(2);
 
 	}
 
@@ -453,9 +448,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	// --------------------------------------
 
 	private void limitValueToDecimalPlaces() {
-		final var decimalPlaces = 3;
-
-		final var bd = BigDecimal.valueOf(mValue).setScale(decimalPlaces, RoundingMode.HALF_UP);
+		final var bd = BigDecimal.valueOf(mValue).setScale(mNumDecimalPlaces, RoundingMode.HALF_UP);
 		mValue = bd.floatValue();
 	}
 
@@ -475,8 +468,6 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		mValue = tempValue;
 
-		limitValueToDecimalPlaces();
-
 		if (mIsValueBounded) {
 			if (mValue < mMinValue)
 				mValue = mMinValue;
@@ -494,7 +485,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		limitValueToDecimalPlaces();
 
 		mInputField.delete(0, mInputField.length());
-		mInputField.append(mValue);
+		mInputField.append(String.format("%." + numDecimalPlaces() + "f", mValue));
 	}
 
 	public void setKeyUpdateListener(IUiInputKeyPressCallback keyUpdateListener, int keyListenerUid) {
