@@ -236,8 +236,8 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 		if (core.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ENTER, this)) {
 
 			// The capture is managed in the onClick() method
-			// This is bad, but we need to 'deactivate' this entry so the onCLick is even called...
 
+			mIsInputActive = false;
 			mParentScreen.onMenuEntryDeactivated(this);
 		}
 
