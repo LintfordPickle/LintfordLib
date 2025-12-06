@@ -596,6 +596,7 @@ public abstract class BaseLayout extends Rectangle implements IScrollBarArea {
 			return 0;
 
 		float lResult = paddingTop() + paddingBottom() + mEntryOffsetFromTop;
+		lResult += titleBarSize();
 
 		for (int i = 0; i < lEntryCount; i++) {
 			final var lMenuEntry = mMenuEntries.get(i);
