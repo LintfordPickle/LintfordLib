@@ -4,10 +4,14 @@ import net.lintfordlib.ConstantsEditor;
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.data.scene.SceneHeader;
 import net.lintfordlib.options.ResourcePathsConfig;
-import net.lintfordlib.screenmanager.entries.MenuDropDownEntry;
+import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
+import net.lintfordlib.screenmanager.entries.MenuInputEntry;
+import net.lintfordlib.screenmanager.entries.MenuListBox;
+import net.lintfordlib.screenmanager.entries.MenuListBoxItem;
+import net.lintfordlib.screenmanager.layouts.BaseLayout;
 import net.lintfordlib.screenmanager.layouts.ListLayout;
 
-public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> extends MenuScreen {
+public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> extends MenuScreen implements IListBoxItemSelected, IListBoxItemDoubleClick {
 
 	// ---------------------------------------------
 	// Constants
@@ -24,7 +28,12 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// ---------------------------------------------
 
 	protected ResourcePathsConfig mResourcePathsConfig;
-	protected MenuDropDownEntry<T> mSceneFilenameEntries;
+
+	protected MenuListBox mSceneFilenameEntries;
+	protected MenuInputEntry mSceneNameInput;
+	protected MenuEntry mCreateNewTrack;
+	protected MenuEntry mLoadTrack;
+	protected MenuEntry mBackButton;
 
 	protected String mTextureHudLocation = "res/textures/textureHud.png";
 	protected String mSpritesheetHudLocation = "res/spritesheets/spritesheetHud.json";
@@ -32,6 +41,10 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	// ---------------------------------------------
 	// Properities
 	// ---------------------------------------------
+
+	public String sceneNameInput() {
+		return mSceneNameInput.inputString();
+	}
 
 	public ResourcePathsConfig gameResourcePaths() {
 		return mResourcePathsConfig;
@@ -45,6 +58,8 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 		mSpritesheetHudLocation = newFilepath;
 	}
 
+	protected abstract String getInitialScenesDirectory();
+
 	// ---------------------------------------------
 	// Constructors
 	// ---------------------------------------------
@@ -53,34 +68,48 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 		super(screenManager, TITLE);
 
 		mResourcePathsConfig = pathsConfig;
-		final var lListLayout = new ListLayout(this);
+		final var listLayout1 = new ListLayout(this);
+		listLayout1.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 
-		mSceneFilenameEntries = new MenuDropDownEntry<>(screenManager, this);
-		mSceneFilenameEntries.allowDuplicateNames(true);
+		final var listLayout2 = new ListLayout(this);
 
-		final var lCreateNewTrack = new MenuEntry(screenManager, this, "Create New");
-		lCreateNewTrack.registerClickListener(this, BUTTON_CREATE_NEW_ID);
+		mSceneFilenameEntries = new MenuListBox(screenManager, this);
+		mSceneFilenameEntries.setItemSelectedListener(this);
+		mSceneFilenameEntries.setItemDoubleClickListener(this);
 
-		final var lLoadTrack = new MenuEntry(screenManager, this, "Load");
-		lLoadTrack.registerClickListener(this, BUTTON_LOAD_ID);
+		mCreateNewTrack = new MenuEntry(screenManager, this, "Create New");
+		mCreateNewTrack.registerClickListener(this, BUTTON_CREATE_NEW_ID);
 
-		lListLayout.addMenuEntry(lCreateNewTrack);
+		mSceneNameInput = new MenuInputEntry(screenManager, this, "Name");
+		mSceneNameInput.singleLine(true);
 
-		lListLayout.addMenuEntry(MenuEntry.menuSeparator());
-		lListLayout.addMenuEntry(mSceneFilenameEntries);
-		lListLayout.addMenuEntry(lLoadTrack);
+		mLoadTrack = new MenuEntry(screenManager, this, "Load");
+		mLoadTrack.registerClickListener(this, BUTTON_LOAD_ID);
 
-		lListLayout.addMenuEntry(MenuEntry.menuSeparator());
+		listLayout1.addMenuEntry(mSceneNameInput);
+		listLayout1.addMenuEntry(mCreateNewTrack);
+
+		listLayout2.addMenuEntry(mSceneFilenameEntries);
+		listLayout2.addMenuEntry(mLoadTrack);
+
+		listLayout2.addMenuEntry(MenuEntry.menuSeparator());
 
 		if (enableBackButton) {
-			final var lBackButton = new MenuEntry(screenManager, this, "Back");
-			lBackButton.registerClickListener(this, BUTTON_BACK_ID);
-			lListLayout.addMenuEntry(lBackButton);
+			mBackButton = new MenuEntry(screenManager, this, "Back");
+			mBackButton.registerClickListener(this, BUTTON_BACK_ID);
+			listLayout2.addMenuEntry(mBackButton);
 		} else {
 			mESCBackEnabled = false;
 		}
 
-		addLayout(lListLayout);
+		addLayout(listLayout1);
+		addLayout(listLayout2);
+
+		finalizeScreenLayout(listLayout1);
+
+	}
+
+	protected void finalizeScreenLayout(BaseLayout layout) {
 
 	}
 
@@ -92,7 +121,7 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 	public void initialize() {
 		super.initialize();
 
-		populateDropDownListWithSceneFilenames(mSceneFilenameEntries);
+		populateDropDownListWithSceneFilenames(mSceneFilenameEntries, getInitialScenesDirectory());
 	}
 
 	@Override
@@ -118,9 +147,9 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 			break;
 
 		case BUTTON_LOAD_ID:
-			if (mSceneFilenameEntries.selectedItem() != null) {
-				final var lGameFileHeader = mSceneFilenameEntries.selectedItem().value;
-				onLoadScene(lGameFileHeader);
+			final var sceneItem = mSceneFilenameEntries.getSelectedItem();
+			if (sceneItem != null) {
+				onLoadScene(sceneItem);
 			}
 
 			break;
@@ -137,7 +166,7 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 
 	protected abstract void onCreateNewScene();
 
-	protected abstract void onLoadScene(T sceneHeader);
+	protected abstract void onLoadScene(MenuListBoxItem selectedItem);
 
-	protected abstract void populateDropDownListWithSceneFilenames(MenuDropDownEntry<T> pEntry);
+	protected abstract void populateDropDownListWithSceneFilenames(MenuListBox sceneList, String scenesDirectory);
 }
