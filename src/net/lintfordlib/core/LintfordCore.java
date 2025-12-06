@@ -45,6 +45,7 @@ import net.lintfordlib.core.time.TimeConstants;
 import net.lintfordlib.data.DataManager;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.MasterConfig;
+import net.lintfordlib.options.ResourcePathsConfig;
 import net.lintfordlib.screenmanager.ScreenManager;
 
 /**
@@ -514,8 +515,9 @@ public abstract class LintfordCore {
 		mInputState.initialize(this);
 
 		final var eventActionManager = mInputState.actionManager();
-		onInitializeInputActions(eventActionManager);
 
+		onInitializePaths(mMasterConfig.resourcePaths());
+		onInitializeInputActions(eventActionManager);
 		onInitializeBitmapFontSources(mResourceManager.fontManager());
 	}
 
@@ -532,6 +534,15 @@ public abstract class LintfordCore {
 	 * Provides an opportunity before the bitmapfonts are loaded into memory, to change the default locations that the core/library loads fonts from for rendering in the 'standard' Ui components.
 	 */
 	protected void onInitializeBitmapFontSources(BitmapFontManager fontManager) {
+
+	}
+
+	/**
+	 * Provides an opportunity to setup any paths that your game may require.
+	 * 
+	 * @param pathsConfig The ResourcePathsConfig, as instantiated by LintfordCore.
+	 */
+	protected void onInitializePaths(ResourcePathsConfig pathsConfig) {
 
 	}
 
