@@ -75,7 +75,6 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 			if (mScrollBar.scrollBarEnabled())
 				mScrollBar.AbsCurrentYPos(0);
 
-			lYPos += 5f;
 		}
 
 		// See how many layouts only take what they need
