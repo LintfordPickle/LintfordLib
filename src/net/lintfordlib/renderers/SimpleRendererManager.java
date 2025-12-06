@@ -3,6 +3,8 @@ package net.lintfordlib.renderers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
@@ -126,6 +128,8 @@ public class SimpleRendererManager extends RendererManagerBase {
 		if (RENDER_GAME_RENDERABLES) {
 			drawGameRenderers(core);
 		}
+
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		if (RENDER_UI_WINDOWS) {
 			drawWindowRenderers(core);
