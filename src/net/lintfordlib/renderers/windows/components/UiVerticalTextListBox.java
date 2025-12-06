@@ -105,6 +105,20 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		mVerticalAssetSeparationInPx = newAsseteparation;
 	}
 
+	public void moveSelectedIndexUp() {
+		if (mSelectedItemIndex > 0) {
+			Collections.swap(mItems, mSelectedItemIndex, mSelectedItemIndex - 1);
+			selectedItemIndex(mSelectedItemIndex - 1);
+		}
+	}
+
+	public void moveSelectedIndexDown() {
+		if (mSelectedItemIndex < mItems.size() - 1) {
+			Collections.swap(mItems, mSelectedItemIndex, mSelectedItemIndex + 1);
+			selectedItemIndex(mSelectedItemIndex + 1);
+		}
+	}
+
 	/** Returns an unmodifiableList with the mItems as backing. */
 	public List<UiListBoxItem> items() {
 		return Collections.unmodifiableList(mItems);
@@ -243,6 +257,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 			mH = mDesiredHeight;
 		} else {
 			mH = MathHelper.clamp(lContentHeight, mMinHeight, mMaxHeight);
+			mDesiredHeight = mH;
 		}
 
 		// @formatter:off
