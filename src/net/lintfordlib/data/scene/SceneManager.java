@@ -78,7 +78,7 @@ public class SceneManager extends BaseDataManager {
 	}
 
 	public SceneHeader loadSceneHeader(String sceneName, String sceneDirectory) {
-		return SceneHeaderIoService.loadSceneHeaderFileFromFilepath("cscene1", "res/scenes/custom");
+		return SceneHeader.loadSceneHeaderFileFromFilepath(sceneName, sceneDirectory);
 	}
 
 	public boolean renameScene(String sceneName, String newSceneName) {
