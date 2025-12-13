@@ -68,7 +68,7 @@ public class ListLayout extends BaseLayout implements IInputProcessor {
 		float lYPos = mY + mEntryOffsetFromTop + lTitleHeight + mScrollBar.currentYPos() + mCropPaddingTop + paddingTop();
 
 		final int lEntryCount = mMenuEntries.size();
-		final float lLayoutHeight = mH - marginBottom() - marginTop() - lTitleHeight - mCropPaddingBottom - mCropPaddingTop + paddingTop() + paddingBottom();
+		final float lLayoutHeight = mH - marginBottom() - marginTop() - lTitleHeight - mCropPaddingBottom - mCropPaddingTop;
 
 		// If the height of the content is smaller than the height of this layout, disable the scroll bar
 		if (mContentArea.height() < lLayoutHeight) {
