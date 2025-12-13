@@ -94,10 +94,6 @@ public class EditorCameraMovementController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public void initialize(LintfordCore pCore) {
-	}
-
-	@Override
 	public boolean handleInput(LintfordCore core) {
 		final var lIsRightDown = core.input().mouse().isMouseRightButtonDown();
 		final var lCanProcessMouse = lIsRightDown && core.input().mouse().tryAcquireMouseRightClick(hashCode());
