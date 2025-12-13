@@ -381,6 +381,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mHasFocus = newValue;
 		if (mHasFocus)
 			onGainFocus();
+		else
+			onLostFocus();
 	}
 
 	public boolean isActive() {
@@ -523,8 +525,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		mMinHeight = 4.f;
 		mMaxHeight = 512.f;
 
-		mDesiredWidth = 400.f;
-		mDesiredHeight = ENTRY_DEFAULT_HEIGHT;
+		mDesiredWidth = MenuStyles.entryDesiredWidth;
+		mDesiredHeight = MenuStyles.entryDesiredHeight;
 
 		mW = mDesiredWidth;
 		mH = mDesiredHeight;
@@ -532,8 +534,8 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 		entryColor.setFromColor(ColorConstants.WHITE());
 		textColor.setFromColor(ColorConstants.TextEntryColor);
 
-		mVerticalFillType = FILLTYPE.TAKE_WHATS_NEEDED;
-		mHorizontalFillType = FILLTYPE.HALF_PARENT;
+		mVerticalFillType = FILLTYPE.TAKE_DESIRED_SIZE;
+		mHorizontalFillType = FILLTYPE.TAKE_DESIRED_SIZE;
 
 		// maybe set this from some global constants or options
 		gamepadMenuIcon.focusHintEnabled(true);
@@ -1026,6 +1028,10 @@ public class MenuEntry extends Rectangle implements IInputProcessor, IToolTipPro
 	}
 
 	public void onGainFocus() {
+
+	}
+
+	public void onLostFocus() {
 
 	}
 
