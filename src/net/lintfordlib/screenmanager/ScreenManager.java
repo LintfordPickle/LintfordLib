@@ -251,7 +251,8 @@ public class ScreenManager implements IInputClickedFocusManager {
 			if (!mScreensToAdd.isEmpty())
 				lCoveredByOtherScreen = true;
 
-			lScreen.update(core, lOtherScreenHasFocus, lCoveredByOtherScreen);
+			if(lScreen.screenState() != ScreenState.HIDDEN)
+				lScreen.update(core, lOtherScreenHasFocus, lCoveredByOtherScreen);
 
 			if (lScreen.screenState() == ScreenState.TRANSITION_STARTING || lScreen.screenState() == ScreenState.ACTIVE) {
 				lOtherScreenHasFocus = true;
