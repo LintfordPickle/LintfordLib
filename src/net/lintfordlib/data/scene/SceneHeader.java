@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.storage.FileUtils;
 
 public class SceneHeader implements Serializable {
 
@@ -21,67 +22,76 @@ public class SceneHeader implements Serializable {
 
 	private static final long serialVersionUID = 1301516618574644330L;
 
+	// these must be next to each other in the scene path
 	public static final String DATA_FILENAME = "scene.data";
 	public static final String HEADER_FILENAME = "scene.hdr";
+
+	public static final String SCENE_NAME = "SCENE_NAME";
+	public static final String SCENE_DESCRIPTION = "SCENE_DESCRIPTION";
 
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 
-	@SerializedName(value = "SceneName")
-	private String mSceneName;
-
-	@SerializedName(value = "SceneDataFilePath")
-	private String mSceneDataFilePath;
-
-	private transient boolean mDirtyChanges;
-	private transient String mSceneHeaderFilePath;
-
 	@SerializedName(value = "Values")
 	private Map<String, String> mKeyValues = new HashMap<>();
+
+	private transient String mSceneFolderName; // diddy_ko
+	private transient String mSceneParentDirectory; // res/scenes/custom/
+
+	private transient String mSceneHeaderFilePath;
+	private transient String mSceneDataFilePath;
+
+	private transient boolean mDirtyChanges;
 
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
 
-	public boolean hasDirtyChanges() {
-		return mDirtyChanges;
-	}
-
-	public void resetDirty() {
-		mDirtyChanges = false;
-	}
-
 	public String sceneName() {
-		return mSceneName;
+		return mKeyValues.get(SCENE_NAME);
 	}
 
 	public void sceneName(String sceneName) {
+
 		if (sceneName == null || sceneName.length() == 0)
 			return;
 
-		if (mSceneName.equals(sceneName)) {
-			return;
-		}
+		mKeyValues.put(SCENE_NAME, sceneName);
 
-		mSceneName = sceneName;
 		mDirtyChanges = true;
+	}
+
+	public String sceneFolderName() {
+		return mSceneFolderName;
+	}
+
+	private void sceneFolderName(String folderName) {
+		mSceneFolderName = folderName;
+	}
+
+	public String sceneParentDirectory() {
+		return mSceneParentDirectory;
+	}
+
+	private void sceneParentDirectory(String parentDirectoryName) {
+		mSceneParentDirectory = parentDirectoryName;
 	}
 
 	public String sceneHeaderFilePath() {
 		return mSceneHeaderFilePath;
 	}
 
-	public void sceneHeaderFilePath(String sceneHeaderFilePath) {
-		mSceneHeaderFilePath = sceneHeaderFilePath;
+	private void sceneHeaderFilePath(String headerFilePath) {
+		mSceneHeaderFilePath = headerFilePath;
 	}
 
 	public String sceneDataFilePath() {
 		return mSceneDataFilePath;
 	}
 
-	public void sceneDataFilePath(String sceneDataFilePath) {
-		mSceneDataFilePath = sceneDataFilePath;
+	private void sceneDataFilePath(String dataFilePath) {
+		mSceneDataFilePath = dataFilePath;
 	}
 
 	public boolean isSceneValid() {
@@ -93,7 +103,7 @@ public class SceneHeader implements Serializable {
 	}
 
 	public boolean headerExistsOnDisk() {
-		final var headerFilePath = sceneHeaderFilePath();
+		final var headerFilePath = sceneHeaderFilePath().toString();
 		if (headerFilePath == null || headerFilePath.length() == 0)
 			return false;
 
@@ -102,12 +112,20 @@ public class SceneHeader implements Serializable {
 	}
 
 	public boolean dataExistsOnDisk() {
-		final var dataFilePath = sceneDataFilePath();
+		final var dataFilePath = sceneDataFilePath().toString();
 		if (dataFilePath == null || dataFilePath.length() == 0)
 			return false;
 
 		final var dataFile = new File(dataFilePath);
 		return dataFile.exists();
+	}
+
+	public boolean hasDirtyChanges() {
+		return mDirtyChanges;
+	}
+
+	public void resetDirty() {
+		mDirtyChanges = false;
 	}
 
 	// ---------------------------------------------
@@ -121,25 +139,81 @@ public class SceneHeader implements Serializable {
 	public SceneHeader(String sceneName) {
 		this();
 
-		mSceneName = sceneName;
+		sceneName(sceneName);
 	}
 
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
-	public static SceneHeader createNewSceneHeader(String sceneName, String scenesDirectoryFilePath) {
-		final var newScene = new SceneHeader(sceneName);
+	public static boolean sceneExists(String sceneName, String scenesDirectoryFilePath) {
+		final var headerFilePath = Paths.get(scenesDirectoryFilePath, sceneName, HEADER_FILENAME).toString();
+		if (headerFilePath == null || headerFilePath.length() == 0)
+			return false;
 
-		final var sceneHeaderFilePath = Paths.get(scenesDirectoryFilePath, sceneName, HEADER_FILENAME).toString();
-		newScene.sceneHeaderFilePath(sceneHeaderFilePath);
+		final var headerFile = new File(headerFilePath);
+		return headerFile.exists();
+	}
 
-		final var sceneDataFilePath = Paths.get(scenesDirectoryFilePath, sceneName, DATA_FILENAME).toString();
-		newScene.sceneDataFilePath(sceneDataFilePath);
+	public static SceneHeader createNewSceneHeader(String sceneFolderName, String sceneParentDirectory) {
+		final var newScene = new SceneHeader(sceneFolderName);
 
+		// set these so we can easily save the scene files later
+
+		newScene.sceneFolderName(sceneFolderName);
+		newScene.sceneParentDirectory(sceneParentDirectory);
+
+		newScene.sceneHeaderFilePath(Paths.get(sceneParentDirectory, sceneFolderName, HEADER_FILENAME).toString());
+		newScene.sceneDataFilePath(Paths.get(sceneParentDirectory, sceneFolderName, DATA_FILENAME).toString());
+
+		newScene.saveSceneHeaderFile();
 		return newScene;
 
 	}
+
+	// Load
+
+	public static SceneHeader loadSceneHeaderFileFromFilepath(String sceneFolderName, String sceneParentDirectory) {
+		final var sceneHeaderFilePath = Paths.get(sceneParentDirectory, sceneFolderName, HEADER_FILENAME).toString();
+
+		final var sceneHeaderFile = new File(sceneHeaderFilePath);
+		if (!sceneHeaderFile.exists()) {
+			Debug.debugManager().logger().w(SceneHeader.class.getSimpleName(), "Failed to load scene header from path: " + sceneHeaderFilePath);
+			return null;
+		}
+
+		final var gson = new GsonBuilder().create();
+
+		final var fileContents = FileUtils.loadString(sceneHeaderFilePath);
+		final var loadedHeader = gson.fromJson(fileContents, SceneHeader.class);
+
+		if (loadedHeader == null) {
+			Debug.debugManager().logger().e(SceneHeader.class.getSimpleName(), "Couldn't deserialize SceneHeader file: " + sceneHeaderFilePath);
+			return null;
+		}
+
+		// set these so we can easily save the scene files later
+		loadedHeader.sceneFolderName(sceneFolderName);
+		loadedHeader.sceneParentDirectory(sceneParentDirectory);
+		
+		loadedHeader.sceneHeaderFilePath(Paths.get(sceneParentDirectory, sceneFolderName, HEADER_FILENAME).toString());
+		loadedHeader.sceneDataFilePath(Paths.get(sceneParentDirectory, sceneFolderName, DATA_FILENAME).toString());
+
+		if (!loadedHeader.dataExistsOnDisk()) {
+			final var sceneDataPath = Paths.get(sceneParentDirectory, SceneHeader.DATA_FILENAME).toString();
+			final var sceneDataFile = new File(sceneDataPath);
+			if (sceneDataFile.exists()) {
+				loadedHeader.sceneDataFilePath(sceneDataPath);
+			} else {
+				Debug.debugManager().logger().w(SceneHeader.class.getSimpleName(), "Could not find or resolve the scene data file. Looking in " + sceneDataPath);
+			}
+		}
+
+		return loadedHeader;
+
+	}
+
+	// Save
 
 	public void saveSceneHeaderFile() {
 		final var sceneHeaderFile = sceneHeaderFilePath().toString();
@@ -168,5 +242,9 @@ public class SceneHeader implements Serializable {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Error serializing SceneHeader file.");
 			Debug.debugManager().logger().printException(getClass().getSimpleName(), e);
 		}
+	}
+
+	public void moveSceneHeader() {
+
 	}
 }
