@@ -1,5 +1,7 @@
 package net.lintfordlib.controllers.editor;
 
+import java.nio.file.Paths;
+
 import net.lintfordlib.controllers.BaseController;
 import net.lintfordlib.controllers.ControllerManager;
 import net.lintfordlib.data.scene.SceneHeader;
@@ -24,32 +26,24 @@ public class EditorFileController extends BaseController {
 	// Properties
 	// ---------------------------------------------
 
+	public SceneHeader sceneHeader() {
+		return mSceneHeader;
+	}
+
 	public String sceneName() {
 		return mSceneHeader.sceneName();
 	}
 
-	public void sceneName(String newFilename) {
-		mSceneHeader.sceneName(newFilename);
-
-		if (mCallbackListener != null) {
-			mCallbackListener.onSceneNameChanged(newFilename);
-		}
+	public String sceneFileName() {
+		return mSceneHeader.sceneFolderName();
 	}
 
 	public String sceneDirectory() {
-		return mSceneHeader.sceneDirectory();
-	}
-
-	public void worldDirectory(String newWorldDirectory) {
-		mSceneHeader.setSceneDirectory(newWorldDirectory);
-
-		if (mCallbackListener != null) {
-			mCallbackListener.onFilepathChanged(newWorldDirectory);
-		}
+		return mSceneHeader.sceneParentDirectory();
 	}
 
 	public String sceneFullFilepath() {
-		return sceneDirectory() + sceneName();
+		return Paths.get(sceneDirectory(), sceneName()).toString();
 	}
 
 	public void setCallbackListener(IEditorFileControllerListener listener) {
@@ -58,10 +52,6 @@ public class EditorFileController extends BaseController {
 
 	public void removeCallbackListener() {
 		mCallbackListener = null;
-	}
-
-	public SceneHeader sceneHeader() {
-		return mSceneHeader;
 	}
 
 	// ---------------------------------------------
@@ -77,6 +67,35 @@ public class EditorFileController extends BaseController {
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
+
+	public void sceneName(String newFilename) {
+		// TODO: implement the scene name change in the EditorFileController (SceneManager can do the rename)
+		// mSceneHeader.sceneName(newFilename);
+
+		if (mCallbackListener != null) {
+			mCallbackListener.onSceneNameChanged(newFilename);
+		}
+	}
+
+	public void changeSceneDirectory(String newDirectory) {
+
+		// TODO:
+
+		if (mCallbackListener != null) {
+			mCallbackListener.onSceneDirectoryChanged(newDirectory);
+		}
+
+	}
+
+	public void changeSceneFileName(String newFileName) {
+
+		// TODO:
+
+		if (mCallbackListener != null) {
+			mCallbackListener.onSceneFileNameChanged(newFileName);
+		}
+
+	}
 
 	public boolean saveScene() {
 		if (mCallbackListener != null) {
