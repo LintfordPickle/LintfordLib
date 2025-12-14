@@ -8,6 +8,13 @@
 			"wrapTIndex":1
 		},
 		{
+			"textureName":"TEXTURE_HUD",
+			"filepath":"RES///res/textures/core/texturehud.png",
+			"filterIndex":1,
+			"wrapSIndex":1,
+			"wrapTIndex":1
+		},
+		{
 			"textureName":"TEXTURE_CHARATLAS_00",
 			"filepath":"RES///res/textures/fonts/textureCharAtlas00.png",
 			"filterIndex":1,

@@ -3,6 +3,7 @@ package net.lintfordlib.renderers.editor.panels;
 import net.lintfordlib.controllers.editor.EditorFileController;
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.debug.Debug;
+import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.input.InputManager;
 import net.lintfordlib.renderers.windows.UiWindow;
 import net.lintfordlib.renderers.windows.components.UiButton;
@@ -45,9 +46,21 @@ public class FileInfoPanel extends UiPanel {
 	private UiButton mSaveSceneButton;
 	private UiButton mLoadSceneButton;
 
+	protected boolean mShowSaveLayerButton;
+	private final Rectangle mSaveLayerButtonRect = new Rectangle();
+	private boolean mIsMouseOverSave;
+
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isSaveButtonVisible() {
+		return mShowSaveLayerButton;
+	}
+
+	public void isSaveButtonVisible(boolean newValue) {
+		mShowSaveLayerButton = newValue;
+	}
 
 	@Override
 	public int layerOwnerHashCode() {
@@ -63,6 +76,7 @@ public class FileInfoPanel extends UiPanel {
 
 		mShowActiveLayerButton = false;
 		mShowShowLayerButton = false;
+		mShowSaveLayerButton = true;
 
 		mRenderPanelTitle = true;
 
@@ -122,6 +136,65 @@ public class FileInfoPanel extends UiPanel {
 		mEditorFileController = (EditorFileController) lControllerManager.getControllerByNameRequired(EditorFileController.CONTROLLER_NAME, mEntityGroupUid);
 
 		updateUiElements();
+
+	}
+
+	@Override
+	public boolean handleInput(LintfordCore core) {
+		final float lMouseX = core.HUD().getMouseWorldSpaceX();
+		final float lMouseY = core.HUD().getMouseWorldSpaceY();
+
+		if (mShowSaveLayerButton) {
+			mIsMouseOverSave = mSaveLayerButtonRect.intersectsAA(lMouseX, lMouseY);
+			if (mIsMouseOverSave) {
+				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+
+					widgetOnClick(core.input(), BUTTON_SAVE);
+					return true;
+				}
+			}
+		}
+
+		return super.handleInput(core);
+	}
+
+	@Override
+	public void update(LintfordCore core) {
+		super.update(core);
+
+		if (mShowSaveLayerButton) {
+			int lButtonCounter = 1;
+			if (mIsExpandable)
+				lButtonCounter++;
+			if (mShowActiveLayerButton)
+				lButtonCounter++;
+			if (mShowShowLayerButton)
+				lButtonCounter++;
+
+			final float lCanvasScale = 1.0f;
+			final float lTitleButtonSize = 32.f;
+
+			mSaveLayerButtonRect.set(mPanelArea.x() + mPanelArea.width() - (lTitleButtonSize * lCanvasScale) * lButtonCounter, mPanelArea.y() + mPanelBarHeight / 2.f - 6, 24, 24);
+		}
+
+	}
+
+	@Override
+	public void draw(LintfordCore core) {
+		super.draw(core);
+
+		final var sharedResources = core.sharedResources();
+		final var spriteBatch = sharedResources.uiSpriteBatch();
+
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColorWhite();
+
+		if (mShowSaveLayerButton) {
+			final var spriteInstance = mHudSpritesheet.getSpriteInstance("TEXTURE_SAVE_LAYER");
+			spriteBatch.draw(mHudSpritesheet, spriteInstance, mSaveLayerButtonRect, .01f);
+
+		}
+		spriteBatch.end();
 
 	}
 

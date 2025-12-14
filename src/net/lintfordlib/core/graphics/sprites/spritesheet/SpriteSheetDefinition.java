@@ -187,6 +187,8 @@ public class SpriteSheetDefinition {
 			if (mTextureFileName != null) {
 				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("Attempting to load texture from '%s'", mTextureFileName));
 				mTexture = lTextureManager.loadTexture(mTextureName, mTextureFileName, mEntityGroupUid);
+			} else {
+				Debug.debugManager().logger().e(getClass().getSimpleName(), String.format("The SpriteSheetDefinition '%s' doesn't contain information about texture location. Failed to load texture", mSpriteSheetName));
 			}
 		}
 

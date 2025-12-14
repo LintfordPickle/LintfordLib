@@ -204,11 +204,11 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 		mUiStructureController = (HudLayoutController) core.controllerManager().getControllerByName(HudLayoutController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 		mEditorBrushController = (EditorBrushController) core.controllerManager().getControllerByName(EditorBrushController.CONTROLLER_NAME, mEntityGroupUid);
 
-		final int lNumWidgets = mWidgets.size();
-		for (int i = 0; i < lNumWidgets; i++) {
-			final var lWidget = mWidgets.get(i);
+		final int numWidgets = mWidgets.size();
+		for (int i = 0; i < numWidgets; i++) {
+			final var widget = mWidgets.get(i);
 
-			lWidget.initialize();
+			widget.initialize();
 		}
 	}
 
@@ -216,11 +216,11 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
 		mHudSpritesheet = resourceManager.spriteSheetManager().getSpriteSheet("SPRITESHEET_HUD", ConstantsEditor.EDITOR_RESOURCE_GROUP_ID);
 
-		final int lNumWidgets = mWidgets.size();
-		for (int i = 0; i < lNumWidgets; i++) {
-			final var lWidget = mWidgets.get(i);
+		final int numWidgets = mWidgets.size();
+		for (int i = 0; i < numWidgets; i++) {
+			final var widget = mWidgets.get(i);
 
-			lWidget.loadResources(resourceManager);
+			widget.loadResources(resourceManager);
 		}
 	}
 
@@ -299,37 +299,36 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 		mVerticalSpacing = 5.f;
 		mPaddingBottom = 5.f;
 
-		final float lCanvasScale = 1.0f;
-		final float lTitleButtonSize = 32.f;
-		final float lInsetSize = (lTitleButtonSize - lTitleButtonSize) / 2.f;
+		final float canvasScale = 1.0f;
+		final float titleButtonSize = 32.f;
 
 		// @formatter:off
-		int lButtonCounter = 1;
+		int numButtons = 1;
 		if(mIsExpandable) {
 			mExpandRectangle.set(
-					mPanelArea.x() + mPanelArea.width() - lInsetSize - lTitleButtonSize * lCanvasScale, 
-					mPanelArea.y() + lInsetSize, 
-					lTitleButtonSize,
-					lTitleButtonSize);
-			lButtonCounter++;
+					mPanelArea.x() + mPanelArea.width() - titleButtonSize * canvasScale, 
+					mPanelArea.y(), 
+					titleButtonSize,
+					titleButtonSize);
+			numButtons++;
 		}
 		
 		mIsLayerActiveToggleOn = mEditorActiveLayerUid != EditorLayerBrush.NO_LAYER_UID && mEditorBrushController.isLayerActive(mEditorActiveLayerUid);
 		if(mShowActiveLayerButton) {
 			mActiveLayerButtonRect.set(
-					mPanelArea.x() + mPanelArea.width() - lInsetSize * lButtonCounter - (lTitleButtonSize * lCanvasScale) * lButtonCounter, 
-					mPanelArea.y() + lInsetSize, 
-					lTitleButtonSize,
-					lTitleButtonSize);
-			lButtonCounter++;
+					mPanelArea.x() + mPanelArea.width() - (titleButtonSize * canvasScale) * numButtons, 
+					mPanelArea.y(), 
+					titleButtonSize,
+					titleButtonSize);
+			numButtons++;
 		}
 		
 		if(mShowShowLayerButton) {
 		mShowLayerButtonRect.set(
-				mPanelArea.x() + mPanelArea.width() - lInsetSize * lButtonCounter - (lTitleButtonSize * lCanvasScale) * lButtonCounter, 
-				mPanelArea.y() + lInsetSize, 
-				lTitleButtonSize,
-				lTitleButtonSize);
+				mPanelArea.x() + mPanelArea.width() - (titleButtonSize * canvasScale) * numButtons, 
+				mPanelArea.y(), 
+				titleButtonSize,
+				titleButtonSize);
 
 		}
 		// @formatter:on
@@ -351,64 +350,64 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 	}
 
 	public void draw(LintfordCore core) {
-		final var lSharedResources = core.sharedResources();
+		final var sharedResources = core.sharedResources();
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-		final var lFontUnit = lSharedResources.uiTextFont();
-		final var lSpriteBatch = lSharedResources.uiSpriteBatch();
+		final var fontUnit = sharedResources.uiTextFont();
+		final var spriteBatch = sharedResources.uiSpriteBatch();
 
 		final var mCoreSpriteSheet = mParentWindow.coreSpritesheet();
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
-			lSpriteBatch.begin(core.HUD());
-			lSpriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
-			lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea, .01f);
-			lSpriteBatch.end();
+			spriteBatch.begin(core.HUD());
+			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
+			spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea, .01f);
+			spriteBatch.end();
 		}
 
 		if (mDrawBackground)
-			drawBackground(core, lSpriteBatch, true, .02f);
+			drawBackground(core, spriteBatch, true, .02f);
 
-		lSpriteBatch.begin(core.HUD());
-		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
 
 		final var zDepth = .01f;
 
 		if (mRenderPanelTitle) {
 			mPanelBarHeight = 20.f;
-			lFontUnit.begin(core.HUD());
-			final var lTextWidth = lFontUnit.getStringWidth(mPanelTitle);
-			lFontUnit.drawText(mPanelTitle, mPanelArea.x() + 5.f, mPanelArea.y() + 5.f, zDepth, 1.f);
+			fontUnit.begin(core.HUD());
+			final var lTextWidth = fontUnit.getStringWidth(mPanelTitle);
+			fontUnit.drawText(mPanelTitle, mPanelArea.x() + 5.f, mPanelArea.y() + 5.f, zDepth, 1.f);
 			if (mIsPanelOpen && mPanelTitleUnderline)
-				lSpriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea.x() + 5.f, mPanelArea.y() + lFontUnit.fontHeight() + 5.f, lTextWidth, 1.f, zDepth);
-			lFontUnit.end();
+				spriteBatch.draw(mCoreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mPanelArea.x() + 5.f, mPanelArea.y() + fontUnit.fontHeight() + 5.f, lTextWidth, 1.f, zDepth);
+			fontUnit.end();
 		}
 
 		if (mShowShowLayerButton) {
 			if (mIsLayerVisibleToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SHOW_LAYER"), mShowLayerButtonRect, zDepth);
+				spriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SHOW_LAYER"), mShowLayerButtonRect, zDepth);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_HIDE_LAYER"), mShowLayerButtonRect, zDepth);
+				spriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_HIDE_LAYER"), mShowLayerButtonRect, zDepth);
 			}
 		}
 
 		if (mShowActiveLayerButton) {
 			if (mIsLayerActiveToggleOn) {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_ON"), mActiveLayerButtonRect, zDepth);
+				spriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_ON"), mActiveLayerButtonRect, zDepth);
 			} else {
-				lSpriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_OFF"), mActiveLayerButtonRect, zDepth);
+				spriteBatch.draw(mHudSpritesheet, mHudSpritesheet.getSpriteInstance("TEXTURE_SET_LAYER_OFF"), mActiveLayerButtonRect, zDepth);
 			}
 		}
 
 		if (mIsExpandable) {
 			if (mIsPanelOpen) {
-				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_EXPAND, mExpandRectangle, zDepth);
+				spriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_EXPAND, mExpandRectangle, zDepth);
 			} else {
-				lSpriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_COLLAPSE, mExpandRectangle, zDepth);
+				spriteBatch.draw(mCoreSpriteSheet, CoreTextureNames.TEXTURE_COLLAPSE, mExpandRectangle, zDepth);
 			}
 		}
-		lSpriteBatch.end();
+		spriteBatch.end();
 
 		var zoff = zDepth;
 		if (mIsPanelOpen) {
@@ -417,7 +416,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 				final var lWidget = mWidgets.get(i);
 
 				zoff += .03f;
-				lWidget.draw(core, lSharedResources, mCoreSpriteSheet, lFontUnit, zoff);
+				lWidget.draw(core, sharedResources, mCoreSpriteSheet, fontUnit, zoff);
 			}
 
 			if (mNestedPanel != null)

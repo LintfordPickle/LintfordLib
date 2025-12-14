@@ -1,0 +1,72 @@
+{
+  "spriteSheetName": "SPRITESHEET_HUD",
+  "textureName": "TEXTURE_HUD",
+  "spriteFrames": [
+    {
+      "name": "TEXTURE_HIDE_LAYER",
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_SAVE_LAYER",
+      "x": 33,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_SET_LAYER_OFF",
+      "x": 66,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_SET_LAYER_ON",
+      "x": 99,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    },
+    {
+      "name": "TEXTURE_SHOW_LAYER",
+      "x": 132,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0,
+      "pivotY": 0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorToPointName": null,
+      "anchorPoints": []
+    }
+  ],
+  "animationFramesMap": {}
+}
