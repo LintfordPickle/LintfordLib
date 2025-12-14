@@ -5,7 +5,7 @@ public class MenuStyles {
 	private MenuStyles() {
 	}
 
-	public static float entryDesiredWidth = 200;
+	public static float entryDesiredWidth = 400;
 	public static float entryDesiredHeight = 25;
 
 	public static float marginLeft = 5;
