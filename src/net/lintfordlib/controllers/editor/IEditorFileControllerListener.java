@@ -8,6 +8,10 @@ public interface IEditorFileControllerListener {
 
 	void onSceneNameChanged(String newScenename);
 
-	void onFilepathChanged(String newFilename);
+	
+	void onSceneFileNameChanged(String newScenename);
+
+	/** This is the directory, excluding the scene folder name (e.g. 'res/scenes/campaign/'. */
+	void onSceneDirectoryChanged(String newDirectory);
 
 }
