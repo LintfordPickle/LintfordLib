@@ -10,6 +10,7 @@ import net.lintfordlib.core.input.gamepad.GamepadManager;
 import net.lintfordlib.core.input.gamepad.IGamepadListener;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
+import net.lintfordlib.screenmanager.MenuStyles;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.LAYOUT_WIDTH;
@@ -93,7 +94,7 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 		controllerSelectionLayout.setDrawBackground(true, ColorConstants.MenuPanelSecondaryColor);
 		controllerSelectionLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
 		controllerSelectionLayout.layoutWidth(LAYOUT_WIDTH.THREEQUARTER);
-		controllerSelectionLayout.marginBottom(10);
+		controllerSelectionLayout.marginBottom(MenuStyles.marginBottom);
 
 		mAvailableControllers = new MenuEnumEntryIndexed<Gamepad>(screenManager, this, "Controller");
 		mAvailableControllers.setButtonsEnabled(true);
@@ -107,7 +108,7 @@ public class ControllerOptionsScreen extends MenuScreen implements IGamepadListe
 
 		mResetSdlMapping = new MenuEntry(screenManager, this, "Reset Mapping");
 		mResetSdlMapping.horizontalFillType(FILLTYPE.TAKE_DESIRED_SIZE);
-		mResetSdlMapping.desiredWidth(200);
+		mResetSdlMapping.desiredWidth(MenuStyles.entryDesiredWidth);
 		mResetSdlMapping.enabled(false);
 		mResetSdlMapping.registerClickListener(this, BUTTON_RESET_SDL);
 

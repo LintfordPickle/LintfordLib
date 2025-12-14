@@ -5,6 +5,7 @@ import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.data.scene.SceneHeader;
 import net.lintfordlib.options.ResourcePathsConfig;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
+import net.lintfordlib.screenmanager.entries.HorizontalEntryGroup;
 import net.lintfordlib.screenmanager.entries.MenuInputEntry;
 import net.lintfordlib.screenmanager.entries.MenuListBox;
 import net.lintfordlib.screenmanager.entries.MenuListBoxItem;
@@ -82,6 +83,7 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 
 		mSceneNameInput = new MenuInputEntry(screenManager, this, "Name");
 		mSceneNameInput.singleLine(true);
+		mSceneNameInput.setDefaultText("<Scene Name>", true);
 
 		mLoadTrack = new MenuEntry(screenManager, this, "Load");
 		mLoadTrack.registerClickListener(this, BUTTON_LOAD_ID);
@@ -90,15 +92,22 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 		listLayout1.addMenuEntry(mCreateNewTrack);
 
 		listLayout2.addMenuEntry(mSceneFilenameEntries);
-		listLayout2.addMenuEntry(mLoadTrack);
-
-		listLayout2.addMenuEntry(MenuEntry.menuSeparator());
 
 		if (enableBackButton) {
+			final var horizontalButtonLayout = new HorizontalEntryGroup(screenManager, this);
+			horizontalButtonLayout.horizontalFillType(FILLTYPE.THREEQUARTER_PARENT);
+
 			mBackButton = new MenuEntry(screenManager, this, "Back");
 			mBackButton.registerClickListener(this, BUTTON_BACK_ID);
-			listLayout2.addMenuEntry(mBackButton);
+
+			horizontalButtonLayout.addEntry(mBackButton);
+			horizontalButtonLayout.addEntry(mLoadTrack);
+
+			listLayout2.addMenuEntry(horizontalButtonLayout);
 		} else {
+
+			listLayout2.addMenuEntry(mLoadTrack);
+
 			mESCBackEnabled = false;
 		}
 
@@ -106,6 +115,13 @@ public abstract class BaseEditorSceneSelectionScreen<T extends SceneHeader> exte
 		addLayout(listLayout2);
 
 		finalizeScreenLayout(listLayout1);
+
+		listLayout1.paddingTop(MenuStyles.paddingTop);
+		listLayout1.paddingBottom(MenuStyles.paddingBottom);
+		listLayout1.marginBottom(MenuStyles.marginBottom);
+
+		listLayout2.paddingTop(MenuStyles.paddingTop);
+		listLayout2.paddingBottom(MenuStyles.paddingBottom);
 
 	}
 
