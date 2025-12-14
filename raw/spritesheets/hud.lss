@@ -1,0 +1,30 @@
+{
+  "outputDataFilename": "..\\..\\res\\res\\spritesheets\\hud\\spritesheetHud.json",
+  "outputNameDataFilename": "..\\..\\src\\net\\lintfordlib\\core\\graphics\\textures\\HudTextureNames.java",
+  "outputImageFilename": "..\\..\\res\\res\\textures\\core\\textureHud.png",
+  "workingDirectory": "core",
+  "spriteSheetName": "SPRITESHEET_HUD",
+  "textureName": "TEXTURE_HUD",
+  "textureFilePath": "RES://res/textures/texture/textureHud2.png",
+  "dataPackageName": "net.lintfordlib.core.graphics.textures",
+  "exportDataFile": true,
+  "exportTextureFile": true,
+  "exportNamesFile": true,
+  "sortMode": "Area",
+  "borderPadding": 0,
+  "shapeOutlines": false,
+  "crop": false,
+  "trim": false,
+  "allowRotations": false,
+  "spritePadding": 1,
+  "textureWidthMax": 256,
+  "textureWidthActual": 256,
+  "textureHeightMax": 256,
+  "textureHeightActual": 256,
+  "forcePoTTextures": true,
+  "autoSizeTexture": false,
+  "itemFilenames": [
+    "D:\\dev\\java\\ludumdare\\52 - Harvest\\projects\\LintfordLib\\raw\\spritesheets\\hud\\*.*"
+  ],
+  "animationItems": {}
+}
