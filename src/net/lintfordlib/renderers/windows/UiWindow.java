@@ -27,12 +27,6 @@ import net.lintfordlib.renderers.windows.components.interfaces.UIWindowChangeLis
 public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowChangeListener, IInputProcessor {
 
 	// --------------------------------------
-	// Constants
-	// --------------------------------------
-
-	protected static final float Z_DEPTH = 2.f;
-
-	// --------------------------------------
 	// Variables
 	// --------------------------------------
 
@@ -435,7 +429,7 @@ public class UiWindow extends BaseRenderer implements IScrollBarArea, UIWindowCh
 			mScrollBar.scrollBarAlpha(mWindowAlpha);
 
 			lSpritebatch.begin(core.HUD());
-			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, Z_DEPTH);
+			mScrollBar.draw(core, lSpritebatch, mCoreSpritesheet, 2.0f);
 			lSpritebatch.end();
 		}
 
