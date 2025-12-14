@@ -22,6 +22,7 @@ import net.lintfordlib.screenmanager.IListBoxItemDoubleClick;
 import net.lintfordlib.screenmanager.IListBoxItemSelected;
 import net.lintfordlib.screenmanager.MenuEntry;
 import net.lintfordlib.screenmanager.MenuScreen;
+import net.lintfordlib.screenmanager.MenuStyles;
 import net.lintfordlib.screenmanager.Screen;
 import net.lintfordlib.screenmanager.ScreenManager;
 import net.lintfordlib.screenmanager.ScreenManagerConstants.FILLTYPE;
@@ -148,10 +149,10 @@ public class MenuListBox extends MenuEntry implements IScrollBarArea {
 
 		mScrollBar = new ScrollBar(this, new Rectangle(mX + mW - ScrollBar.BAR_WIDTH, mY, 20, mH));
 
-		mLeftMargin = 10f;
-		mRightMargin = 10f;
-		mTopMargin = 10f;
-		mBottomMargin = 10f;
+		mLeftMargin = MenuStyles.marginLeft;
+		mRightMargin = MenuStyles.marginRight;
+		mTopMargin = MenuStyles.marginTop;
+		mBottomMargin = MenuStyles.marginBottom;
 
 		mMinWidth = LISTBOX_MIN_WIDTH;
 		mMaxWidth = LISTBOX_MAX_WIDTH;
