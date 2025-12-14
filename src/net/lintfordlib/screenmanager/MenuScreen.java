@@ -410,7 +410,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				lCountOfTakers++;
 				final var lTitleHeight = lBaseLayout.titleBarSize();
-				heightTaken += lBaseLayout.getEntryHeight() + lTitleHeight;
+				final var entryHeight = lBaseLayout.getEntryHeight();
+				heightTaken += entryHeight + lTitleHeight;
 			}
 		}
 
@@ -431,12 +432,16 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			if (lBaseLayout.layoutFillType() == FILLTYPE.TAKE_WHATS_NEEDED) {
 				// Takers (cannot be larger than available)
 				final var lTitleHeight = lBaseLayout.titleBarSize();
-				var lNewHeight = Math.min(lBaseLayout.getEntryHeight() + mLayoutPaddingVertical + lBaseLayout.cropPaddingTop() + lBaseLayout.cropPaddingBottom() + lTitleHeight, lLayoutHeight);
+				final var internalEntryHeight = lBaseLayout.getEntryHeight();
+				var lNewHeight = Math.min(internalEntryHeight + lBaseLayout.cropPaddingTop() + lBaseLayout.cropPaddingBottom() + lTitleHeight, lLayoutHeight);
 				if (lBaseLayout.maxHeight() > 0 && lNewHeight > lBaseLayout.maxHeight()) {
 					lNewHeight = lBaseLayout.maxHeight();
 				}
 
+				// something isn't right here - this is a feedback loop, with 'getEntryHeight()' above being fed back into 'lBaseLayout.height(lNewHeight)'.
+
 				lBaseLayout.height(lNewHeight);
+
 				lBaseLayout.updateStructure();
 
 				lTop += lBaseLayout.getEntryHeight() + lBaseLayout.marginBottom() + lTitleHeight + mLayoutPaddingVertical;
