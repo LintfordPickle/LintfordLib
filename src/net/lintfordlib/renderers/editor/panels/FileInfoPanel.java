@@ -24,7 +24,8 @@ public class FileInfoPanel extends UiPanel {
 	private static final int BUTTON_CREATE_DIRS = 16;
 
 	private static final int ENTRY_SCENE_NAME = 50;
-	private static final int ENTRY_DIRECTORY_NAME = 51;
+	private static final int ENTRY_FILENAME = 51;
+	private static final int ENTRY_DIRECTORY = 52;
 
 	// --------------------------------------
 	// Variables
@@ -33,12 +34,13 @@ public class FileInfoPanel extends UiPanel {
 	private EditorFileController mEditorFileController;
 
 	private UiInputText mSceneName;
-	private UiInputText mWorldDirectoryName;
+	private UiInputText mLevelFileName;
+	private UiInputText mLevelDirectoryName;
 
 	private UiHorizontalEntryGroup mHorizontalGroup;
 
 	private UiLabel mSceneNameLabel;
-	private UiLabel mDirectoryNameLabel;
+	private UiLabel mFileInfoLabel;
 	private UiButton mNewSceneButton;
 	private UiButton mSaveSceneButton;
 	private UiButton mLoadSceneButton;
@@ -57,26 +59,30 @@ public class FileInfoPanel extends UiPanel {
 	// --------------------------------------
 
 	public FileInfoPanel(UiWindow parentWindow, int entityGroupUid) {
-		super(parentWindow, "File Info Panel", entityGroupUid);
+		super(parentWindow, "File Info", entityGroupUid);
 
 		mShowActiveLayerButton = false;
 		mShowShowLayerButton = false;
 
 		mRenderPanelTitle = true;
-		mPanelTitle = "File Info";
 
 		mSceneNameLabel = new UiLabel("Scene Name");
-		mDirectoryNameLabel = new UiLabel("Directory Name");
+		mFileInfoLabel = new UiLabel("File:");
 
 		mSceneName = new UiInputText();
 		mSceneName.maxnumInputCharacters(20);
 		mSceneName.setUiWidgetListener(this, ENTRY_SCENE_NAME);
 		mSceneName.emptyString("<scene name>");
 
-		mWorldDirectoryName = new UiInputText();
-		mWorldDirectoryName.maxnumInputCharacters(200);
-		mWorldDirectoryName.emptyString("<directory name>");
-		mWorldDirectoryName.setUiWidgetListener(this, ENTRY_DIRECTORY_NAME);
+		mLevelFileName = new UiInputText();
+		mLevelFileName.maxnumInputCharacters(200);
+		mLevelFileName.emptyString("<filename>");
+		mLevelFileName.setUiWidgetListener(this, ENTRY_FILENAME);
+
+		mLevelDirectoryName = new UiInputText();
+		mLevelDirectoryName.maxnumInputCharacters(200);
+		mLevelDirectoryName.emptyString("<directory name>");
+		mLevelDirectoryName.setUiWidgetListener(this, ENTRY_DIRECTORY);
 
 		mNewSceneButton = new UiButton();
 		mNewSceneButton.buttonLabel("New");
@@ -96,8 +102,9 @@ public class FileInfoPanel extends UiPanel {
 
 		addWidget(mSceneNameLabel);
 		addWidget(mSceneName);
-		addWidget(mDirectoryNameLabel);
-		addWidget(mWorldDirectoryName);
+		addWidget(mFileInfoLabel);
+		addWidget(mLevelFileName);
+		addWidget(mLevelDirectoryName);
 		addWidget(mHorizontalGroup);
 
 	}
@@ -114,11 +121,19 @@ public class FileInfoPanel extends UiPanel {
 
 		mEditorFileController = (EditorFileController) lControllerManager.getControllerByNameRequired(EditorFileController.CONTROLLER_NAME, mEntityGroupUid);
 
-		mSceneName.inputString(mEditorFileController.sceneName());
-		mWorldDirectoryName.inputString(mEditorFileController.sceneDirectory());
+		updateUiElements();
+
 	}
 
 	// --------------------------------------
+	// Methods
+	// --------------------------------------
+
+	private void updateUiElements() {
+		mSceneName.inputString(mEditorFileController.sceneName());
+		mLevelFileName.inputString(mEditorFileController.sceneFileName());
+		mLevelDirectoryName.inputString(mEditorFileController.sceneDirectory());
+	}
 
 	@Override
 	public void widgetOnClick(InputManager inputManager, int entryUid) {
@@ -153,8 +168,18 @@ public class FileInfoPanel extends UiPanel {
 			mEditorFileController.sceneName(mSceneName.inputString().toString());
 			break;
 
-		case ENTRY_DIRECTORY_NAME:
-			mEditorFileController.worldDirectory(mWorldDirectoryName.inputString().toString());
+		case ENTRY_FILENAME:
+			mEditorFileController.changeSceneFileName(mLevelFileName.inputString().toString());
+
+			updateUiElements();
+
+			break;
+
+		case ENTRY_DIRECTORY:
+			mEditorFileController.changeSceneDirectory(mLevelDirectoryName.inputString().toString());
+
+			updateUiElements();
+
 			break;
 
 		default:
