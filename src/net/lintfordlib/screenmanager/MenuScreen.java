@@ -732,6 +732,8 @@ public abstract class MenuScreen extends Screen implements EntryInteractions {
 			return;
 
 		final var lEntry = getSelectedEntry(mLayouts, mSelectedLayoutIndex, mSelectedEntryIndex);
+		if (lEntry == null)
+			return;
 
 		if (lEntry.readOnly())
 			return;
