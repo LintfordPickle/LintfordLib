@@ -498,7 +498,7 @@ public class TextureManager extends EntityGroupManager {
 				}
 			}
 		} catch (Exception e) {
-			Debug.debugManager().logger().e(getClass().getSimpleName(), "");
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to load textures from meta file. Exception: " + e.getMessage());
 		}
 	}
 
