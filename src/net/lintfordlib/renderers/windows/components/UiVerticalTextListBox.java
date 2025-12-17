@@ -21,7 +21,7 @@ import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiListBoxListener;
 import net.lintfordlib.renderers.windows.components.interfaces.IUiWidgetInteractions;
 
-public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, IUiWidgetInteractions {
+public class UiVerticalTextListBox<T extends UiListBoxItem> extends UIWidget implements IScrollBarArea, IUiWidgetInteractions {
 
 	// --------------------------------------
 	// Constants
@@ -36,7 +36,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 	// Variables
 	// --------------------------------------
 
-	private final List<UiListBoxItem> mItems = new ArrayList<>();
+	private final List<T> mItems = new ArrayList<>();
 	private int mSelectedItemIndex;
 	private transient boolean mHasFocus;
 	private ScrollBarContentRectangle mContentArea;
@@ -120,7 +120,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 	}
 
 	/** Returns an unmodifiableList with the mItems as backing. */
-	public List<UiListBoxItem> items() {
+	public List<T> items() {
 		return Collections.unmodifiableList(mItems);
 	}
 
@@ -135,7 +135,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		return mSelectedItemIndex;
 	}
 
-	public UiListBoxItem getSelectedItem() {
+	public T getSelectedItem() {
 		if (mSelectedItemIndex < 0 || mSelectedItemIndex >= mItems.size())
 			return null;
 
@@ -150,7 +150,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		mHasFocus = v;
 	}
 
-	public UiListBoxItem getItemByUid(int itemUid) {
+	public T getItemByUid(int itemUid) {
 		final var lNumitems = mItems.size();
 		for (int i = 0; i < lNumitems; i++) {
 			if (mItems.get(i).itemUid == itemUid)
@@ -160,7 +160,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		return null;
 	}
 
-	public UiListBoxItem getItemByIndex(int index) {
+	public T getItemByIndex(int index) {
 		if (index < 0 || index >= mItems.size())
 			return null;
 
@@ -226,7 +226,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 				final var lMouseRelY = core.HUD().getMouseWorldSpaceY() - mY;
 				mSelectedItemIndex = (int) ((lMouseRelY - mScrollbar.currentYPos()) / (mAssetHeightInpx + mVerticalAssetSeparationInPx));
 
-				UiListBoxItem lSelectedItem = null;
+				T lSelectedItem = null;
 				if (mSelectedItemIndex >= 0 && mSelectedItemIndex < mItems.size())
 					lSelectedItem = mItems.get(mSelectedItemIndex);
 
@@ -363,7 +363,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		mCallbackListener = null;
 	}
 
-	public void addItem(UiListBoxItem newItem) {
+	public void addItem(T newItem) {
 		if (!mItems.contains(newItem)) {
 			mItems.add(newItem);
 
@@ -383,7 +383,7 @@ public class UiVerticalTextListBox extends UIWidget implements IScrollBarArea, I
 		mScrollbar.resetBarTop();
 	}
 
-	public void removeItem(UiListBoxItem oldItem) {
+	public void removeItem(T oldItem) {
 		if (mItems.contains(oldItem)) {
 			mItems.remove(oldItem);
 
