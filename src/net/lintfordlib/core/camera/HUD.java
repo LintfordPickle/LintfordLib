@@ -141,7 +141,7 @@ public class HUD implements ICamera, IResizeListener {
 			createOrtho(mDisplayConfig.uiResolutionWidth(), mDisplayConfig.uiResolutionHeight());
 		} else {
 			mScaleRatio.set(1.f, 1.f);
-			createOrtho(mViewportWidth, mViewportHeight);
+			createOrtho(mDisplayConfig.windowWidth(), mDisplayConfig.windowHeight());
 		}
 
 		mBoundingRectangle.width(mScaledViewportWidth);
