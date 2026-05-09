@@ -1,6 +1,7 @@
 package net.lintfordlib.data.scene;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
@@ -183,8 +184,15 @@ public class SceneHeader implements Serializable {
 		}
 
 		final var gson = new GsonBuilder().create();
+		String fileContents = null;
 
-		final var fileContents = FileUtils.loadString(sceneHeaderFilePath);
+		try {
+			fileContents = FileUtils.loadString(sceneHeaderFilePath);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(SceneHeader.class.getSimpleName(), "Couldn't find header file at: " + sceneHeaderFilePath);
+			return null;
+		}
+
 		final var loadedHeader = gson.fromJson(fileContents, SceneHeader.class);
 
 		if (loadedHeader == null) {
@@ -195,7 +203,7 @@ public class SceneHeader implements Serializable {
 		// set these so we can easily save the scene files later
 		loadedHeader.sceneFolderName(sceneFolderName);
 		loadedHeader.sceneParentDirectory(sceneParentDirectory);
-		
+
 		loadedHeader.sceneHeaderFilePath(Paths.get(sceneParentDirectory, sceneFolderName, HEADER_FILENAME).toString());
 		loadedHeader.sceneDataFilePath(Paths.get(sceneParentDirectory, sceneFolderName, DATA_FILENAME).toString());
 
