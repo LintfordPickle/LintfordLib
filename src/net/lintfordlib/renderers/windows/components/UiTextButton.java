@@ -8,7 +8,7 @@ import net.lintfordlib.core.graphics.textures.CoreTextureNames;
 import net.lintfordlib.core.rendering.SharedResources;
 import net.lintfordlib.screenmanager.entries.EntryInteractions;
 
-public class UITextButton extends UIWidget {
+public class UiTextButton extends UIWidget {
 
 	// --------------------------------------
 	// Constants
@@ -53,17 +53,11 @@ public class UITextButton extends UIWidget {
 	// Constructor
 	// --------------------------------------
 
-	public UITextButton() {
-		this(0);
+	public UiTextButton() {
+		this(NO_LABEL_TEXT);
 	}
 
-	public UITextButton(int entryUid) {
-		this(entryUid, NO_LABEL_TEXT);
-	}
-
-	public UITextButton(int entryUid, String label) {
-		mEntryUid = entryUid;
-
+	public UiTextButton(String label) {
 		mButtonLabel = label;
 		mW = 200;
 		mH = 25;
@@ -109,7 +103,7 @@ public class UITextButton extends UIWidget {
 
 	@Override
 	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
-		final var lColorMod = mHoveredOver ? .3f : 1.f;
+		final var lColorMod = mHoveredOver ? 1.f : .6f;
 		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, lColorMod);
 
 		final var lFontRenderer = sharedResources.uiTextFont();
@@ -117,14 +111,16 @@ public class UITextButton extends UIWidget {
 
 		lSpriteBatch.begin(core.HUD());
 		lSpriteBatch.setColor(lColor);
-		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, 32, 32, componentZDepth);
+		lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mX, mY, mW, 32, componentZDepth);
 		lSpriteBatch.end();
 
 		final var lButtonText = mButtonLabel != null ? mButtonLabel : NO_LABEL_TEXT;
 		final var lTextWidth = lFontRenderer.getStringWidth(lButtonText);
 
+		lFontRenderer.begin(core.HUD());
 		lFontRenderer.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-		lFontRenderer.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - lFontRenderer.fontHeight() / 4f, componentZDepth, 1f);
+		lFontRenderer.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - lFontRenderer.fontHeight() / 4f, componentZDepth - 0.1f, 1f);
+		lFontRenderer.end();
 	}
 
 	// --------------------------------------

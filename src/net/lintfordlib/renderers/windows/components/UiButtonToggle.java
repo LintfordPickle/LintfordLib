@@ -128,7 +128,7 @@ public class UiButtonToggle extends UIWidget {
 
 		textFont.begin(core.HUD());
 		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
-		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth, 1.f);
+		textFont.drawText(lButtonText, mX + mW / 2f - lTextWidth / 2f, mY + mH / 2f - textFont.fontHeight() / 2f, componentZDepth - 0.1f, 1.f);
 		textFont.end();
 	}
 }

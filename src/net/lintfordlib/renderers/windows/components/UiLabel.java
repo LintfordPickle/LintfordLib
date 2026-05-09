@@ -82,7 +82,7 @@ public class UiLabel extends UIWidget {
 
 			textFont.begin(core.HUD());
 			textFont.setTextColor(ColorConstants.TextEntryColor);
-			textFont.drawText(mLabelText, mX, mY + mH / 2 - lTextHeight / 2, componentZDepth - 0.01f, 1f, -1);
+			textFont.drawText(mLabelText, mX, mY + mH / 2 - lTextHeight / 2, componentZDepth - .01f, 1f, -1);
 			textFont.end();
 		}
 	}

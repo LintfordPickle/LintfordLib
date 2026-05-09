@@ -219,27 +219,27 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		if (mHasFocus) {
 
-//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_HOME, this)) {
-//				resetCoolDownTimer();
-//				mCursorPos = 0;
-//			}
-//
-//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_END, this)) {
-//				resetCoolDownTimer();
-//				mCursorPos = mInputField.length();
-//			}
-//
-//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT, this)) {
-//				resetCoolDownTimer();
-//				if (mCursorPos > 0)
-//					mCursorPos--;
-//			}
-//
-//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_RIGHT, this)) {
-//				resetCoolDownTimer();
-//				if (mCursorPos < mInputField.length())
-//					mCursorPos++;
-//			}
+			//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_HOME, this)) {
+			//				resetCoolDownTimer();
+			//				mCursorPos = 0;
+			//			}
+			//
+			//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_END, this)) {
+			//				resetCoolDownTimer();
+			//				mCursorPos = mInputField.length();
+			//			}
+			//
+			//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT, this)) {
+			//				resetCoolDownTimer();
+			//				if (mCursorPos > 0)
+			//					mCursorPos--;
+			//			}
+			//
+			//			if (core.input().keyboard().isKeyDown(GLFW.GLFW_KEY_RIGHT, this)) {
+			//				resetCoolDownTimer();
+			//				if (mCursorPos < mInputField.length())
+			//					mCursorPos++;
+			//			}
 
 			if (mMouseClickBreaksInputTextFocus && (core.input().mouse().isMouseLeftButtonDownTimed(this) || core.input().mouse().isMouseRightButtonDownTimed(this))) {
 				core.input().keyboard().stopBufferedTextCapture();
@@ -288,11 +288,11 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		var xx = mX;
 		var ww = mW;
-
+		
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
 			textFont.setTextColor(lTextColor);
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth - .01f, mTextScale);
 			textFont.end();
 
 			xx = mX + mW * .5f;
@@ -301,6 +301,7 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 
 		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
+		// Background panel
 		lSpriteBatch.begin(core.HUD());
 		lSpriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
 		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth);
@@ -309,8 +310,10 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32, mY, 32, mH, componentZDepth);
 		}
 
+		// Cancel Rectangle
 		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, mCancelRectHovered ? 1.f : .5f);
-		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, componentZDepth);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_ERASER, mCancelRectangle, componentZDepth - .01f);
+		lSpriteBatch.end();
 
 		var lText = mInputField.toString();
 		if (lText.length() == 0 && !mHasFocus) {
@@ -338,15 +341,16 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 		final var lTextOverlapWithBox = lInputTextWidth - mw;
 		final var lTextPosX = lIsTextTooLong ? xx - lTextOverlapWithBox : xx;
 
+		lSpriteBatch.begin(core.HUD());
 		if (mShowCaret && mHasFocus) {
 			final var lCarotPositionX = lTextPosX + lCaretPositionX;
 			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, lCarotPositionX + 8, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth - .01f);
 		}
 
 		lSpriteBatch.end();
 
-		StencilHelper.preDraw(core, lSpriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, 1);
+		StencilHelper.preDraw(core, lSpriteBatch, xx + 2.f, mY, ww - lCancelRectSize - 5.f, mH, -0, mStencilId);
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(lTextColor);
@@ -384,6 +388,13 @@ public class UiInputText extends UIWidget implements IBufferedTextInputCallback 
 				}
 			}
 		}
+	}
+	
+	public void stopInputCapture(InputManager inputState) {
+		inputState.keyboard().stopBufferedTextCapture();
+
+		mHasFocus = false;
+		mShowCaret = false;
 	}
 
 	@Override

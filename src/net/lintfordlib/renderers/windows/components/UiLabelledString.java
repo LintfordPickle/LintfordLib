@@ -84,11 +84,11 @@ public class UiLabelledString extends UIWidget {
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(ColorConstants.TextEntryColor);
-		textFont.drawText(mLabelText, mX + HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, 1f, -1);
+		textFont.drawText(mLabelText, mX + HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth - .01f, 1f, -1);
 
 		if (mValueString != null && mValueString.length() > 0) {
 			final var lValueWidth = textFont.getStringWidth(mValueString);
-			textFont.drawText(mValueString, mX + mW - lValueWidth - HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth, 1f, -1);
+			textFont.drawText(mValueString, mX + mW - lValueWidth - HorizontalPadding, mY + mH / 2 - lTextHeight / 2, componentZDepth - .01f, 1f, -1);
 		}
 
 		textFont.end();

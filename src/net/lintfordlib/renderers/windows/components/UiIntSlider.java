@@ -140,16 +140,18 @@ public class UiIntSlider extends UIWidget {
 		final var lSliderRailHeight = 4.f;
 		final var lSliderWidth = 10.f;
 
+		mIsEnabled = true;
 		final var lBackgroundColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
-		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 
 		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
 		lSpriteBatch.begin(core.HUD());
 		lSpriteBatch.setColor(lBackgroundColor);
-		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + textFont.fontHeight() + mH / 2 - lSliderRailHeight / 2, mW, lSliderRailHeight, 0f);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX, mY + textFont.fontHeight() + mH / 2 - lSliderRailHeight / 2, mW, lSliderRailHeight, componentZDepth - .01f);
+
+		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 		lSpriteBatch.setColor(lNubbinColor);
-		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, mY + +textFont.fontHeight() + mH / 4, lSliderWidth, mH / 2, 0f);
+		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mCurrentRelPosition - lSliderWidth / 2, mY + +textFont.fontHeight() + mH / 4, lSliderWidth, mH / 2, componentZDepth - .02f);
 		lSpriteBatch.end();
 
 		final var lQtyLabel = Integer.toString(mCurrentValue) + ((mQtyPostFix != null && mQtyPostFix.length() > 0) ? mQtyPostFix : "");

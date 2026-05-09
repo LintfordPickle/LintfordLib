@@ -140,11 +140,11 @@ public class UiBar {
 
 		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
 		textFont.setShadowColorRGBA(0.f, 0.f, 0.f, 1.f);
-		textFont.drawShadowedText(mLabel, x, y + h / 2 - textFont.fontHeight() / 2, componentZDepth, 1.f, 1.f, 1.f);
+		textFont.drawShadowedText(mLabel, x, y + h / 2 - textFont.fontHeight() / 2, componentZDepth - .01f, 1.f, 1.f, 1.f);
 
 		// Outer
 		spriteBatch.setColor(mUiBarOuterColor);
-		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth);
+		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, lFullBarPosX, y, lFullBarWidth, h, componentZDepth - .01f);
 
 		// Inner
 		mInnerBorderPadding = 2;
@@ -156,6 +156,6 @@ public class UiBar {
 		final var hh = !mIsInverted ? lHeight : -lHeight;
 
 		spriteBatch.setColor(mUiBarInnerColor);
-		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth);
+		spriteBatch.draw(lCoreTexture, CoreTextureNames.TEXTURE_WHITE, xx + mInnerBorderPadding, yy + mInnerBorderPadding, ww, hh, componentZDepth - .01f);
 	}
 }

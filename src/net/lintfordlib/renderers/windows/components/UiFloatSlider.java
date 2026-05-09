@@ -151,12 +151,12 @@ public class UiFloatSlider extends UIWidget {
 		spriteBatch.setColor(backgroundColor);
 
 		// background bar
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins, lowerYPosition - railHeight * .5f, mW - mHorizontalMargins * 2.f, railHeight, 0f);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins, lowerYPosition - railHeight * .5f, mW - mHorizontalMargins * 2.f, railHeight, componentZDepth - .01f);
 		final var lNubbinColor = mIsEnabled ? ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor, 1.f) : ColorConstants.getBlackWithAlpha(.4f);
 
 		// position bar
 		spriteBatch.setColor(lNubbinColor);
-		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins + mCurrentRelPosition - sliderWidth / 2, lowerYPosition - halfHeight * .5f, sliderWidth, halfHeight, 0f);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, mX + mHorizontalMargins + mCurrentRelPosition - sliderWidth / 2, lowerYPosition - halfHeight * .5f, sliderWidth, halfHeight, componentZDepth - .02f);
 		spriteBatch.end();
 
 		textFont.begin(core.HUD());

@@ -57,10 +57,19 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 	protected float mDesiredHeight;
 
 	protected float mTextScale;
+	protected int mStencilId = 1;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public int stencilId() {
+		return mStencilId;
+	}
+
+	public void stencilId(int newStencilId) {
+		mStencilId = newStencilId;
+	}
 
 	public float textScale() {
 		return mTextScale;
@@ -231,6 +240,10 @@ public abstract class UIWidget extends Rectangle implements IInputProcessor {
 
 	// TODO: The signature needs work - core and sharedResources are 'the same' - and either sharedResources or textFont and spriteBatch ...
 	public abstract void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth);
+
+	public void drawPost(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheet, FontUnit textFont, float componentZDepth) {
+		// ignore
+	}
 
 	// --------------------------------------
 	// Methods

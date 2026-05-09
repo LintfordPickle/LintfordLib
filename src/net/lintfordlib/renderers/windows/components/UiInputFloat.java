@@ -373,70 +373,70 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 	@Override
 	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 
-		var lTextColor = ColorConstants.TextEntryColor;
-		final float lTextHeight = textFont.fontHeight();
+		var textColor = ColorConstants.TextEntryColor;
+		final float textHeight = textFont.fontHeight();
 
 		var xx = mX;
 		var ww = mW;
 
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
-			textFont.setTextColor(lTextColor);
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
+			textFont.setTextColor(textColor);
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - textHeight * .5f * mTextScale, componentZDepth - 0.1f, mTextScale);
 			textFont.end();
 
 			xx = mX + mW * .5f;
 			ww = mW * .5f;
 		}
 
-		final var lColorMod = !mIsEnabled ? .4f : mIsHoveredOver ? .9f : 1.f;
-		final var lColor = ColorConstants.getColorWithRGBMod(ColorConstants.MenuPanelPrimaryColor, lColorMod);
+		final var colorMod = !mIsEnabled ? .4f : mIsHoveredOver ? .9f : 1.f;
+		final var color = ColorConstants.getColorWithRGBMod(ColorConstants.MenuPanelPrimaryColor, colorMod);
 
-		final var lSpriteBatch = sharedResources.uiSpriteBatch();
+		final var spriteBatch = sharedResources.uiSpriteBatch();
 
-		lSpriteBatch.begin(core.HUD());
-		lSpriteBatch.setColor(lColor);
-		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth);
+		spriteBatch.begin(core.HUD());
+		spriteBatch.setColor(color);
+		spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_LEFT, (int) xx, mY, 32, mH, componentZDepth);
 		if (mW > 32) {
-			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32.f, mY, ww - 64, mH, componentZDepth);
-			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32.f, mY, 32, mH, componentZDepth);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_MID, (int) xx + 32.f, mY, ww - 64, mH, componentZDepth);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_MENU_INPUT_FIELD_RIGHT, (int) xx + ww - 32.f, mY, 32, mH, componentZDepth);
 		}
 
 		if (mShowControlArrows) {
-			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth);
-			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth);
+			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth - .1f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth - .1f);
 		}
 
-		var lText = mInputField.toString();
-		if (lText.length() == 0 && !mHasFocus) {
+		var text = mInputField.toString();
+		if (text.length() == 0 && !mHasFocus) {
 			if (mEmptyString.isEmpty()) {
-				lText = "";
+				text = "";
 			} else {
-				lText = mEmptyString;
+				text = mEmptyString;
 			}
 		}
 
 		if (isReadonly())
-			lTextColor = ColorConstants.GREY_DARK();
+			textColor = ColorConstants.GREY_DARK();
 
 		final var lTextWidth = textFont.getStringWidth(mInputField.toString(), mTextScale);
 		final var lTextPosX = xx + ww / 2.f - lTextWidth * .5f;
 
 		if (mShowCaret && mHasFocus) {
-			final var lCarotPositionX = lTextPosX + lTextWidth;
-			lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) lCarotPositionX, mY + mH * .5f - lTextHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth);
+			final var carotPositionX = lTextPosX + lTextWidth;
+			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WHITE, (int) carotPositionX, mY + mH * .5f - textHeight * .5f * mTextScale, 1.f, textFont.fontHeight() * mTextScale, componentZDepth - .1f);
 		}
 
-		lSpriteBatch.end();
+		spriteBatch.end();
 
-		final int lCancelRectSize = 16;
-		StencilHelper.preDraw(core, lSpriteBatch, mX + 8, mY, mW - lCancelRectSize, mH, -0, 1);
+		final int cancelRectSize = 16;
+		StencilHelper.preDraw(core, spriteBatch, mX + 8, mY, mW - cancelRectSize, mH, -0, mStencilId);
 
 		textFont.begin(core.HUD());
-		textFont.setTextColor(lTextColor);
-		textFont.drawText(lText, lTextPosX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
+		textFont.setTextColor(textColor);
+		textFont.drawText(text, lTextPosX, mY + mH * .5f - textHeight * .5f * mTextScale, componentZDepth - .1f, mTextScale);
 		textFont.end();
 
 		StencilHelper.postDraw(core);

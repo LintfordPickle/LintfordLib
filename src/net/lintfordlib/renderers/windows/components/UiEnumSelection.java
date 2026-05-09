@@ -258,14 +258,14 @@ public class UiEnumSelection extends UIWidget {
 			else
 				lSpriteBatch.setColorWhite();
 
-			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mLeftRectangle, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mLeftRectangle, componentZDepth - .01f);
 
 			if (mArrowRightHovered)
 				lSpriteBatch.setColorRGB(.7f, .7f, .7f);
 			else
 				lSpriteBatch.setColorWhite();
 
-			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mRightRectangle, componentZDepth - 0.01f);
+			lSpriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mRightRectangle, componentZDepth - .01f);
 		}
 
 		lSpriteBatch.end();
@@ -273,18 +273,18 @@ public class UiEnumSelection extends UIWidget {
 		if (mIndexTotalEnabled) {
 			final var lSelectionText = (!mItems.isEmpty() ? (mSelectedIndex + 1) + "/" + mItems.size() : "0");
 			final var lSelectionTextWidth = textFont.getStringWidth(lSelectionText);
-			textFont.drawText(lSelectionText, mX + mW - lSelectionTextWidth - ARROW_PADDING, mY + ARROW_PADDING, componentZDepth, lScale);
+			textFont.drawText(lSelectionText, mX + mW - lSelectionTextWidth - ARROW_PADDING - 16, mY + ARROW_PADDING, componentZDepth - .01f, lScale);
 		}
 
 		if (mSelectedIndex >= 0 && mSelectedIndex < mItems.size()) {
 			final var lItem = mItems.get(mSelectedIndex);
 			final var lItemDisplayName = lItem.displayName;
 			final var lTextItemWidth = textFont.getStringWidth(lItemDisplayName);
-			textFont.drawText(lItemDisplayName, mX + mW - mW / 4.f - lTextItemWidth / 2f, mY + mH / 2 - textFont.fontHeight() / 2, componentZDepth, lScale);
+			textFont.drawText(lItemDisplayName, mX + mW - mW / 4.f - lTextItemWidth / 2f, mY + mH / 2 - textFont.fontHeight() / 2, componentZDepth - .01f, lScale);
 		} else {
 			final var lNoItemSelectedText = "";
 			final var lNoTextWidth = textFont.getStringWidth(lNoItemSelectedText);
-			textFont.drawText(lNoItemSelectedText, mX + mW / 4f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth, lScale);
+			textFont.drawText(lNoItemSelectedText, mX + mW / 4f - lNoTextWidth / 2f, mY + mH - ARROW_SIZE - ARROW_PADDING, componentZDepth - .01f, lScale);
 		}
 		textFont.end();
 	}
