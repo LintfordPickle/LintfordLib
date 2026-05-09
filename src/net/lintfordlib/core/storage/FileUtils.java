@@ -84,7 +84,7 @@ public class FileUtils {
 		return mStringBuilder.toString();
 	}
 
-	public static String loadString(String resourceLocation) {
+	public static String loadString(String resourceLocation) throws FileNotFoundException {
 		if (resourceLocation == null || resourceLocation.length() == 0) {
 			return null;
 		}
@@ -110,7 +110,7 @@ public class FileUtils {
 			final var file = new File(resourceLocation);
 			if (!file.exists()) {
 				Debug.debugManager().logger().e(FileUtils.class.getSimpleName(), "Could not load string from file '" + resourceLocation + "'. The file does not exist!");
-				throw new RuntimeException("Unable to resolve a string resource file location!");
+				throw new FileNotFoundException("Unable to resolve a string resource file location!");
 			}
 
 			return loadStringFromFile(resourceLocation);
@@ -300,6 +300,10 @@ public class FileUtils {
 		return pathBase.relativize(pathAbsolute);
 	}
 
+	// --------------------------------------
+	
+	
+	
 	// --------------------------------------
 
 	

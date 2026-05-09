@@ -500,8 +500,13 @@ public class AudioManager {
 		var metaFileContentsString = (String) null;
 		var audioMetaObject = (AudioMetaData) null;
 
-		metaFileContentsString = FileUtils.loadString(metaFileLocation);
-		audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);
+		try {
+			metaFileContentsString = FileUtils.loadString(metaFileLocation);
+			audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Could not find audio file: " + metaFileLocation);
+		} catch (FileNotFoundException e) {
+			return;
+		}
 
 		if (audioMetaObject == null || audioMetaObject.AudioMetaDefinitions == null || audioMetaObject.AudioMetaDefinitions.length == 0) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the audio meta file");
@@ -559,14 +564,14 @@ public class AudioManager {
 			final var embeddedResourcePath = FileUtils.getResourceUrl(audioLocation);
 			inputStream = loadAudioDataFromResource(embeddedResourcePath);
 		} else {
-			
+
 			final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
 			final var cleanedResourceFileName = FileUtils.cleanFilename(audioLocation);
 
 			if (!audioLocation.startsWith(workspacePath)) {
 				audioLocation = Paths.get(workspacePath, cleanedResourceFileName).toString();
 			}
-			
+
 			inputStream = loadAudioDataFromFile(audioLocation);
 		}
 

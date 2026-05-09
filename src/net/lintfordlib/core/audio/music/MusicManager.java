@@ -1,5 +1,6 @@
 package net.lintfordlib.core.audio.music;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -208,8 +209,13 @@ public class MusicManager {
 		var metaFileContentsString = (String) null;
 		var audioMetaObject = (AudioMetaData) null;
 
-		metaFileContentsString = FileUtils.loadString(metaFileLocation);
-		audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);
+		try {
+			metaFileContentsString = FileUtils.loadString(metaFileLocation);
+			audioMetaObject = gson.fromJson(metaFileContentsString, AudioMetaData.class);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Could not find music_meta file at: " + metaFileLocation);
+			return;
+		}
 
 		if (audioMetaObject == null || audioMetaObject.AudioMetaDefinitions == null || audioMetaObject.AudioMetaDefinitions.length == 0) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "There was an error reading the music meta file");
