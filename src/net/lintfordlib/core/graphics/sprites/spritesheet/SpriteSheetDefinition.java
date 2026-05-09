@@ -73,6 +73,18 @@ public class SpriteSheetDefinition {
 	// Properties
 	// --------------------------------------
 
+	public String name() {
+		return mSpriteSheetName;
+	}
+
+	public String fileName() {
+		return mSpriteSheetFilename;
+	}
+
+	public void fileName(String setFileName) {
+		mSpriteSheetFilename = setFileName;
+	}
+
 	public Map<String, SpriteDefinition> animationFrameMap() {
 		return mAnimationFramesMap;
 	}
@@ -257,6 +269,9 @@ public class SpriteSheetDefinition {
 	}
 
 	public SpriteFrame getSpriteFrame(String spriteName) {
+		if (spriteName == null)
+			return null;
+
 		final var lSpriteIndex = getSpriteFrameIndexByName(spriteName);
 		if (lSpriteIndex < 0 || lSpriteIndex >= mSpriteFrames.length)
 			return null;
