@@ -69,6 +69,10 @@ public class ScrollBarContentRectangle extends Rectangle {
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilRefValue, boolean scrollBarEnabled, int mask) {
+		preDraw(core, spriteBatch, rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height(), stencilRefValue, scrollBarEnabled, 0xFFFFFFFF);
+	}
+
+	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, float x, float y, float w, float h, int stencilRefValue, boolean scrollBarEnabled, int mask) {
 		if (mPreDrawing)
 			return;
 
@@ -76,20 +80,26 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
-		// GL_GEQUAL: Passes if ( ref & mask ) >= ( stencil & mask ).
+		// Always pass during the "stamping" phase
 		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilRefValue, mask);
-		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE); // What should happen to stencil values
+
+		// Replace the buffer value with our stencilRefValue
+		GL11.glStencilOp(GL11.GL_REPLACE, GL11.GL_REPLACE, GL11.GL_REPLACE);
+		GL11.glColorMask(false, false, false, false);
 
 		spriteBatch.begin(core.HUD());
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
 		final var lScrolbarWidth = scrollBarEnabled ? ScrollBar.BAR_WIDTH : 0.f;
-		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rectangle.x() + mDepthPadding, rectangle.y() + mDepthPadding, rectangle.width() - mDepthPadding * 2 - lScrolbarWidth, rectangle.height() - mDepthPadding * 2, 10.f);
+		spriteBatch.draw((Texture) null, 0, 0, 1, 1, x + mDepthPadding, y + mDepthPadding, w - mDepthPadding * 2 - lScrolbarWidth, h - mDepthPadding * 2, 10.f);
 		spriteBatch.end();
+
+		GL11.glColorMask(true, true, true, true);
 
 		// (ref & mask) <func> (stencil_value & mask)
 		// <stencilRefValue> EQUAL <buffervalue>
 
 		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, mask);
+		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 	}
 
 	public void restoreRef(int stencilRefValue) {

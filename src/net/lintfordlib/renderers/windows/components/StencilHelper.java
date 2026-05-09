@@ -39,8 +39,9 @@ public class StencilHelper {
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 
 		// GL_GEQUAL: Passes if ( ref & mask ) >= ( stencil & mask ).
-		GL11.glStencilFunc(GL11.GL_GEQUAL, stencilRefValue, mask);
-		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilRefValue, mask);
+		GL11.glStencilOp(GL11.GL_REPLACE, GL11.GL_REPLACE, GL11.GL_REPLACE);
+		GL11.glColorMask(false, false, false, false);
 
 		// Clear the stencil buffer
 
@@ -50,8 +51,11 @@ public class StencilHelper {
 		spriteBatch.draw((Texture) null, 0, 0, 1, 1, rx + padding, ry + padding, rw - padding * 2, rh - padding * 2, Camera.Z_FAR);
 		spriteBatch.end();
 
+		GL11.glColorMask(true, true, true, true);
+
 		// GL_EQUAL: Passes if ( ref & mask ) = ( stencil & mask ).
 		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, mask); // Pass test if stencil value our ref
+		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
 	}
 
