@@ -1,5 +1,6 @@
 package net.lintfordlib.core.graphics.textures;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -457,9 +458,15 @@ public class TextureManager extends EntityGroupManager {
 		var metaFileContentsString = (String) null;
 		var textureMetaData = (TextureMetaData) null;
 
-		metaFileContentsString = FileUtils.loadString(metaFileLocation);
+		try {
+			metaFileContentsString = FileUtils.loadString(metaFileLocation);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Couldn't find file at: " + metaFileLocation);
+			return;
+		}
 
 		try {
+
 			textureMetaData = gson.fromJson(metaFileContentsString, TextureMetaData.class);
 
 			if (textureMetaData == null || textureMetaData.textureDefinitions == null || textureMetaData.textureDefinitions.length == 0) {
