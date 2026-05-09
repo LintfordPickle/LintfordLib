@@ -9,6 +9,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.GLFW_AUTO_ICONIFY;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
@@ -409,6 +410,7 @@ public class DisplayManager extends IniFile {
 		// Remove all functionality marked as deprecated from the OpenGl context
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+		glfwWindowHint(GLFW_AUTO_ICONIFY, GL_FALSE);
 		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 		glfwWindowHint(GLFW_RESIZABLE, mDisplaySettings.resizeable() ? GL_TRUE : GL_FALSE);
 
@@ -512,6 +514,32 @@ public class DisplayManager extends IniFile {
 		GLDebug.checkGLErrorsException();
 
 		return mMasterWindowId;
+	}
+
+	/**
+	 * Programmatically resizes the window to the specified width and height.
+	 * This will trigger the GLFW window size callback and update internal listeners.
+	 */
+	public void resizeWindow(int width, int height) {
+		if (mMasterWindowId == NULL) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Cannot resize window: Window ID is null.");
+			return;
+		}
+
+		// 1. Tell GLFW to change the window size
+		GLFW.glfwSetWindowSize(mMasterWindowId, width, height);
+
+		// 2. Center the window on the desktop (Optional, but often desired when resizing)
+		glfwSetWindowPos(mMasterWindowId, (mDesktopWidth - width) / 2, (mDesktopHeight - height) / 2);
+
+		// 3. Manually call changeResolution to ensure internal settings and 
+		//    glViewport are updated immediately without waiting for the GLFW callback.
+		changeResolution(width, height);
+
+		// 4. Save the new dimensions to your config file
+		saveConfig();
+
+		Debug.debugManager().logger().i(getClass().getSimpleName(), "Window programmatically resized to: " + width + "x" + height);
 	}
 
 	public long createSharedContext() {
