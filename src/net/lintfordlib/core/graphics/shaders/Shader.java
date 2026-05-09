@@ -21,6 +21,8 @@ import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
 
+import java.io.FileNotFoundException;
+
 import net.lintfordlib.assets.ResourceManager;
 import net.lintfordlib.core.debug.Debug;
 import net.lintfordlib.core.storage.FileUtils;
@@ -71,15 +73,29 @@ public abstract class Shader {
 	// --------------------------------------
 
 	public void loadResources(ResourceManager resourceManager) {
-		final var lVertexSource = FileUtils.loadString(mVertPathname);
-		final var lFragmentSource = FileUtils.loadString(mFragPathname);
+		String vertexSource = null;
+		String fragmentSource = null;
 
-		if (lVertexSource == null || lFragmentSource == null) {
+		try {
+			vertexSource = FileUtils.loadString(mVertPathname);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Could not find vertex shader file at: " + mVertPathname);
+			return;
+		}
+
+		try {
+			fragmentSource = FileUtils.loadString(mFragPathname);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Could not find fragment shader file at: " + mFragPathname);
+			return;
+		}
+
+		if (vertexSource == null || fragmentSource == null) {
 			Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to load shader - no vert/frag filename specified.");
 			return;
 		}
 
-		mShaderID = create(lVertexSource, lFragmentSource);
+		mShaderID = create(vertexSource, fragmentSource);
 		glUseProgram(mShaderID);
 
 		getUniformLocations();
@@ -108,8 +124,22 @@ public abstract class Shader {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  " + mVertPathname);
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "  " + mFragPathname);
 
-		final var vertexSource = FileUtils.loadString(mVertPathname);
-		final var fragmentSource = FileUtils.loadString(mFragPathname);
+		String vertexSource = null;
+		String fragmentSource = null;
+
+		try {
+			vertexSource = FileUtils.loadString(mVertPathname);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Could not find vertex shader file at: " + mVertPathname);
+			return;
+		}
+
+		try {
+			fragmentSource = FileUtils.loadString(mFragPathname);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().e(getClass().getSimpleName(), "Could not find fragment shader file at: " + mFragPathname);
+			return;
+		}
 
 		mShaderID = create(vertexSource, fragmentSource);
 
