@@ -27,7 +27,7 @@ public class LineBatch {
 
 	public static final int MAX_LINES = 5000;
 
-	public static final int NUM_VERTS_PER_LINE = 2;
+	public static final int NUM_VERTS_PER_LINE = 6;
 
 	private static final String VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.vert";
 	private static final String FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_basic_pc.frag";
@@ -84,19 +84,8 @@ public class LineBatch {
 	}
 
 	public void lineWidth(float newWidth) {
-		if (mAntiAliasing) {
-			if (newWidth < compatibility.aliasedLineWidthMin())
-				newWidth = compatibility.aliasedLineWidthMin();
-
-			if (newWidth > compatibility.aliasedLineWidthMax())
-				newWidth = compatibility.aliasedLineWidthMax();
-		} else {
-			if (newWidth < compatibility.smoothLineWidthMin())
-				newWidth = compatibility.smoothLineWidthMin();
-
-			if (newWidth > compatibility.smoothLineWidthMax())
-				newWidth = compatibility.smoothLineWidthMax();
-		}
+		if (newWidth <= 0)
+			newWidth = .1f;
 
 		mGLLineWidth = newWidth;
 	}
@@ -137,7 +126,7 @@ public class LineBatch {
 
 		mA = mR = mG = mB = 1f;
 
-		mGLLineType = GL11.GL_LINES;
+		mGLLineType = GL11.GL_TRIANGLES; // Default to triangles instead of GL_LINES
 		mGLLineWidth = 1.f;
 		mModelMatrix = new Matrix4f();
 		mResourcesLoaded = false;
@@ -368,22 +357,61 @@ public class LineBatch {
 	}
 
 	public void draw(float point0X, float point0Y, float point1X, float point1Y, float zDepth, float red, float green, float blue, float alpha) {
-
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount * 2 >= MAX_LINES)
+		if (mGLLineWidth < 1)
+			mGLLineWidth = 1.f;
+
+		// Check if we have room for 6 more vertices
+		if (mVertexCount + 6 > MAX_LINES * NUM_VERTS_PER_LINE)
 			flush();
 
-		draw(point0X, point0Y, zDepth, red, green, blue, alpha);
-		draw(point1X, point1Y, zDepth, red, green, blue, alpha);
+		// 1. Calculate the direction vector of the line
+		float dx = point1X - point0X;
+		float dy = point1Y - point0Y;
+		float length = (float) Math.sqrt(dx * dx + dy * dy);
+
+		// Prevent division by zero if points are identical
+		if (length == 0.0f)
+			return;
+
+		// 2. Calculate the normalized perpendicular vector (normal)
+		float nx = -dy / length;
+		float ny = dx / length;
+
+		// 3. Scale the normal by half the desired line width
+		float halfWidth = mGLLineWidth / 2.0f;
+		float offsetX = nx * halfWidth;
+		float offsetY = ny * halfWidth;
+
+		// 4. Calculate the 4 corners of the quad
+		float v0x = point0X + offsetX;
+		float v0y = point0Y + offsetY;
+		float v1x = point0X - offsetX;
+		float v1y = point0Y - offsetY;
+		float v2x = point1X + offsetX;
+		float v2y = point1Y + offsetY;
+		float v3x = point1X - offsetX;
+		float v3y = point1Y - offsetY;
+
+		// 5. Push the 6 vertices to form 2 triangles
+		// Triangle 1 (v0, v1, v2)
+		addVertToBuffer(v0x, v0y, zDepth, 1f, red, green, blue, alpha);
+		addVertToBuffer(v1x, v1y, zDepth, 1f, red, green, blue, alpha);
+		addVertToBuffer(v2x, v2y, zDepth, 1f, red, green, blue, alpha);
+
+		// Triangle 2 (v2, v1, v3)
+		addVertToBuffer(v2x, v2y, zDepth, 1f, red, green, blue, alpha);
+		addVertToBuffer(v1x, v1y, zDepth, 1f, red, green, blue, alpha);
+		addVertToBuffer(v3x, v3y, zDepth, 1f, red, green, blue, alpha);
 	}
 
 	public void draw(float point0X, float point0Y, float zDepth, float red, float green, float blue, float alpha) {
 		if (!mIsDrawing)
 			return;
 
-		if (mVertexCount * 2 >= MAX_LINES)
+		if (mVertexCount + 1 > MAX_LINES * NUM_VERTS_PER_LINE)
 			flush();
 
 		addVertToBuffer(point0X, point0Y, zDepth, 1f, red, green, blue, alpha);
@@ -449,7 +477,6 @@ public class LineBatch {
 			GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		}
 
-		GL11.glLineWidth(mGLLineWidth);
 		GL11.glDrawArrays(mGLLineType, 0, mVertexCount);
 
 		GL30.glBindVertexArray(0);
