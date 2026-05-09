@@ -722,6 +722,8 @@ public abstract class LintfordCore {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Closing down");
 
 		onUnloadResources();
+
+		onAppClosing();
 	}
 
 	/**
@@ -764,6 +766,11 @@ public abstract class LintfordCore {
 	/** When called, sends the glfwWindowShouldClose message to GLFW. */
 	public void closeApp() {
 		glfwSetWindowShouldClose(mMasterConfig.display().windowID(), true);
+	}
+
+	/** Called at the end of the game loop (after the loop has ended). */
+	public void onAppClosing() {
+
 	}
 
 	// ---------------------------------------------

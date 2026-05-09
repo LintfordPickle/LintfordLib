@@ -45,6 +45,23 @@ public class AppStorage {
 		return lConfigFolder;
 	}
 
+	public static String getGameDirectory(String applicationName) {
+		String lDataFolder = null;
+
+		if (useLocalDirectory) {
+			lDataFolder = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME) + FileUtils.FILE_SEPERATOR;
+		} else {
+			final var lOSName = System.getProperty("os.name").toLowerCase();
+			if (lOSName.startsWith("win")) {
+				lDataFolder = System.getenv("AppData") + FileUtils.FILE_SEPERATOR + applicationName + FileUtils.FILE_SEPERATOR;
+			} else if (lOSName.startsWith("linux") || lOSName.startsWith("mac") || lOSName.startsWith("darwin")) {
+				lDataFolder = System.getProperty("user.home") + FileUtils.FILE_SEPERATOR + "." + applicationName + FileUtils.FILE_SEPERATOR;
+			}
+		}
+
+		return lDataFolder;
+	}
+
 	/**
 	 * Returns a platform dependant folder which can be used for saving application data. The data folder will be created as Roaming\pApplicationName
 	 */
