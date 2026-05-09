@@ -1,6 +1,7 @@
 package net.lintfordlib.core.graphics.sprites.spritesheet;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -128,6 +129,10 @@ public class SpriteSheetManager {
 	}
 
 	public SpriteSheetDefinition loadSpriteSheet(String spriteSheetLocation, int entityGroupUid) {
+		return loadSpriteSheet(spriteSheetLocation, entityGroupUid, true);
+	}
+
+	public SpriteSheetDefinition loadSpriteSheet(String spriteSheetLocation, int entityGroupUid, boolean reload) {
 		if (spriteSheetLocation == null || spriteSheetLocation.length() == 0) {
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "Error loading spritesheet. Pathname is null! ");
 			return null;
@@ -146,12 +151,12 @@ public class SpriteSheetManager {
 				spriteSheetLocation = Paths.get(workspacePath, cleanedResourceFileName).toString();
 			}
 
-			return loadSpriteSheetFromFile(spriteSheetLocation, entityGroupUid);
+			return loadSpriteSheetFromFile(spriteSheetLocation, entityGroupUid, reload);
 		}
 	}
 
 	/** Loads SpriteSheetDefinition from an absolute filePath. */
-	private SpriteSheetDefinition loadSpriteSheetFromFile(String filePath, int entityGroupUid) {
+	private SpriteSheetDefinition loadSpriteSheetFromFile(String filePath, int entityGroupUid, boolean reload) {
 		if (filePath == null || filePath.length() == 0)
 			return null;
 
@@ -173,8 +178,24 @@ public class SpriteSheetManager {
 				return null;
 			}
 
-			if (spriteSheetDefinition.getSpriteCount() == 0)
+			// TODO: Make these paths relative again ffs!
+			final var workspacePath = System.getProperty(ConstantsApp.WORKSPACE_PROPERTY_NAME);
+
+			if (filePath.startsWith(workspacePath)) {
+				var relativeFilePath = filePath.substring(workspacePath.length(), filePath.length()); // = Paths.get(workspacePath, cleanedResourceFileName).toString();
+				spriteSheetDefinition.fileName(relativeFilePath);
+			} else {
+				spriteSheetDefinition.fileName(filePath);
+			}
+
+			if (spriteSheetDefinition.getSpriteCount() == 0) {
 				Debug.debugManager().logger().w(getClass().getSimpleName(), spriteSheetDefinition.mSpriteSheetName + " has no SpriteMap Sprites defined (SpriteMap is empty!) " + file.getPath());
+
+				if (spriteSheetDefinition.mTextureName == null) {
+					Debug.debugManager().logger().w(getClass().getSimpleName(), filePath + " doesn't appear to be a spritesheet definition. It will be skipped!");
+					return null;
+				}
+			}
 
 			Debug.debugManager().logger().v(getClass().getSimpleName(), "SpriteSheet " + file.getPath() + " loaded (" + spriteSheetDefinition.mSpriteSheetName + ")");
 
@@ -232,6 +253,8 @@ public class SpriteSheetManager {
 				return null;
 			}
 
+			spriteSheet.fileName(filePath);
+
 			var spriteSheetGroup = mSpriteSheetGroups.get(entityGroupUid);
 			if (spriteSheetGroup == null) {
 				spriteSheetGroup = new HashMap<>();
@@ -278,7 +301,13 @@ public class SpriteSheetManager {
 		var metaFileContentsString = (String) null;
 		var spriteSheetMetaObject = (SpriteSheetMetaData) null;
 
-		metaFileContentsString = FileUtils.loadString(metaFileLocation);
+		try {
+			metaFileContentsString = FileUtils.loadString(metaFileLocation);
+		} catch (FileNotFoundException e) {
+			Debug.debugManager().logger().w(getClass().getSimpleName(), "Couldn't find meta file at:" + metaFileLocation);
+			return;
+		}
+
 		spriteSheetMetaObject = gson.fromJson(metaFileContentsString, SpriteSheetMetaData.class);
 
 		if (spriteSheetMetaObject == null || spriteSheetMetaObject.spriteSheetLocations == null || spriteSheetMetaObject.spriteSheetLocations.length == 0) {
