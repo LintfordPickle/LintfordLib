@@ -460,7 +460,9 @@ public class UiDropDownBox2<T> extends UIWidget implements IInputClickedFocusMan
 		// 5. Draw Scrollbar (on top of the window but outside the stencil if preferred)
 		if (mScrollBar.scrollBarEnabled()) {
 			mScrollBar.scrollBarAlpha(1.f);
-			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth - 1);
+			spriteBatch.begin(core.HUD());
+			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth - 0.25f);
+			spriteBatch.end();
 		}
 
 	}

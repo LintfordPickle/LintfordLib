@@ -308,7 +308,7 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 			return;
 
 		// Render the actual scroll bar
-		final float by = ARROW_SIZE + mScrollBarArea.contentDisplayArea().y() - (mScrollPosition / mMarkerMoveMod);
+		final float by = positionOffset.y + ARROW_SIZE + mScrollBarArea.contentDisplayArea().y() - (mScrollPosition / mMarkerMoveMod);
 
 		final var lBackgroundColor = ColorConstants.getColorWithRGBMod(ColorConstants.TertiaryColor.r * .8f, ColorConstants.TertiaryColor.g * .8f, ColorConstants.TertiaryColor.b * .8f, .6f, .6f);
 		spriteBatch.setColor(lBackgroundColor);
@@ -316,26 +316,26 @@ public class ScrollBar extends Rectangle implements IInputProcessor, IInputClick
 
 		// Draw the background bar
 		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, mScrollBarAlpha);
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, positionOffset.x + mX + (ARROW_SIZE * .5f) - 1, positionOffset.y + mY + 16, 2, mH - 32, zDepth);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, positionOffset.x + mX + (ARROW_SIZE * .5f) - 1, positionOffset.y + mY + ARROW_SIZE, 2, mH - ARROW_SIZE * 2, zDepth - 0.005f);
 
 		// Draw the moving bar
-		final float lColorMod = mClickActive ? 0.35f : 0.55f;
-		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor.r * .8f, ColorConstants.PrimaryColor.g * .8f, ColorConstants.PrimaryColor.g * .8f, mScrollBarAlpha, lColorMod);
+		final float lColorMod = mClickActive ? 0.75f : 1.0f;
+		final var lBarColor = ColorConstants.getColorWithRGBMod(ColorConstants.PrimaryColor.r, ColorConstants.PrimaryColor.g, ColorConstants.PrimaryColor.b, mScrollBarAlpha, lColorMod);
 		spriteBatch.setColor(lBarColor);
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, positionOffset.x + mX, by, 8, mMarkerBarHeight, zDepth);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, positionOffset.x + mX, by, 8, mMarkerBarHeight, zDepth - 0.01f);
 
 		if (mTopArrayHover)
 			spriteBatch.setColor(ColorConstants.SecondaryColor);
 		else
 			spriteBatch.setColorWhite();
 
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_UP, positionOffset.x + mX, positionOffset.y + mY + 3, ARROW_SIZE, ARROW_SIZE, zDepth);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_UP, positionOffset.x + mX, positionOffset.y + mY + 3, ARROW_SIZE, ARROW_SIZE, zDepth - 0.015f);
 
 		if (mBottomArrayHover)
 			spriteBatch.setColor(ColorConstants.SecondaryColor);
 		else
 			spriteBatch.setColorWhite();
-		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_DOWN, positionOffset.x + mX, positionOffset.y + mY + mH - ARROW_SIZE - 3, ARROW_SIZE, ARROW_SIZE, zDepth - 0.01f);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_SCROLLBAR_DOWN, positionOffset.x + mX, positionOffset.y + mY + mH - ARROW_SIZE - 3, ARROW_SIZE, ARROW_SIZE, zDepth - 0.015f);
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
 			spriteBatch.setColor(ColorConstants.Debug_Transparent_Magenta);
