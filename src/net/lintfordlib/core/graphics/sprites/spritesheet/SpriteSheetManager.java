@@ -63,8 +63,15 @@ public class SpriteSheetManager {
 	/** Returns the {@link SpriteSheetDefinition} to which the specified key string is mapped, or null if no such {@link SpriteSheetDefinition} exists. */
 	public SpriteSheetDefinition getSpriteSheet(String spriteSheetDefinitionName, int entityGroupUid) {
 		final var spriteSheetGroup = mSpriteSheetGroups.get(entityGroupUid);
-		if (spriteSheetGroup != null) {
+		if (spriteSheetGroup != null && spriteSheetGroup.containsKey(spriteSheetDefinitionName)) {
 			return spriteSheetGroup.get(spriteSheetDefinitionName);
+		}
+
+		if (entityGroupUid != LintfordCore.CORE_ENTITY_GROUP_ID) {
+			final var coreGroup = mSpriteSheetGroups.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+			if (coreGroup != null) {
+				return coreGroup.get(spriteSheetDefinitionName);
+			}
 		}
 
 		return null;

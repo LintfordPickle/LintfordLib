@@ -186,15 +186,16 @@ public class TextureManager extends EntityGroupManager {
 	public Texture getTexture(String textureName, int entityGroupUid) {
 		TextureGroup textureGroup = mTextureGroupMap.get(entityGroupUid);
 
-		if (textureGroup == null) {
-			Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", textureName, entityGroupUid));
-			return mTextureNotFound;
-		}
-
-		if (textureGroup.mTextureMap.containsKey(textureName))
+		if (textureGroup != null && textureGroup.mTextureMap.containsKey(textureName))
 			return textureGroup.mTextureMap.get(textureName);
 
-		Debug.debugManager().logger().w(getClass().getSimpleName(), String.format("Couldn't getTexture %s: TextureGroup %d doesn't exit", textureName, entityGroupUid));
+		if (entityGroupUid != LintfordCore.CORE_ENTITY_GROUP_ID) {
+			final var coreGroup = mTextureGroupMap.get(LintfordCore.CORE_ENTITY_GROUP_ID);
+			if (coreGroup != null && coreGroup.mTextureMap.containsKey(textureName)) {
+				return coreGroup.mTextureMap.get(textureName);
+			}
+		}
+
 		return mTextureNotFound;
 	}
 
