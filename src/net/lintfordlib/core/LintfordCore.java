@@ -46,6 +46,7 @@ import net.lintfordlib.data.DataManager;
 import net.lintfordlib.options.DisplayManager;
 import net.lintfordlib.options.MasterConfig;
 import net.lintfordlib.options.ResourcePathsConfig;
+import net.lintfordlib.renderers.windows.components.StencilHelper;
 import net.lintfordlib.screenmanager.ScreenManager;
 
 /**
@@ -479,7 +480,8 @@ public abstract class LintfordCore {
 	protected void showStartUpLogo(long windowHandle) {
 		// by default just clear the window background to black and swap out the
 		// back-buffer
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+		StencilHelper.reset();
 
 		glfwSwapBuffers(windowHandle);
 	}
@@ -760,7 +762,8 @@ public abstract class LintfordCore {
 		if (mIsHeadlessMode)
 			return;
 
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+		StencilHelper.reset();
 	}
 
 	/** When called, sends the glfwWindowShouldClose message to GLFW. */

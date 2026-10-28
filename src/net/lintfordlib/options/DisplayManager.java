@@ -413,6 +413,7 @@ public class DisplayManager extends IniFile {
 		glfwWindowHint(GLFW_AUTO_ICONIFY, GL_FALSE);
 		glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 		glfwWindowHint(GLFW_RESIZABLE, mDisplaySettings.resizeable() ? GL_TRUE : GL_FALSE);
+		glfwWindowHint(GLFW.GLFW_STENCIL_BITS, 8);
 
 		if (validateSavedMonitor(gameInfo, mDisplaySettings.monitorIndex()) == false) {
 			mDisplaySettings.monitorIndex(GLFW.glfwGetPrimaryMonitor());

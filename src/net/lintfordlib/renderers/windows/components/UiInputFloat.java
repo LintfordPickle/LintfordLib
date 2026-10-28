@@ -382,7 +382,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
 			textFont.setTextColor(textColor);
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - textHeight * .5f * mTextScale, componentZDepth - 0.1f, mTextScale);
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - textHeight * .5f * mTextScale, componentZDepth - .01f, mTextScale);
 			textFont.end();
 
 			xx = mX + mW * .5f;
@@ -404,8 +404,8 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		if (mShowControlArrows) {
 			spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth - .1f);
-			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth - .1f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_LEFT_ARROW, mDecrementRectangle, componentZDepth - .01f);
+			spriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_WIDGET_RIGHT_ARROW, mIncrementRectangle, componentZDepth - .01f);
 		}
 
 		var text = mInputField.toString();
@@ -436,7 +436,7 @@ public class UiInputFloat extends UIWidget implements IBufferedTextInputCallback
 
 		textFont.begin(core.HUD());
 		textFont.setTextColor(textColor);
-		textFont.drawText(text, lTextPosX, mY + mH * .5f - textHeight * .5f * mTextScale, componentZDepth - .1f, mTextScale);
+		textFont.drawText(text, lTextPosX, mY + mH * .5f - textHeight * .5f * mTextScale, componentZDepth - .01f, mTextScale);
 		textFont.end();
 
 		StencilHelper.postDraw(core);

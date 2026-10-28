@@ -302,6 +302,7 @@ public class UiVerticalTextListBox<T extends UiListBoxItem> extends UIWidget imp
 	@Override
 	public void draw(LintfordCore core, SharedResources sharedResources, SpriteSheetDefinition coreSpritesheetDefinition, FontUnit textFont, float componentZDepth) {
 
+		final boolean depthTestWasEnabled = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		final var lSpriteBatch = sharedResources.uiSpriteBatch();
@@ -320,7 +321,7 @@ public class UiVerticalTextListBox<T extends UiListBoxItem> extends UIWidget imp
 			lSpriteBatch.end();
 		}
 
-		mWindowRectangle.preDraw(core, lSpriteBatch, mWindowRectangle, 2);
+		mWindowRectangle.preDraw(core, lSpriteBatch, mWindowRectangle, 0, mScrollbar.scrollBarEnabled());
 
 		lSpriteBatch.begin(core.HUD());
 		textFont.begin(core.HUD());
@@ -334,7 +335,7 @@ public class UiVerticalTextListBox<T extends UiListBoxItem> extends UIWidget imp
 		lSpriteBatch.end();
 		textFont.end();
 
-		mWindowRectangle.postDraw(core);
+		mWindowRectangle.postDraw(core, lSpriteBatch);
 
 		if (mScrollbar.scrollBarEnabled()) {
 			mScrollbar.scrollBarAlpha(.8f);
@@ -346,9 +347,13 @@ public class UiVerticalTextListBox<T extends UiListBoxItem> extends UIWidget imp
 		if (mShowReorderButtons) {
 			mUpButton.draw(core, sharedResources, coreSpritesheetDefinition, textFont, componentZDepth);
 			mDownButton.draw(core, sharedResources, coreSpritesheetDefinition, textFont, componentZDepth);
-
 		}
 
+		if (depthTestWasEnabled) {
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+		} else {
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+		}
 	}
 
 	// --------------------------------------

@@ -110,7 +110,7 @@ public class LintfordMain extends LintfordCore {
 		final var lTexture = mResourceManager.textureManager().loadTexture("LOGO", FileUtils.RESOURCE_LOCATION_PREFIX + "/res/textures/core/textureLogo.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		glClearColor(0f, 0f, 0f, 1f);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
 		mShowLogoTimer = System.currentTimeMillis();
 

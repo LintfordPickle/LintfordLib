@@ -229,7 +229,7 @@ public abstract class ResourceLoader extends Thread {
 
 	protected void onDraw(LintfordCore core) {
 		glClearColor(0f, 0f, 0f, 1f);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 
 		drawMessages(core);
 	}

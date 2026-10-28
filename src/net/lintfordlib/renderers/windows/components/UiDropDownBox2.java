@@ -249,15 +249,18 @@ public class UiDropDownBox2<T> extends UIWidget implements IInputClickedFocusMan
 				final var lLabelOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
 
 				final var lMouseY = core.HUD().getMouseCameraSpace().y;
-				final var lRelativeHeight = lMouseY - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY - lLabelOffsetY;
+				final var lRelativeHeight = lMouseY - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY;
 
 				// Only select if we are below the search bar area
 				if (lRelativeHeight > 0) {
-					int lIndex = MathHelper.clampi((int) (lRelativeHeight / ITEM_HEIGHT), 0, mFilteredItems.size()) + 1;
+					int lIndex = MathHelper.clampi((int) (lRelativeHeight / ITEM_HEIGHT), 0, mFilteredItems.size());
 					mHighlightedIndex = lIndex;
 
 					if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 						// Find the actual item in the master list to set the index correctly
+						
+						// FIXME: Out of Range exception gets thrown here !
+						
 						var selectedFilteredItem = mFilteredItems.get(lIndex);
 						setSelectedEntry(selectedFilteredItem.name);
 

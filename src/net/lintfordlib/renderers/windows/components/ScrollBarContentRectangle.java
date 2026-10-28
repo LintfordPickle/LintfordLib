@@ -1,11 +1,8 @@
 package net.lintfordlib.renderers.windows.components;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintfordlib.core.LintfordCore;
 import net.lintfordlib.core.geometry.Rectangle;
 import net.lintfordlib.core.graphics.batching.SpriteBatch;
-import net.lintfordlib.core.graphics.textures.Texture;
 import net.lintfordlib.renderers.windows.components.interfaces.IScrollBarArea;
 
 public class ScrollBarContentRectangle extends Rectangle {
@@ -48,12 +45,11 @@ public class ScrollBarContentRectangle extends Rectangle {
 	// --------------------------------------
 
 	public void stencilClear() {
-		stencilClear(0x00);
+		StencilHelper.clear();
 	}
 
 	public void stencilClear(int value) {
-		GL11.glClearStencil(value);
-		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT); // Clear the stencil buffer
+		StencilHelper.clear();
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch) {
@@ -69,7 +65,7 @@ public class ScrollBarContentRectangle extends Rectangle {
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, Rectangle rectangle, int stencilRefValue, boolean scrollBarEnabled, int mask) {
-		preDraw(core, spriteBatch, rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height(), stencilRefValue, scrollBarEnabled, 0xFFFFFFFF);
+		preDraw(core, spriteBatch, rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height(), stencilRefValue, scrollBarEnabled, mask);
 	}
 
 	public void preDraw(LintfordCore core, SpriteBatch spriteBatch, float x, float y, float w, float h, int stencilRefValue, boolean scrollBarEnabled, int mask) {
@@ -78,40 +74,28 @@ public class ScrollBarContentRectangle extends Rectangle {
 
 		mPreDrawing = true;
 
-		GL11.glEnable(GL11.GL_STENCIL_TEST);
-
-		// Always pass during the "stamping" phase
-		GL11.glStencilFunc(GL11.GL_ALWAYS, stencilRefValue, mask);
-
-		// Replace the buffer value with our stencilRefValue
-		GL11.glStencilOp(GL11.GL_REPLACE, GL11.GL_REPLACE, GL11.GL_REPLACE);
-		GL11.glColorMask(false, false, false, false);
-
-		spriteBatch.begin(core.HUD());
-		spriteBatch.setColorRGBA(1.f, 1.f, 1.f, 0.f);
 		final var lScrolbarWidth = scrollBarEnabled ? ScrollBar.BAR_WIDTH : 0.f;
-		spriteBatch.draw((Texture) null, 0, 0, 1, 1, x + mDepthPadding, y + mDepthPadding, w - mDepthPadding * 2 - lScrolbarWidth, h - mDepthPadding * 2, 10.f);
-		spriteBatch.end();
+		final var actualX = x + mDepthPadding;
+		final var actualY = y + mDepthPadding;
+		final var actualW = Math.max(0.f, w - mDepthPadding * 2.f - lScrolbarWidth);
+		final var actualH = Math.max(0.f, h - mDepthPadding * 2.f);
 
-		GL11.glColorMask(true, true, true, true);
-
-		// (ref & mask) <func> (stencil_value & mask)
-		// <stencilRefValue> EQUAL <buffervalue>
-
-		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, mask);
-		GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+		StencilHelper.preDraw(core, spriteBatch, actualX, actualY, actualW, actualH);
 	}
 
 	public void restoreRef(int stencilRefValue) {
-		GL11.glEnable(GL11.GL_STENCIL_TEST);
-		GL11.glStencilFunc(GL11.GL_EQUAL, stencilRefValue, 0xFF);
+		// Handled automatically by StencilHelper's hierarchical stack
 	}
 
 	public void postDraw(LintfordCore core) {
+		postDraw(core, null);
+	}
+
+	public void postDraw(LintfordCore core, SpriteBatch spriteBatch) {
 		if (!mPreDrawing)
 			return;
 
 		mPreDrawing = false;
-		GL11.glDisable(GL11.GL_STENCIL_TEST);
+		StencilHelper.postDraw(core, spriteBatch);
 	}
 }

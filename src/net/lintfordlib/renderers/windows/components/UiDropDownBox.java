@@ -80,7 +80,6 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 	/** If set, an empty item will be automatically added at the top of the dropdown box (even after clearing) to be used to deselect the current item. */
 	public void useEmptyItemPlaceholder(boolean newValue) {
-
 		if (newValue && !mUseEmptyItemPlaceholder) {
 			mItems.add(0, new UiDropDownBoxItem(NO_SELECTION_TEXT, null));
 		} else if (!newValue && mUseEmptyItemPlaceholder) {
@@ -102,6 +101,17 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 	public void label(String newLabel) {
 		mLabel = newLabel;
+		mIsDoubleHeight = mLabel != null && !mLabel.isEmpty();
+		desiredHeight(mIsDoubleHeight ? UIWidget.DefaultWidthHeight * 2.f : UIWidget.DefaultWidthHeight);
+		mH = desiredHeight();
+	}
+
+	public boolean isOpen() {
+		return mOpen;
+	}
+
+	public void isOpen(boolean open) {
+		mOpen = open;
 	}
 
 	public void noItemsFoundText(String newText) {
@@ -124,14 +134,13 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	}
 
 	public UiDropDownBoxItem selectedItem() {
-		if (mItems == null || mItems.size() == 0)
+		if (mItems == null || mItems.isEmpty())
 			return null;
 
-		if (mSelectedIndex == NO_ITEM_INDEX)
+		if (mSelectedIndex == NO_ITEM_INDEX || mSelectedIndex >= mItems.size())
 			return null;
 
 		return mItems.get(mSelectedIndex);
-
 	}
 
 	public T getObjectByIndex(int index) {
@@ -207,12 +216,15 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	// --------------------------------------
 
 	public UiDropDownBox() {
-		this(NO_LABEL_TEXT);
+		this(null);
 	}
 
 	public UiDropDownBox(String label) {
 		mOpen = false;
 		mLabel = label;
+		mIsDoubleHeight = mLabel != null && !mLabel.isEmpty();
+		desiredHeight(mIsDoubleHeight ? UIWidget.DefaultWidthHeight * 2.f : UIWidget.DefaultWidthHeight);
+		mH = desiredHeight();
 
 		mWindowRectangle = new ScrollBarContentRectangle(this);
 		mContentRectangle = new ScrollBarContentRectangle(this);
@@ -229,54 +241,69 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public boolean handleInput(LintfordCore core) {
 		var lResult = super.handleInput(core);
 
-		mDownArrowHovered = mDownArrowRectangle.intersectsAA(core.HUD().getMouseCameraSpace().x, core.HUD().getMouseCameraSpace().y);
+		final var lMouseCamera = core.HUD().getMouseCameraSpace();
+		mDownArrowHovered = mDownArrowRectangle.intersectsAA(lMouseCamera.x, lMouseCamera.y);
 
 		if (!core.input().mouse().isMouseMenuSelectionEnabled())
 			return false;
 
-		if (!mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace())) {
-			if (mOpen) {
-				if (core.input().mouse().isMouseLeftButtonDownTimed(this)) {
-					mOpen = false;
+		if (mOpen) {
+			// 1. Mouse inside popup window
+			if (mWindowRectangle.intersectsAA(lMouseCamera)) {
+				if (mScrollBar.scrollBarEnabled() && mScrollBar.handleInput(core, this)) {
+					return true;
 				}
+
+				if (core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+					final float lRelativeY = lMouseCamera.y - mWindowRectangle.y() - mScrollBar.currentYPos();
+					final int lIndex = (int) (lRelativeY / ITEM_HEIGHT);
+
+					if (lIndex >= 0 && lIndex < mItems.size()) {
+						mHighlightedIndex = lIndex;
+					} else {
+						mHighlightedIndex = NO_ITEM_INDEX;
+					}
+
+					if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+						if (lIndex >= 0 && lIndex < mItems.size()) {
+							mSelectedIndex = lIndex;
+
+							if (mUiWidgetListenerCallback != null) {
+								mUiWidgetListenerCallback.widgetOnClick(core.input(), mUiWidgetListenerUid);
+								mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
+							}
+						}
+
+						mOpen = false;
+						return true;
+					}
+				}
+				return true;
+			}
+
+			// 2. Clicked on the header box (toggle closed)
+			if (intersectsAA(lMouseCamera)) {
+				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+					mOpen = false;
+					return true;
+				}
+				return true;
+			}
+
+			// 3. Clicked outside both popup and header
+			if (core.input().mouse().isMouseLeftButtonDownTimed(this)) {
+				mOpen = false;
+				return false;
 			}
 
 			return false;
 		}
 
-		if (!core.input().mouse().isMouseOverThisComponent(hashCode()))
-			return false;
-
-		if (mOpen && mScrollBar.handleInput(core, this))
-			return true;
-
-		else {
-			final var intersectsDropDown = mWindowRectangle.intersectsAA(core.HUD().getMouseCameraSpace());
-			if (intersectsDropDown && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
-				final var lOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
-				if (mOpen) {
-					final var lConsoleLineHeight = ITEM_HEIGHT;
-					final var lRelativeHeight = core.HUD().getMouseCameraSpace().y - mWindowRectangle.y() - mScrollBar.currentYPos() - lOffsetY;
-					final var lSelectedIndex = MathHelper.clampi((int) (lRelativeHeight / lConsoleLineHeight), 0, mItems.size() - 1);
-
-					mHighlightedIndex = lSelectedIndex;
-
-					if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-
-						mSelectedIndex = lSelectedIndex;
-
-						if (mUiWidgetListenerCallback != null) {
-							mUiWidgetListenerCallback.widgetOnClick(core.input(), mUiWidgetListenerUid);
-							mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
-						}
-
-						mOpen = false;
-					}
-				}
-
-				if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
-					mOpen = true;
-				}
+		// When closed: clicking on the widget opens it
+		if (intersectsAA(lMouseCamera) && core.input().mouse().tryAcquireMouseOverThisComponent(hashCode())) {
+			if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
+				mOpen = true;
+				return true;
 			}
 		}
 
@@ -287,27 +314,31 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 	public void update(LintfordCore core) {
 		super.update(core);
 
-		final var lLabelOffset = mLabel != null ? 1 : 0;
-
 		if (mOpen) {
-			final var lNumItemsToRender = Math.min(mItems.size(), MAX_ITEMS_TO_DISPLAY);
-			final var lHeight = lNumItemsToRender * ITEM_HEIGHT + lLabelOffset * UIWidget.DefaultWidthHeight;
+			final float lPopupHeight = Math.max(1, Math.min(mItems.size(), (int) MAX_ITEMS_TO_DISPLAY)) * ITEM_HEIGHT;
+			float lPopupY = mY + mH;
 
-			mWindowRectangle.set(mX, mY + UIWidget.DefaultWidthHeight, mW, lHeight);
-		} else {
-			if (mLabel != null) {
-				desiredHeight(UIWidget.DefaultWidthHeight * 2.f);
-			} else {
-				desiredHeight(UIWidget.DefaultWidthHeight);
+			if (core.HUD() != null && core.HUD().boundingRectangle() != null) {
+				final float lHudBottom = core.HUD().boundingRectangle().bottom();
+				if (lPopupY + lPopupHeight > lHudBottom) {
+					lPopupY = mY - lPopupHeight;
+				}
 			}
 
+			mWindowRectangle.set(mX, lPopupY, mW, lPopupHeight);
+			final float lContentHeight = Math.max(mItems.size() * ITEM_HEIGHT, lPopupHeight);
+			mContentRectangle.set(mX, lPopupY, mW, lContentHeight);
+			mScrollBar.update(core);
+		} else {
+			mIsDoubleHeight = mLabel != null && !mLabel.isEmpty();
+			desiredHeight(mIsDoubleHeight ? UIWidget.DefaultWidthHeight * 2.f : UIWidget.DefaultWidthHeight);
+
 			mWindowRectangle.set(this);
-			mWindowRectangle.expand(1);
+			mContentRectangle.set(this);
+			mScrollBar.update(core);
 		}
 
 		mDownArrowRectangle.set(right() - 25, mY + mH - UIWidget.DefaultWidthHeight, 25, 25);
-		mContentRectangle.height((mItems.size() + lLabelOffset) * ITEM_HEIGHT);
-		mScrollBar.update(core);
 	}
 
 	@Override
@@ -315,8 +346,8 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		final var lFontHeight = textFont.fontHeight();
 		final var lSpriteBatch = sharedResources.uiSpriteBatch();
 
-		// Handle Empty State
-		if (mItems.isEmpty()) {
+		// Handle Empty State when closed
+		if (mItems.isEmpty() && !mOpen) {
 			textFont.begin(core.HUD());
 			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
 			textFont.drawText(mNoItemsFoundText, mX + HorizontalPadding, mY + mH / 2f - lFontHeight / 2f, componentZDepth, 1.f, -1);
@@ -325,7 +356,7 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		}
 
 		// Draw Main Label (if exists)
-		if (mLabel != null) {
+		if (mLabel != null && !mLabel.isEmpty()) {
 			textFont.begin(core.HUD());
 			textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
 			textFont.drawText(mLabel, mX, mY + UIWidget.DefaultWidthHeight * .5f - lFontHeight / 2f, componentZDepth, 1.f, -1);
@@ -334,7 +365,6 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 		if (!mOpen) {
 			drawSelectedItem(core, lSpriteBatch, textFont, coreSpritesheet, componentZDepth);
-
 		}
 
 		if (ConstantsApp.getBooleanValueDef("DEBUG_SHOW_UI_COLLIDABLES", false)) {
@@ -364,16 +394,37 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 
 		drawSelectedItem(core, spriteBatch, textFont, coreSpritesheet, componentZDepth);
 
-		mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, mStencilId);
-
-		textFont.begin(core.HUD());
+		// 1. Draw dropdown background panel
 		spriteBatch.begin(core.HUD());
-		spriteBatch.setColorRGBA(0.f, 0.f, 0.f, 1.f);
+		spriteBatch.setColorRGBA(0.08f, 0.08f, 0.08f, 1.f);
 		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle, componentZDepth - 0.1f);
+
+		// Border around popup
+		spriteBatch.setColor(ColorConstants.MenuPanelPrimaryColor);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle.x(), mWindowRectangle.y(), mWindowRectangle.width(), 1.f, componentZDepth - 0.12f);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle.x(), mWindowRectangle.bottom() - 1.f, mWindowRectangle.width(), 1.f, componentZDepth - 0.12f);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle.x(), mWindowRectangle.y(), 1.f, mWindowRectangle.height(), componentZDepth - 0.12f);
+		spriteBatch.draw(coreSpritesheet, CoreTextureNames.TEXTURE_WHITE, mWindowRectangle.right() - 1.f, mWindowRectangle.y(), 1.f, mWindowRectangle.height(), componentZDepth - 0.12f);
 		spriteBatch.end();
 
-		final var lOffsetY = mLabel != null ? UIWidget.DefaultWidthHeight : 0.f;
-		float lYPos = mWindowRectangle.y() + mScrollBar.currentYPos() + lOffsetY;
+		final boolean hasScrollBar = mScrollBar.scrollBarEnabled();
+
+		if (mItems.isEmpty()) {
+			textFont.begin(core.HUD());
+			textFont.setTextColorRGBA(0.7f, 0.7f, 0.7f, 1.f);
+			textFont.drawText(mNoItemsFoundText, mWindowRectangle.x() + HorizontalPadding, mWindowRectangle.y() + (ITEM_HEIGHT - textFont.fontHeight()) / 2f, componentZDepth - 0.2f, 1.f, -1);
+			textFont.end();
+			return;
+		}
+
+		// 2. Stencil clipping for scrollable area
+		if (hasScrollBar) {
+			mWindowRectangle.preDraw(core, spriteBatch, mWindowRectangle, mStencilId, true);
+		}
+
+		// 3. Draw items
+		textFont.begin(core.HUD());
+		float lYPos = mWindowRectangle.y() + mScrollBar.currentYPos();
 
 		final int lItemCount = mItems.size();
 		for (int i = 0; i < lItemCount; i++) {
@@ -385,18 +436,23 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 				entityColor.setFromColor(ColorConstants.TextEntryColor);
 
 			textFont.setTextColor(entityColor);
-			textFont.drawText(lItem.name, mX + 5.f, lYPos, componentZDepth - 0.2f, 1.f, -1);
+			textFont.drawText(lItem.name, mWindowRectangle.x() + 5.f, lYPos + (ITEM_HEIGHT - textFont.fontHeight()) / 2f, componentZDepth - 0.2f, 1.f, -1);
 			lYPos += ITEM_HEIGHT;
 		}
 
 		textFont.end();
 		textFont.setTextColorWhite();
 
-		mWindowRectangle.postDraw(core);
+		if (hasScrollBar) {
+			mWindowRectangle.postDraw(core);
+		}
 
-		if (mScrollBar.scrollBarEnabled()) {
+		// 4. Draw scrollbar (wrapped in spriteBatch.begin/end and closer in Z depth)
+		if (hasScrollBar) {
 			mScrollBar.scrollBarAlpha(1.f);
-			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth);
+			spriteBatch.begin(core.HUD());
+			mScrollBar.draw(core, spriteBatch, coreSpritesheet, componentZDepth - 0.25f);
+			spriteBatch.end();
 		}
 	}
 
@@ -417,12 +473,11 @@ public class UiDropDownBox<T> extends UIWidget implements IInputClickedFocusMana
 		textFont.begin(core.HUD());
 		textFont.setTextColorRGBA(1.f, 1.f, 1.f, 1.f);
 
-		if (mSelectedIndex > -1) {
+		if (mSelectedIndex > -1 && mSelectedIndex < mItems.size()) {
 			final var lSelectedMenuEnumEntryItem = mItems.get(mSelectedIndex);
-			final var lCurItemName = lSelectedMenuEnumEntryItem.name;
+			final var lCurItemName = lSelectedMenuEnumEntryItem != null ? lSelectedMenuEnumEntryItem.name : NO_SELECTION_TEXT;
 
 			textFont.drawText(lCurItemName, mX + HorizontalPadding, yy + UIWidget.DefaultWidthHeight * .5f - textFont.fontHeight() / 2f, componentZDepth - .01f, 1.f, -1);
-
 		} else {
 			textFont.drawText("No item selected", mX + HorizontalPadding, yy + UIWidget.DefaultWidthHeight * .5f - textFont.fontHeight() / 2f, componentZDepth - .01f, 1.f, -1);
 		}

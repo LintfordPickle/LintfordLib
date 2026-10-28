@@ -214,7 +214,7 @@ public abstract class UiPanel implements IScrollBarArea, UIWindowChangeListener,
 
 	public void loadResources(ResourceManager resourceManager) {
 		mCoreSpritesheet = resourceManager.spriteSheetManager().coreSpritesheet();
-		mHudSpritesheet = resourceManager.spriteSheetManager().getSpriteSheet("SPRITESHEET_HUD", ConstantsEditor.EDITOR_RESOURCE_GROUP_ID);
+		mHudSpritesheet = resourceManager.spriteSheetManager().getSpriteSheet("SPRITESHEET_HUD", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		final int numWidgets = mWidgets.size();
 		for (int i = 0; i < numWidgets; i++) {

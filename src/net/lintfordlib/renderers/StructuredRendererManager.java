@@ -70,7 +70,7 @@ public class StructuredRendererManager extends RendererManagerBase {
 			mActiveRenderTarget.bind();
 
 			GL11.glClearColor(.06f, 0.18f, 0.31f, 1.0f);
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 		}
 
 		// TODO: render all stages and passes
