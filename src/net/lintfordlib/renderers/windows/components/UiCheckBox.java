@@ -110,6 +110,7 @@ public class UiCheckBox extends UIWidget {
 
 				if (mUiWidgetListenerCallback != null)
 					mUiWidgetListenerCallback.widgetOnDataChanged(core.input(), mUiWidgetListenerUid);
+				return true;
 
 			}
 		}
@@ -143,7 +144,7 @@ public class UiCheckBox extends UIWidget {
 		if (mLabelText != null) {
 			textFont.begin(core.HUD());
 			textFont.setTextColor(ColorConstants.TextEntryColor);
-			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth, mTextScale);
+			textFont.drawText(mLabelText, mX, mY + mH * .5f - lTextHeight * .5f * mTextScale, componentZDepth - 0.005f, mTextScale);
 			textFont.end();
 		}
 
@@ -153,7 +154,7 @@ public class UiCheckBox extends UIWidget {
 		lSpriteBatch.setColorRGBA(1.f, 1.f, 1.f, 1.f);
 		lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_UNCHECKED, mBoxRectangle, componentZDepth);
 		if (mIsChecked)
-			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_CHECKED, mBoxRectangle, componentZDepth);
+			lSpriteBatch.draw(coreSpritesheetDefinition, CoreTextureNames.TEXTURE_CHECKBOX_CHECKED, mBoxRectangle, componentZDepth - 0.005f);
 
 		lSpriteBatch.end();
 	}
@@ -171,6 +172,10 @@ public class UiCheckBox extends UIWidget {
 			return;
 
 		mHasFocus = newFocus;
+		mIsChecked = !mIsChecked;
+
+		if (mUiWidgetListenerCallback != null)
+			mUiWidgetListenerCallback.widgetOnDataChanged(inputState, mUiWidgetListenerUid);
 	}
 
 	@Override
