@@ -251,6 +251,10 @@ public class SpriteSheetManager {
 		try {
 
 			final var inputStream = FileUtils.class.getResourceAsStream(filePath);
+			if (inputStream == null) {
+				Debug.debugManager().logger().w(getClass().getSimpleName(), "Error: Resource not found: " + filePath);
+				return null;
+			}
 			final var gsonReader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
 
 			final var spriteSheet = (SpriteSheetDefinition) gson.fromJson(gsonReader, SpriteSheetDefinition.class);
