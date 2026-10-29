@@ -68,8 +68,6 @@ public class TextureBatchPCT {
 	protected static final String VERT_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_batch_pct.vert";
 	protected static final String FRAG_FILENAME = FileUtils.RESOURCE_LOCATION_PREFIX + "/res/shaders/shader_batch_pct.frag";
 
-	private static IntBuffer mIndexBuffer;
-
 	// @formatter:off
 	//  1 ---- 2
 	//  |      |
@@ -77,25 +75,20 @@ public class TextureBatchPCT {
 	//  0------3
 	// @formatter:on
 
-	private static IntBuffer getIndexBuffer() {
-		if (mIndexBuffer == null) {
-			mIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
+	private static IntBuffer createIndexBuffer() {
+		final var lIndexBuffer = MemoryUtil.memAllocInt(MAX_SPRITES * NUM_INDICES_PER_SPRITE);
+		for (int i = 0; i < MAX_SPRITES; i++) {
+			final int offset = i * NUM_VERTICES_PER_SPRITE;
+			lIndexBuffer.put(offset + 1);
+			lIndexBuffer.put(offset + 0);
+			lIndexBuffer.put(offset + 2);
 
-			mIndexBuffer.clear();
-			for (int i = 0; i < MAX_SPRITES; i++) {
-				final int offset = i * NUM_VERTICES_PER_SPRITE;
-				mIndexBuffer.put(offset + 1);
-				mIndexBuffer.put(offset + 0);
-				mIndexBuffer.put(offset + 2);
-
-				mIndexBuffer.put(offset + 2);
-				mIndexBuffer.put(offset + 0);
-				mIndexBuffer.put(offset + 3);
-			}
-			mIndexBuffer.flip();
+			lIndexBuffer.put(offset + 2);
+			lIndexBuffer.put(offset + 0);
+			lIndexBuffer.put(offset + 3);
 		}
-
-		return mIndexBuffer;
+		lIndexBuffer.flip();
+		return lIndexBuffer;
 	}
 
 	// --------------------------------------
@@ -279,7 +272,6 @@ public class TextureBatchPCT {
 		mShader.loadResources(resourceManager);
 
 		mBuffer = MemoryUtil.memAllocFloat(MAX_SPRITES * NUM_VERTICES_PER_SPRITE * VertexDefinition.elementCount);
-		getIndexBuffer();
 
 		if (mVboId == -1) {
 			mVboId = GL15.glGenBuffers();
@@ -339,7 +331,9 @@ public class TextureBatchPCT {
 		GL20.glVertexAttribPointer(3, VertexDefinition.textureIndexElementCount, GL11.GL_FLOAT, false, VertexDefinition.stride, VertexDefinition.textureIndexByteOffset);
 
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mVioId);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, getIndexBuffer(), GL15.GL_STATIC_DRAW);
+		final var lIndexBuffer = createIndexBuffer();
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, lIndexBuffer, GL15.GL_STATIC_DRAW);
+		MemoryUtil.memFree(lIndexBuffer);
 
 		GL30.glBindVertexArray(0);
 		mAreGlContainersInitialized = true;

@@ -253,14 +253,11 @@ public class UiDropDownBox2<T> extends UIWidget implements IInputClickedFocusMan
 
 				// Only select if we are below the search bar area
 				if (lRelativeHeight > 0) {
-					int lIndex = MathHelper.clampi((int) (lRelativeHeight / ITEM_HEIGHT), 0, mFilteredItems.size());
+					int lIndex = MathHelper.clampi((int) (lRelativeHeight / ITEM_HEIGHT), 0, mFilteredItems.size() - 1);
 					mHighlightedIndex = lIndex;
 
 					if (core.input().mouse().tryAcquireMouseLeftClickTimed(hashCode(), this)) {
 						// Find the actual item in the master list to set the index correctly
-						
-						// FIXME: Out of Range exception gets thrown here !
-						
 						var selectedFilteredItem = mFilteredItems.get(lIndex);
 						setSelectedEntry(selectedFilteredItem.name);
 

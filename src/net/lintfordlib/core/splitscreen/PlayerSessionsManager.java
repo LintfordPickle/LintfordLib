@@ -103,7 +103,7 @@ public abstract class PlayerSessionsManager<T extends IPlayerSession> {
 
 		case 2:
 			lOffsetX = lGameCamera.getWidth() * .5f;
-			lOffsetX = lGameCamera.getHeight() * .5f;
+			lOffsetY = lGameCamera.getHeight() * .5f;
 			mPlayerSessions.get(0).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
 			mPlayerSessions.get(1).getViewContainer().viewportOffset.set(lOffsetX, lOffsetY);
 			break;

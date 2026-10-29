@@ -219,9 +219,10 @@ public class ControllerManager {
 	public void removeAllControllers() {
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "ControllerManager: Removing all controllers");
 
-		for (var lControllerEntry : mControllers.entrySet()) {
-			final var lControllerGroupKey = lControllerEntry.getKey();
-			removeControllerGroup(lControllerGroupKey);
+		final var lGroupKeys = new ArrayList<>(mControllers.keySet());
+		final var lCount = lGroupKeys.size();
+		for (int i = 0; i < lCount; i++) {
+			removeControllerGroup(lGroupKeys.get(i));
 		}
 
 		mControllers.clear();
