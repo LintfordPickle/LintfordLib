@@ -168,6 +168,15 @@ public abstract class RendererManagerBase implements IInputClickedFocusManager {
 			mRenderers.get(i).unloadResources();
 		}
 
+		final int lNumRenderTargets = mRenderTargets.size();
+		for (int i = 0; i < lNumRenderTargets; i++) {
+			final var rt = mRenderTargets.get(i);
+			rt.unbind();
+			rt.unloadResources();
+		}
+		mRenderTargets.clear();
+		mRenderTargetAutoResize.clear();
+
 		mDisplayConfig.removeResizeListener(mResizeListener);
 		mDisplayConfig = null;
 

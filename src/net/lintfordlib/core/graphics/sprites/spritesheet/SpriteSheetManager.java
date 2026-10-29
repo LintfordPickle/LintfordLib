@@ -373,4 +373,25 @@ public class SpriteSheetManager {
 			}
 		}
 	}
+
+	public void unloadGroup(int entityGroupUid) {
+		final var group = mSpriteSheetGroups.get(entityGroupUid);
+		if (group != null) {
+			for (var sheet : group.values()) {
+				sheet.unloadResources();
+			}
+			group.clear();
+			mSpriteSheetGroups.remove(entityGroupUid);
+		}
+	}
+
+	public void unloadResources() {
+		for (var group : mSpriteSheetGroups.values()) {
+			for (var sheet : group.values()) {
+				sheet.unloadResources();
+			}
+			group.clear();
+		}
+		mSpriteSheetGroups.clear();
+	}
 }

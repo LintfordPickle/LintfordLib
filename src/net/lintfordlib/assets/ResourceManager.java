@@ -147,6 +147,8 @@ public class ResourceManager {
 		mAudioManager.unloadResources();
 		mTextureManager.unloadResources();
 		mSpriteGraphRepository.unloadResources();
+		mFontManager.unloadResources();
+		mSpriteSheetManager.unloadResources();
 
 		mResourcesLoaded = false;
 	}

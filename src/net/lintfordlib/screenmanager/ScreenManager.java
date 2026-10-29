@@ -52,6 +52,7 @@ public class ScreenManager implements IInputClickedFocusManager {
 	private HudLayoutController mUiStructureController;
 	protected float mColumnMaxWidth;
 	protected IInputClickedFocusTracker mTrackedInputControl;
+	private IResizeListener mResizeListener;
 
 	// --------------------------------------
 	// Properties
@@ -148,7 +149,6 @@ public class ScreenManager implements IInputClickedFocusManager {
 	}
 
 	public void loadResources(final ResourceManager resourceManager) {
-		IResizeListener mResizeListener;
 		mResourceManager = resourceManager;
 
 		mSharedResources.loadResources(resourceManager);
@@ -185,10 +185,18 @@ public class ScreenManager implements IInputClickedFocusManager {
 			mScreens.get(i).unloadResources();
 		}
 
+		if (mResizeListener != null) {
+			core().config().display().removeResizeListener(mResizeListener);
+			mResizeListener = null;
+		}
+
+		if (mUISoundManager != null) {
+			mUISoundManager.releaseAudioSources();
+			mUISoundManager = null;
+		}
+
 		mToolTip.unloadResources();
 		mToastManager.unloadResources();
-
-		mSharedResources.unloadResources();
 
 		Debug.debugManager().logger().i(getClass().getSimpleName(), "Finished ScreenManager.UnloadResources");
 

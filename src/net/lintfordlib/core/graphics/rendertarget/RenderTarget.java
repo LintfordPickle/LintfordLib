@@ -410,12 +410,15 @@ public class RenderTarget {
 
 			// Flip the image vertically (OpenGL uses bottom-left origin, images use top-left)
 			ByteBuffer flippedBuffer = flipImageVertically(imageBuffer, mWidth, mHeight, 4);
-
-			// Write to PNG file using STB
-			if (!STBImageWrite.stbi_write_png(filepath, mWidth, mHeight, 4, flippedBuffer, mWidth * 4)) {
-				Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to write texture to file: " + filepath);
-			} else {
-				Debug.debugManager().logger().i(getClass().getSimpleName(), "Successfully saved texture to: " + filepath);
+			try {
+				// Write to PNG file using STB
+				if (!STBImageWrite.stbi_write_png(filepath, mWidth, mHeight, 4, flippedBuffer, mWidth * 4)) {
+					Debug.debugManager().logger().e(getClass().getSimpleName(), "Failed to write texture to file: " + filepath);
+				} else {
+					Debug.debugManager().logger().i(getClass().getSimpleName(), "Successfully saved texture to: " + filepath);
+				}
+			} finally {
+				MemoryUtil.memFree(flippedBuffer);
 			}
 		}
 	}

@@ -594,6 +594,8 @@ public abstract class LintfordCore {
 		Debug.debugManager().unloadResources();
 
 		mResourceManager.unloadContent();
+
+		net.lintfordlib.core.maths.MathUtil.freeResources();
 	}
 
 	private void warmupJVM() {
@@ -726,6 +728,13 @@ public abstract class LintfordCore {
 		onUnloadResources();
 
 		onAppClosing();
+
+		final long lWindowID = lDisplayConfig.windowID();
+		if (lWindowID != 0) {
+			org.lwjgl.glfw.Callbacks.glfwFreeCallbacks(lWindowID);
+			GLFW.glfwDestroyWindow(lWindowID);
+		}
+		GLFW.glfwTerminate();
 	}
 
 	/**

@@ -145,6 +145,11 @@ public class FullScreenBuffer {
 		mFullScreenQuad.unloadResources();
 		mShader.unloadResources();
 
+		if (mTextureId != -1) {
+			GL11.glDeleteTextures(mTextureId);
+			mTextureId = -1;
+		}
+
 		MemoryUtil.memFree(mARGBColorData);
 
 		mResourcesLoaded = false;

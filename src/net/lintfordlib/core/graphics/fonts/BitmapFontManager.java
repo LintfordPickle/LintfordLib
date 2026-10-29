@@ -232,4 +232,11 @@ public class BitmapFontManager {
 
 		return lNewFontUnit;
 	}
+
+	public void unloadResources() {
+		for (var fontUnit : mFontUnits.values()) {
+			fontUnit.unloadResources();
+		}
+		mFontUnits.clear();
+	}
 }
