@@ -46,7 +46,8 @@ public class ParticleFrameworkRenderer extends BaseRenderer {
 
 	public int numAssignedParticleRenderers() {
 		var lNumAssignedRenderers = 0;
-		for (int i = 0; i < lNumAssignedRenderers; i++) {
+		final int lCount = mParticleRenderers.size();
+		for (int i = 0; i < lCount; i++) {
 			if (mParticleRenderers.get(i).isAssigned())
 				lNumAssignedRenderers++;
 

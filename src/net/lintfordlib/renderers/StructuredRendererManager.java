@@ -134,12 +134,12 @@ public class StructuredRendererManager extends RendererManagerBase {
 			return;
 		}
 
-		final var rtw = mActiveRenderTarget.width() * .8f;
-		final var rth = mActiveRenderTarget.height() * .8f;
+		final var rtw = lRenderTarget.width();
+		final var rth = lRenderTarget.height();
 		final var dx = -rtw * .5f;
 		final var dy = -rth * .5f;
 
-		mSharedResources.drawRenderTargetImmediate(core, dx, dy, rtw, rth, 0.01f, mActiveRenderTarget);
+		mSharedResources.drawRenderTargetImmediate(core, dx, dy, rtw, rth, 0.01f, lRenderTarget);
 	}
 
 	/** draws the given rt (by uid) into the currently bound texture buffer. */
